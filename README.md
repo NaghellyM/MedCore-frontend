@@ -2,7 +2,7 @@
 
 <div align="center">
 <p>
-  <img width="300px" src="./src/assets/images/logoVive100.png" alt="Logo" />
+  <img width="300px" src="./src/assets/images/Cuidarte_vive_al_100.png" alt="Logo" />
 </p>
 </div>
 
@@ -79,5 +79,5 @@ Start the server
 - **Naghelly M.** - Scrum Master
 - **Jesus A.** - Backend Developer
 - **Nicolas C.** - Frontend Developer
-- **Daniel E.** - Software Architect /QA Engineer
+- **Daniel E.** - Infrastructure Engineer / QA Engineer
 </div>
