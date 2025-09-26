@@ -1,18 +1,17 @@
-import { type JSX } from "react";
+import { SidebarProvider, SidebarTrigger } from "../components/ui/sidebar"
+import { PatientSidebar } from "./sidebar/patient-sidebar"
+//import { AdminSidebar } from "./sidebar/admi-sidebar"
+//import { NurseSidebar } from "./sidebar/nurse-sidebar"
+//import { DoctorSidebar } from "./sidebar/doctor-sidebar"
 
-export const Layout = ({
-    children,
-}: {
-    children: JSX.Element | JSX.Element[];
-}) => {
+export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <>
-            <h1 className="text-center text-5xl font-fjalla text-cuidarte-primary">
-                <span>Cuidarte</span>
-            </h1>
-            <main className="grid place-items-center justify-items-center">
+        <SidebarProvider>
+            <PatientSidebar />
+            <main>
+                <SidebarTrigger />
                 {children}
             </main>
-        </>
-    );
-};
+        </SidebarProvider>
+    )
+}
