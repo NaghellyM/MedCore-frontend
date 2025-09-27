@@ -1,52 +1,50 @@
 import {
-    Search,
-    ClipboardPlus,
-    HeartPlus,
-    BriefcaseMedical,
-    Activity,
-    Siren,
-    Settings,
     BookUser,
-    User,
+    CalendarCheck,
+    FileHeart,
+    FileVideoCamera,
     LayoutGrid,
+    Microscope,
+    PillBottle,
+    Settings,
+    User,
 } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarMenuButton } from "../ui/sidebar";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarMenuButton
+} from "../ui/sidebar";
 import { SidebarGroupComponent } from "../ui/SidebarGroup";
 
-const patientsItems = [
+const items = [
     {
-        title: "Buscar pacientes",
+        title: "Mis citas",
         url: "#",
-        icon: Search,
+        icon: CalendarCheck,
     },
     {
-        title: "Registro de procedimientos",
+        title: "Telemedicina",
         url: "#",
-        icon: ClipboardPlus,
-    },
-    {
-        title: "Registro de signos vitales",
-        url: "#",
-        icon: HeartPlus,
-    },
-    {
-        title: "Medicamentos pacientes",
-        url: "#",
-        icon: BriefcaseMedical,
+        icon: FileVideoCamera,
     },
 ];
 
-const monitorItems = [
+const infoItems = [
     {
-        title: "Monitoreo en tiempo real",
+        title: "Historial clínico",
         url: "#",
-        icon: Activity,
+        icon: FileHeart,
     },
     {
-        title: "Alertas de inventario",
+        title: "Resultados de laboratorio",
         url: "#",
-        icon: Siren,
+        icon: Microscope,
+    },
+    {
+        title: "Medicamentos",
+        url: "#",
+        icon: PillBottle,
     },
 ];
 
@@ -67,8 +65,7 @@ const profileItems = [
         icon: BookUser,
     },
 ];
-
-export function NurseSidebar() {
+export function PatientSidebar() {
     return (
         <Sidebar>
             <SidebarContent>
@@ -78,8 +75,8 @@ export function NurseSidebar() {
                         <span>INICIO</span>
                     </a>
                 </SidebarMenuButton>
-                <SidebarGroupComponent label="GESTIÓN DE PACIENTES" items={patientsItems} />
-                <SidebarGroupComponent label="MONITOREO CLÍNICO" items={monitorItems} />
+                <SidebarGroupComponent label="GESTIÓN DE CITAS" items={items} />
+                <SidebarGroupComponent label="INFORMACIÓN DE SALUD" items={infoItems} />
                 <SidebarGroupComponent label="MI PERFIL" items={profileItems} />
             </SidebarContent>
         </Sidebar>

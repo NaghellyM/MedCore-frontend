@@ -1,11 +1,9 @@
 import { SidebarProvider } from "../components/ui/sidebar";
-
-
 import { useState } from 'react';
-import { NurseSidebar } from '../components/nurse/nurseSidebar';
-import { NursePageContent } from '../components/nurse/nursePage';
+import { AdminSidebar } from '../components/admin/adminSidebar';
+import { AdminPageContent } from '../components/admin/adminPage';
 
-export function NurseDashboard() {
+export function AdminDashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
@@ -17,11 +15,11 @@ export function NurseDashboard() {
                     </button>
                 </div>
                 <div className={`md:block w-64 ${sidebarOpen ? 'block' : 'hidden'} md:block`}>
-                    <NurseSidebar />
+                    <AdminSidebar />
                 </div>
 
                 <main className="flex-1 p-4">
-                    <NursePageContent />
+                    <AdminPageContent />
                 </main>
             </div>
         </SidebarProvider>

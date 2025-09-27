@@ -10,7 +10,7 @@ const schema = yup.object().shape({
     password: yup.string().min(6, 'La contraseña debe tener al menos 6 caracteres').required('La contraseña es obligatoria'),
 });
 
-const Form: React.FC = () => {
+const Login: React.FC = () => {
     const { control, handleSubmit, formState: { errors } } = useForm<IFormInput>({
         resolver: yupResolver(schema),
     });
@@ -78,4 +78,4 @@ const Form: React.FC = () => {
     );
 };
 
-export default Form;
+export default Login;

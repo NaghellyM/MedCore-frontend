@@ -1,55 +1,64 @@
 import {
     Search,
-    ClipboardPlus,
-    HeartPlus,
-    BriefcaseMedical,
-    Activity,
-    Siren,
-    Settings,
+    Users,
+    FileHeart,
+    CalendarDays,
+    FileVideoCamera,
+    Pill,
+    ArrowRight,
     BookUser,
+    Settings,
     User,
     LayoutGrid,
 } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarMenuButton } from "../ui/sidebar";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarMenuButton,
+} from "../ui/sidebar";
 import { SidebarGroupComponent } from "../ui/SidebarGroup";
 
-const patientsItems = [
+const items = [
     {
         title: "Buscar pacientes",
         url: "#",
         icon: Search,
     },
     {
-        title: "Registro de procedimientos",
+        title: "Mis pacientes",
         url: "#",
-        icon: ClipboardPlus,
+        icon: Users,
     },
     {
-        title: "Registro de signos vitales",
+        title: "Historial clínico",
         url: "#",
-        icon: HeartPlus,
+        icon: FileHeart,
     },
     {
-        title: "Medicamentos pacientes",
+        title: "Medicamentos",
         url: "#",
-        icon: BriefcaseMedical,
+        icon: Pill,
     },
 ];
 
-const monitorItems = [
+const scheduleItems = [
     {
-        title: "Monitoreo en tiempo real",
+        title: "Mi agenda",
         url: "#",
-        icon: Activity,
+        icon: CalendarDays,
     },
     {
-        title: "Alertas de inventario",
+        title: "Telemedicina",
         url: "#",
-        icon: Siren,
+        icon: FileVideoCamera,
+    },
+    {
+        title: "Derivaciones",
+        url: "#",
+        icon: ArrowRight,
     },
 ];
-
 const profileItems = [
     {
         title: "Mi perfil",
@@ -68,20 +77,20 @@ const profileItems = [
     },
 ];
 
-export function NurseSidebar() {
+export function DoctorSidebar() {
     return (
         <Sidebar>
             <SidebarContent>
                 <SidebarMenuButton asChild>
-                    <a href="#">
+                    <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium hover:bg-gray-100 w-full">
                         <LayoutGrid />
                         <span>INICIO</span>
-                    </a>
+                    </button>
                 </SidebarMenuButton>
-                <SidebarGroupComponent label="GESTIÓN DE PACIENTES" items={patientsItems} />
-                <SidebarGroupComponent label="MONITOREO CLÍNICO" items={monitorItems} />
+                <SidebarGroupComponent label="PACIENTES" items={items} />
+                <SidebarGroupComponent label="AGENDA" items={scheduleItems} />
                 <SidebarGroupComponent label="MI PERFIL" items={profileItems} />
             </SidebarContent>
         </Sidebar>
-    );
-}
+    )
+};

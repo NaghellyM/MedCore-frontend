@@ -1,8 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom';
-import NotFoundPage from '../pages/not-found-page';
-import Form from '../pages/login-page';
+import NotFoundPage from '../pages/notFoundPage';
+import Form from '../pages/loginPage';
 import App from '../App';
-import { NurseDashboard } from '../pages/NurseDashboard';
+import { NurseDashboard } from '../pages/nurseDashboard';
+import { AdminDashboard } from '../pages/adminDashboard';
 
 
 const router = createBrowserRouter([
@@ -11,12 +12,16 @@ const router = createBrowserRouter([
         element: <App />,
     },
     {
+        path: '/login',
+        element: <Form />,
+    },
+    {
         path: '/nursePage',
         element: <NurseDashboard />,
     },
     {
-        path: '/login',
-        element: <Form />,
+        path: '/adminPage',
+        element: <AdminDashboard />,
     },
     {
         path: '*',
