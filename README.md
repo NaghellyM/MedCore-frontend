@@ -19,6 +19,7 @@ and medical analytics.
 - [![TailwindCSS][TailwindCSS-logo]][TailwindCSS-url] - Tailwind CSS is a utility-first CSS framework for rapidly building custom user interfaces.
 
 ## 🎨 UI Components:
+- [![Lucide][Lucide-logo]][Lucide-url] - Lucide is a library of simply beautiful open source icons.
 - [![Shadcn UI][shadcn-logo]][shadcn-url] - Shadcn UI is a collection of components designed for building user interfaces with React.
 - [![Radix UI][Radix-logo]][Radix-url] - Radix UI is a library of unstyled, accessible components for building high-quality design systems and web applications.
 - [![React Hook Form][ReactHookForm-logo]][ReactHookForm-url] - React Hook Form is a library for managing form state and validation in React applications.
@@ -38,6 +39,8 @@ and medical analytics.
 [shadcn-url]: https://ui.shadcn.com/
 [Radix-logo]: https://img.shields.io/badge/Radix_UI-000000?style=for-the-badge&logo=radix-ui&logoColor=white
 [Radix-url]: https://www.radix-ui.com/  
+[Lucide-logo]: https://img.shields.io/badge/Lucide-000000?style=for-the-badge&logo=lucide
+[Lucide-url]: https://lucide.dev/
 ## Run Locally
 
 Clone the project

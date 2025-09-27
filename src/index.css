@@ -1,22 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe:ital@0;1&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');@tailwind base;
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+body {
+}
+
 @layer base {
   :root {
-    --sidebar-background: theme('colors.sidebar.DEFAULT');
-    --sidebar-foreground: theme('colors.sidebar.foreground');
-    --sidebar-primary: theme('colors.sidebar.primary');
-    --sidebar-primary-foreground: theme('colors.sidebar.primary-foreground');
-    --sidebar-accent: theme('colors.sidebar.accent');
-    --sidebar-accent-foreground: theme('colors.sidebar.accent-foreground');
-    --sidebar-border: theme('colors.sidebar.border');
-    --sidebar-ring: theme('colors.sidebar.ring');
+    --sidebar-background: #8dbcc7;
+    --sidebar-foreground: #ffffff;
+    --sidebar-primary: #647fbc;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #91adc8;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #d6cfd2;
+    --sidebar-ring: #647fbc;
   }
 
   .dark {
-    --sidebar-background: theme('colors.sidebar.primary');
-    --sidebar-foreground: theme('colors.sidebar.primary-foreground');
+    --sidebar-background: #647fbc;
+    --sidebar-foreground: #ffffff;
     --sidebar-border: rgba(164, 204, 217, 0.1);
   }
 }

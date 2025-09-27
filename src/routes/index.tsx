@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { NursePage } from '../pages/nurse-page';
 import NotFoundPage from '../pages/not-found-page';
 import Form from '../pages/login-page';
 import App from '../App';
+import { NurseDashboard } from '../pages/NurseDashboard';
 
 
 const router = createBrowserRouter([
@@ -11,8 +11,8 @@ const router = createBrowserRouter([
         element: <App />,
     },
     {
-        path: '/NursePage',
-        element: <NursePage />,
+        path: '/nursePage',
+        element: <NurseDashboard />,
     },
     {
         path: '/login',
