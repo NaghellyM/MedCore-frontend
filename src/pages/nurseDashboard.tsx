@@ -17,7 +17,6 @@ export function NurseDashboard() {
                 <div className={`md:block w-64 ${sidebarOpen ? 'block' : 'hidden'} md:block`}>
                     <NurseSidebar />
                 </div>
-
                 <main className="flex-1 p-4">
                     <NursePageContent />
                 </main>
