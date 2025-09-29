@@ -27,15 +27,20 @@ const Form: React.FC = () => {
   const redirectByRole = (token: string) => {
     const payload = decodeToken(token);
 
+    console.log("Payload decodificado:", payload);
+
     switch (payload.role) {
-      case "admin":
-        navigate("/dashboard/admin");
+      case "ADMINISTRADOR":
+        navigate("/dashboard/administrador");
         break;
-      case "user":
-        navigate("/dashboard/user");
+      case "PACIENTE":
+        navigate("/dashboard/paciente");
         break;
-      case "manager":
-        navigate("/dashboard/manager");
+      case "MEDICO":
+        navigate("/doctorPage");
+        break;
+    case "ENFERMERA":  
+        navigate("/dashboard/enfermera");
         break;
       default:
         navigate("/dashboard");
@@ -133,4 +138,4 @@ const Form: React.FC = () => {
   );
 };
 
-export default Login;
+export default Form;

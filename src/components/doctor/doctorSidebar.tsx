@@ -1,96 +1,81 @@
+// src/components/DoctorSidebar.tsx
+import React, { useState } from "react";
 import {
-    Search,
-    Users,
-    FileHeart,
-    CalendarDays,
-    FileVideoCamera,
-    Pill,
-    ArrowRight,
-    BookUser,
-    Settings,
-    User,
-    LayoutGrid,
+  LayoutGrid,
+  Calendar,
+  User,
+  Video,
+  Activity,
+  ArrowRight,
 } from "lucide-react";
 
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarMenuButton,
-} from "../ui/sidebar";
-import { SidebarGroupComponent } from "../ui/SidebarGroup";
+  Sidebar,
+  SidebarProvider,
+  SidebarHeader,
+  SidebarContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+} from "../../components/ui/sidebar";
 
-const items = [
-    {
-        title: "Buscar pacientes",
-        url: "#",
-        icon: Search,
-    },
-    {
-        title: "Mis pacientes",
-        url: "#",
-        icon: Users,
-    },
-    {
-        title: "Historial clínico",
-        url: "#",
-        icon: FileHeart,
-    },
-    {
-        title: "Medicamentos",
-        url: "#",
-        icon: Pill,
-    },
-];
-
-const scheduleItems = [
-    {
-        title: "Mi agenda",
-        url: "#",
-        icon: CalendarDays,
-    },
-    {
-        title: "Telemedicina",
-        url: "#",
-        icon: FileVideoCamera,
-    },
-    {
-        title: "Derivaciones",
-        url: "#",
-        icon: ArrowRight,
-    },
-];
-const profileItems = [
-    {
-        title: "Mi perfil",
-        url: "#",
-        icon: User,
-    },
-    {
-        title: "Configuración",
-        url: "#",
-        icon: Settings,
-    },
-    {
-        title: "Contactos de emergencia",
-        url: "#",
-        icon: BookUser,
-    },
-];
-
-export function DoctorSidebar() {
-    return (
-        <Sidebar>
-            <SidebarContent>
-                <SidebarMenuButton asChild>
-                    <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium hover:bg-gray-100 w-full">
-                        <LayoutGrid />
-                        <span>INICIO</span>
-                    </button>
-                </SidebarMenuButton>
-                <SidebarGroupComponent label="PACIENTES" items={items} />
-                <SidebarGroupComponent label="AGENDA" items={scheduleItems} />
-                <SidebarGroupComponent label="MI PERFIL" items={profileItems} />
-            </SidebarContent>
-        </Sidebar>
-    )
+type Item = {
+  id: string;
+  label: string;
+  Icon: React.ComponentType<any>;
+  href?: string;
 };
+
+const ITEMS: Item[] = [
+  { id: "dashboard", label: "Dashboard", Icon: LayoutGrid, href: "#" },
+  { id: "agenda", label: "Agenda", Icon: Calendar, href: "#" },
+  { id: "pacientes", label: "Pacientes", Icon: User, href: "#" },
+  { id: "telemedicina", label: "Telemedicina", Icon: Video, href: "#" },
+  { id: "medicamentos", label: "Medicamentos", Icon: Activity, href: "#" },
+  { id: "derivaciones", label: "Derivaciones", Icon: ArrowRight, href: "#" },
+];
+
+// src/components/DoctorSidebar.tsx
+export default function DoctorSidebar() {
+  const [active, setActive] = useState<string>("dashboard");
+
+  return (
+    <SidebarProvider>
+      <Sidebar className="h-screen !w-64 border-r bg-white flex flex-col">
+        <SidebarHeader>
+          <div className="px-4 py-3">
+            <span className="text-black font-bold text-lg">MedCore</span>
+          </div>
+        </SidebarHeader>
+
+        <SidebarContent className="px-2 py-4 text-black flex-1">
+          <SidebarMenu>
+            {ITEMS.map(({ id, label, Icon }) => {
+              const isActive = id === active;
+              return (
+                <SidebarMenuItem key={id}>
+                  <SidebarMenuButton asChild>
+                    <button
+                      onClick={() => setActive(id)}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-left rounded-lg transition
+                        ${isActive ? "bg-gray-200 shadow-inner" : "hover:bg-gray-100"}
+                      `}
+                    >
+                      <Icon className="h-5 w-5 text-black" />
+                      <span className="font-medium text-black">{label}</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarContent>
+
+        <SidebarFooter>
+          <div className="px-4 py-3 text-sm text-gray-600">v1.0 • MedCore</div>
+        </SidebarFooter>
+      </Sidebar>
+    </SidebarProvider>
+  )
+}
