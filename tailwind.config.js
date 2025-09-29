@@ -14,8 +14,8 @@ module.exports = {
 				'cuidarte-accent': '#647FBC',
 			},
 			fontFamily: {
+				fjalla: ['Fjalla One', 'sans-serif'],
 				saira: ['Saira', 'sans-serif'],
-				alumni: ['Alumni Sans Pinstripe', 'sans-serif'],
 			},
 		},
 	},

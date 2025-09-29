@@ -17,7 +17,6 @@ export function AdminDashboard() {
                 <div className={`md:block w-64 ${sidebarOpen ? 'block' : 'hidden'} md:block`}>
                     <AdminSidebar />
                 </div>
-
                 <main className="flex-1 p-4">
                     <AdminPageContent />
                 </main>

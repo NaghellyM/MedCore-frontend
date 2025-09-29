@@ -1,9 +1,9 @@
 import "./App.css";
-
+import HomeDashboard from "./pages/homeDashboard";
 function App() {
   return (
     <div>
-      <h1>MedCore</h1>
+      <HomeDashboard />
     </div>
   );
 }

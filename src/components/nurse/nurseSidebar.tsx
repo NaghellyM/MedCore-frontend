@@ -71,8 +71,8 @@ const profileItems = [
 export function NurseSidebar() {
     return (
         <Sidebar>
-            <SidebarContent>
-                <SidebarMenuButton asChild>
+            <SidebarContent className="mt-10 border-r bg-white w-64">
+                <SidebarMenuButton className="font-sans" asChild>
                     <a href="#">
                         <LayoutGrid />
                         <span>INICIO</span>
