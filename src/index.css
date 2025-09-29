@@ -3,10 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-body {
-}
-
 @layer base {
   :root {
     --sidebar-background: #8dbcc7;

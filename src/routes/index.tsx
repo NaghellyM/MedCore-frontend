@@ -1,14 +1,19 @@
 import { createBrowserRouter } from 'react-router-dom';
-import NotFoundPage from '../pages/not-found-page';
-import Form from '../pages/login-page';
+import NotFoundPage from '../pages/notFoundPage';
+import Form from '../pages/loginPage';
 import App from '../App';
 import { NurseDashboard } from '../pages/NurseDashboard';
+import { DoctorDashboard } from '../pages/doctorDashboard';
 
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <App />,
+    },
+    {
+        path: '/doctorPage',
+        element: <DoctorDashboard />,
     },
     {
         path: '/nursePage',
