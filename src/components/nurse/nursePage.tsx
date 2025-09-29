@@ -1,4 +1,3 @@
-// pages/NursePage.tsx
 import { InfoCard } from "../ui/sectionCard";
 import { PatientTable } from "./nurseTable";
 import { BriefcaseMedical, Siren, ClipboardClock } from "lucide-react";
@@ -13,7 +12,7 @@ export function NursePageContent() {
         { name: "Sofía Fernández", room: "106", alertColor: "0", priority: "Baja", lastUpdate: "2024-10-01 09:00" },
         { name: "Miguel Torres", room: "107", alertColor: "1", priority: "Alta", lastUpdate: "2024-10-01 12:00" },
         { name: "Laura Ramírez", room: "108", alertColor: "2", priority: "Media", lastUpdate: "2024-10-01 11:45" },
-        { name: "Diego Sánchez", room: "109", alertColor: "3", priority: "Baja", lastUpdate: "2024-10-01 08:30" },
+        { name: "Diego Sánchez", room: "109", alertColor: "3    ", priority: "Baja", lastUpdate: "2024-10-01 08:30" },
     ];
 
     return (

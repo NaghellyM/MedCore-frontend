@@ -1,5 +1,4 @@
 import { Table, TableBody, TableRow, TableCell, TableHeader, TableHead } from "../ui/table";
-import { Siren } from "lucide-react";
 
 export function PatientTable({ data }: any) {
     return (
