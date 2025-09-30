@@ -86,9 +86,9 @@ const operationItems = [
 
 export function AdminSidebar() {
     return (
-        <Sidebar>
+        <Sidebar className="w-64 mt-10 border-r bg-white">
             <SidebarContent>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton className="font-sans" asChild>
                     <a href="#">
                         <LayoutGrid />
                         <span>Inicio</span>

@@ -2,8 +2,8 @@ import { Table, TableBody, TableRow, TableCell, TableHeader, TableHead } from ".
 
 export function PatientTable({ data }: any) {
     return (
-        <Table className="min-w-full bg-white shadow-md border-collapse">
-            <TableHeader className="bg-cyan-100 text-left">
+        <Table className="min-w-full bg-white shadow-md border-collapse font-sans">
+            <TableHeader className="bg-cuidarte-secondary text-left border-s-2 font-sans">
                 <TableRow>
                     <TableHead className="px-4 py-2 rounded-tl-lg">Paciente</TableHead>
                     <TableHead className="px-4 py-2">Habitación</TableHead>

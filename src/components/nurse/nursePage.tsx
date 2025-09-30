@@ -40,7 +40,7 @@ export function NursePageContent() {
                     onActionClick={() => {}}
                 />
             </div>
-            <PatientTable data={patientsData} />
+            <PatientTable className="font-sans" data={patientsData} />
         </div>
     );
 }
