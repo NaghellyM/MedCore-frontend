@@ -1,7 +1,7 @@
 // src/services/authService.ts
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002/api/v1"; 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002"; 
 // mejor manejarlo con variables de entorno
 
 export interface LoginResponse {
@@ -12,7 +12,7 @@ export interface LoginResponse {
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
   try {
-    const response = await axios.post<LoginResponse>(`${API_URL}/auth/sign-in`, {
+    const response = await axios.post<LoginResponse>(`${API_URL}/api/v1/auth/sign-in`, {
       email,
       current_password: password, // ojo! el backend lo pide así
     });

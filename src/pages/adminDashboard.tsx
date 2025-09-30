@@ -1,9 +1,8 @@
 import { SidebarProvider } from "../components/ui/sidebar";
 import { useState } from 'react';
 import { AdminSidebar } from '../components/admin/adminSidebar';
-import { AdminRegisterCSV } from '../components/admin/page/admiRegisterCSV';
 import AdminHeader from "../components/admin/admiHeader";
-
+import { AdminRegisterUser } from '../components/admin/page/admiRegisterUser';
 export function AdminDashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -21,7 +20,7 @@ export function AdminDashboard() {
                         <AdminSidebar />
                     </div>
                     <main className="flex-1 p-4">
-                        <AdminRegisterCSV />
+                        <AdminRegisterUser />
                     </main>
                 </div>
             </SidebarProvider>

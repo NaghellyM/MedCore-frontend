@@ -2,10 +2,12 @@ import { SidebarBase } from "../ui/sidebarBase";
 import { SidebarMenuButton } from "../ui/sidebar";
 import { SidebarGroupComponent } from "../ui/SidebarGroup";
 import { UsersRound, Upload, Shield, HeartPulse, LayoutGrid, Activity,KeySquare, ClockFading, Boxes,Bell } from "lucide-react";
+import { AdminRegisterCSV } from "./page/admiRegisterCSV";
+import { AdminRegisterUser } from "./page/admiRegisterUser";
 
 const items = [
-    { title: "Usuarios y Roles", url: "#", icon: UsersRound },
-    { title: "Carga Masiva de Usuarios", url: "#", icon: Upload },
+    { title: "Registro de usuarios", url: <AdminRegisterUser />, icon: UsersRound },
+    { title: "Carga Masiva de Usuarios", url: <AdminRegisterCSV />, icon: Upload },
     { title: "Gestión de pacientes", url: "#", icon: HeartPulse },
 ];
 
