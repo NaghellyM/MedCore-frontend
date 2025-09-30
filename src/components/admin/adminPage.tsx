@@ -1,37 +1,190 @@
-import { ArrowUpFromLine } from "lucide-react";
-import React from "react";
+import { SidebarProvider } from "../../components/ui/sidebar"
+import { useState } from "react"
+import { AdminSidebar } from "../admin/adminSidebar"
+import { registerUser} from "../../services/patientService"
+import type { RegisterUserDto } from "../../services/patientService"
+
+
+import { useForm, Controller } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
+import Swal from "sweetalert2"
+
+const schema = yup.object().shape({
+  email: yup.string().email("Email no válido").required("El correo es obligatorio"),
+  fullname: yup.string().required("El nombre completo es obligatorio"),
+  current_password: yup
+    .string()
+    .required("La contraseña es obligatoria")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+      "La contraseña debe tener al menos una letra y un número, y mínimo 6 caracteres"
+    ),
+  role: yup.string().required("El rol es obligatorio"),
+})
 
 export function AdminPageContent() {
-    const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-    const handleIconClick = () => {
-        fileInputRef.current?.click();  
-    };
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RegisterUserDto>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: "",
+      fullname: "",
+      current_password: "",
+      role: "MEDICO",
+      status: "PENDING",
+    },
+  })
 
-    return (
-        <div className="p-8 bg-white rounded-lg shadow-lg max-w-lg mx-auto">
-            <h1 className="text-2xl font-semibold text-gray-800 mb-4">Carga de Archivo CSV</h1>
-            <p className="text-gray-600 mb-6">Sube tu archivo CSV para importar usuarios. Asegúrate de que el archivo esté en el formato correcto.</p>
-            <div className="flex items-center justify-center border-dashed border-2 border-gray-300 p-8 rounded-lg">
-                <div 
-                    onClick={handleIconClick}
-                    className="flex items-center cursor-pointer text-blue-500 hover:text-blue-600"
-                >
-                    <ArrowUpFromLine className="w-6 h-6 mr-2" />
-                    <span className="text-lg">Arrastra tu archivo CSV aquí o haz clic para seleccionar</span>
-                </div>
-                <input 
-                    type="file" 
-                    accept=".csv" 
-                    ref={fileInputRef} 
-                    style={{ display: 'none' }} 
-                />
-            </div>
-            <div className="flex justify-end mt-4">
-                <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
-                    Subir y Validar Usuarios
-                </button>
-            </div>
+  const onSubmit = async (data: RegisterUserDto) => {
+    setLoading(true)
+    try {
+      await registerUser(data)
+      Swal.fire({
+        icon: "success",
+        title: "Usuario registrado con éxito",
+        showConfirmButton: false,
+        timer: 2000,
+      })
+      reset()
+    } catch (error: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "No se pudo registrar",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen bg-gray-50">
+        {/* Botón hamburguesa en móviles */}
+        <div className="md:hidden fixed top-2 left-2 z-20">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 border rounded-md bg-white shadow-md"
+          >
+            <span className="text-2xl">☰</span>
+          </button>
         </div>
-    );
+
+        {/* Sidebar */}
+        <div
+          className={`w-64 bg-white shadow-md md:block ${
+            sidebarOpen ? "block" : "hidden"
+          }`}
+        >
+          <AdminSidebar />
+        </div>
+
+        {/* Contenido principal */}
+        <main className="flex-1 p-6">
+          <h1 className="text-2xl font-bold mb-6">Panel de Administración</h1>
+
+          {/* Formulario de registro */}
+          <div className="max-w-lg p-6 border rounded-lg bg-white shadow">
+            <h2 className="text-xl font-semibold mb-4">Registrar Usuario</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium">Correo *</label>
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      type="email"
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  )}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email.message}</p>
+                )}
+              </div>
+
+              {/* Nombre completo */}
+              <div>
+                <label className="block text-sm font-medium">
+                  Nombre Completo *
+                </label>
+                <Controller
+                  name="fullname"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      type="text"
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  )}
+                />
+                {errors.fullname && (
+                  <p className="text-red-500 text-xs">{errors.fullname.message}</p>
+                )}
+              </div>
+
+              {/* Contraseña */}
+              <div>
+                <label className="block text-sm font-medium">Contraseña *</label>
+                <Controller
+                  name="current_password"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      type="password"
+                      className="w-full border rounded px-3 py-2"
+                    />
+                  )}
+                />
+                {errors.current_password && (
+                  <p className="text-red-500 text-xs">{errors.current_password.message}</p>
+                )}
+              </div>
+
+              {/* Rol */}
+              <div>
+                <label className="block text-sm font-medium">Rol</label>
+                <Controller
+                  name="role"
+                  control={control}
+                  render={({ field }) => (
+                    <select {...field} className="w-full border rounded px-3 py-2">
+                      <option value="ADMINISTRADOR">Administrador</option>
+                      <option value="PACIENTE">Paciente</option>
+                      <option value="MEDICO">Médico</option>
+                      <option value="ENFERMERA">Enfermera</option>
+                    </select>
+                  )}
+                />
+                {errors.role && (
+                  <p className="text-red-500 text-xs">{errors.role.message}</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? "Registrando..." : "Registrar"}
+              </button>
+            </form>
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
+  )
 }
