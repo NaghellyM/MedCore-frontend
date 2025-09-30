@@ -5,6 +5,7 @@ import App from '../App';
 import { NurseDashboard } from '../pages/nurseDashboard';
 import { DoctorDashboard } from '../pages/doctorDashboard';
 import { AdminDashboard } from '../pages/adminDashboard';   
+import { PatientDashboard } from '../pages/patientDashboard';
 
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     {
         path: '/adminPage',
         element: <AdminDashboard />,
+    },
+    {
+        path: '/patientPage',
+        element: <PatientDashboard />,
     },
     {
         path: '/login',

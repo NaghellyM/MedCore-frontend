@@ -1,13 +1,11 @@
 import { ArrowUpFromLine } from "lucide-react";
 import React from "react";
 
-export function AdminPageContent() {
+export function AdminRegisterCSV() {
     const fileInputRef = React.useRef<HTMLInputElement>(null);
-
     const handleIconClick = () => {
         fileInputRef.current?.click();  
     };
-
     return (
         <div className="p-8 bg-white max-w-lg mx-auto">
             <h1 className="text-2xl font-semibold text-gray-800 mb-4">Carga de Archivo CSV</h1>

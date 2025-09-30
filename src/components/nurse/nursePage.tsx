@@ -4,15 +4,15 @@ import { BriefcaseMedical, Siren, ClipboardClock } from "lucide-react";
 
 export function NursePageContent() {
     const patientsData = [
-        { name: "Juan Pérez", room: "101", alertColor: "0", priority: "Alta", lastUpdate: "2024-10-01 10:00" },
-        { name: "María Gómez", room: "102", alertColor: "1", priority: "Media", lastUpdate: "2024-10-01 09:30" },
-        { name: "Carlos López", room: "103", alertColor: "3", priority: "Baja", lastUpdate: "2024-10-01 08:45" },
-        { name: "Ana Martínez", room: "104", alertColor: "0", priority: "Alta", lastUpdate: "2024-10-01 11:15" },
-        { name: "Luis Rodríguez", room: "105", alertColor: "2", priority: "Media", lastUpdate: "2024-10-01 10:30" },
-        { name: "Sofía Fernández", room: "106", alertColor: "0", priority: "Baja", lastUpdate: "2024-10-01 09:00" },
-        { name: "Miguel Torres", room: "107", alertColor: "1", priority: "Alta", lastUpdate: "2024-10-01 12:00" },
-        { name: "Laura Ramírez", room: "108", alertColor: "2", priority: "Media", lastUpdate: "2024-10-01 11:45" },
-        { name: "Diego Sánchez", room: "109", alertColor: "3    ", priority: "Baja", lastUpdate: "2024-10-01 08:30" },
+        { name: "Juan Pérez", room: "101", alert: "0"  , priority: "Baja", lastUpdate: "2024-10-01 10:00" },
+        { name: "María Gómez", room: "102", alert: "1", priority: "Baja", lastUpdate: "2024-10-01 09:30" },
+        { name: "Carlos López", room: "103", alert: "3", priority: "Alta", lastUpdate: "2024-10-01 08:45" },
+        { name: "Ana Martínez", room: "104", alert: "0", priority: "Baja", lastUpdate: "2024-10-01 11:15" },
+        { name: "Luis Rodríguez", room: "105", alert: "2", priority: "Media", lastUpdate: "2024-10-01 10:30" },
+        { name: "Sofía Fernández", room: "106", alert: "0", priority: "Baja", lastUpdate: "2024-10-01 09:00" },
+        { name: "Miguel Torres", room: "107", alert: "1", priority: "Baja", lastUpdate: "2024-10-01 12:00" },
+        { name: "Laura Ramírez", room: "108", alert: "2", priority: "Media", lastUpdate: "2024-10-01 11:45" },
+        { name: "Diego Sánchez", room: "109", alert: "3", priority: "Alta", lastUpdate: "2024-10-01 08:30" },
     ];
 
     return (
@@ -34,13 +34,13 @@ export function NursePageContent() {
                 />
                 <InfoCard
                     icon={ClipboardClock}
-                    title="Procedimientos Pendientes"
+                    title="Pendientes"
                     description="8 Procedimientos"
                     actionText="Ver Procedimientos"
                     onActionClick={() => {}}
                 />
             </div>
-            <PatientTable className="font-sans" data={patientsData} />
+            <PatientTable className="font-sans justify-center" data={patientsData} />
         </div>
     );
 }

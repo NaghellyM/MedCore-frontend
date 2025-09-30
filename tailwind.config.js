@@ -11,7 +11,7 @@ module.exports = {
 				'cuidarte-primary': '#8DBCC7',
 				'cuidarte-secondary': '#A4CCD9',
 				'cuidarte-tertiary': '#C4E1E6',
-				'cuidarte-accent': '#647FBC',
+				'cuidarte-accent': '#627DBC',
 			},
 			fontFamily: {
 				fjalla: ['Fjalla One', 'sans-serif'],

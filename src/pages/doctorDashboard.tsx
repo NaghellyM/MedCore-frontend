@@ -1,7 +1,7 @@
 import { useState } from "react";
-import DoctorSidebar from "../components/doctor/doctorSidebar";
-import DoctorHeader from "../components/header/doctorHeader";
+import DoctorHeader from "../components/doctor/doctorHeader";
 import {DoctorPage } from "../components/doctor/doctorPage";
+import DoctorSidebar from "../components/doctor/doctorSideBar";
 
 export function DoctorDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -7,18 +7,18 @@ export default function DoctorHeader() {
       className="w-full bg-white shadow-sm px-6 py-3 flex items-center"
       style={{ "--header-height": "64px" } as React.CSSProperties}
     >
-      {/* Avatar */}
+      
       <Avatar className="w-10 h-10 mr-3">
         <AvatarImage src="https://i.pravatar.cc/48?img=12" alt="Avatar" />
         <AvatarFallback>CG</AvatarFallback>
       </Avatar>
 
-      {/* Nombre y rol */}
+      
       <div className="min-w-0">
         <div className="text-sm font-semibold text-slate-900 truncate">
           Camilo Garcia
         </div>
-        <div className="text-xs text-slate-500">Administrador</div>
+        <div className="text-xs text-slate-500">Medico</div>
       </div>
 
       <div className="flex-1" />
