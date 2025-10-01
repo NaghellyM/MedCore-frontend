@@ -1,5 +1,5 @@
 export interface IFormInput {
-    nombre: string;
+    nombre?: string;
     email: string;
     password: string;
 }

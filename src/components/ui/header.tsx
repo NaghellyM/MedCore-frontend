@@ -2,6 +2,7 @@ import { ArrowRightFromLine, Search } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import React from "react"
 import { Button } from "./button"
+import { useNavigate } from "react-router-dom"
 
 
 interface UserHeaderProps {
@@ -11,6 +12,8 @@ interface UserHeaderProps {
 }
 
 export default function UserHeader({ name, role, avatarUrl }: UserHeaderProps) {
+    const navigate = useNavigate();
+
     return (
         <header
             className="fixed top-0 left-0 right-0 w-full bg-white shadow-md px-6 py-3 flex items-center justify-between"
@@ -45,7 +48,7 @@ export default function UserHeader({ name, role, avatarUrl }: UserHeaderProps) {
                     <div className="text-xs text-slate-500">{role}</div>
                 </div>
                 <div>
-                    <Button className="flex items-center gap-2 bg-cuidarte-accent text-white font-sans font-bold" variant="outline">
+                    <Button onClick={() => navigate("/")} className="flex items-center gap-2 bg-cuidarte-accent text-white font-sans font-bold" variant="outline">
                         <ArrowRightFromLine />
                         Cerrar Sesión</Button>
                 </div>

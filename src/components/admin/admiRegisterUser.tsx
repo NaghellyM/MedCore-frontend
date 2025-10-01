@@ -23,7 +23,6 @@ const schema = yup.object().shape({
 })
 
 
-// Página de administración
 export function AdminRegisterUser() {
     const [loading, setLoading] = useState(false)
 
@@ -63,15 +62,11 @@ export function AdminRegisterUser() {
 
     return (
         <SidebarProvider>
-            <div className="flex">
-                <main className="flex-1 p-6">
-                    <h1 className="text-2xl font-bold mb-6">Panel de Administración</h1>
-
-                    {/* Formulario de registro */}
-                    <div className="p-6 border rounded-lg bg-white shadow w-full sm:max-w-lg mx-auto">
+            <div className="flex ">
+                <main className="flex-1 ">
+                    <div className="p-6 border rounded-lg  ">
                         <h2 className="text-xl font-semibold mb-4">Registrar Usuario</h2>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                            {/* Email */}
                             <div>
                                 <label className="block text-sm font-medium">Correo *</label>
                                 <Controller
@@ -90,7 +85,6 @@ export function AdminRegisterUser() {
                                 )}
                             </div>
 
-                            {/* Nombre completo */}
                             <div>
                                 <label className="block text-sm font-medium">
                                     Nombre Completo *
@@ -110,8 +104,6 @@ export function AdminRegisterUser() {
                                     <p className="text-red-500 text-xs">{errors.fullname.message}</p>
                                 )}
                             </div>
-
-                            {/* Contraseña */}
                             <div>
                                 <label className="block text-sm font-medium">Contraseña *</label>
                                 <Controller
@@ -130,7 +122,6 @@ export function AdminRegisterUser() {
                                 )}
                             </div>
 
-                            {/* Rol */}
                             <div>
                                 <label className="block text-sm font-medium">Rol</label>
                                 <Controller

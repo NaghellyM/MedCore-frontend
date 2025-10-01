@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
+    const navigate = useNavigate();
+
     return (
         <header
             className="fixed top-0 left-0 right-0 w-full bg-white shadow-md px-6 py-3 flex items-center justify-between"
@@ -17,8 +20,7 @@ const Header: React.FC = () => {
                 </div>
             </div>
             <div className="flex items-center gap-3 flex-shrink-0">
-                <button className="bg-cuidarte-accent text-white px-4 py-2 rounded-md hover:bg-cuidarte-accent-dark">Iniciar Sesión</button>
-                <button className="bg-cuidarte-accent text-white px-4 py-2 rounded-md hover:bg-cuidarte-accent-dark">Registrarse</button>
+                <button onClick={() => navigate("/login")} className="bg-cuidarte-accent text-white px-4 py-2 rounded-md hover:bg-cuidarte-accent-dark">Iniciar Sesión</button>
             </div>
         </header>
     );
