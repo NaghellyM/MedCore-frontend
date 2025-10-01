@@ -1,21 +1,8 @@
-import {
-    BookUser,
-    CalendarCheck,
-    FileHeart,
-    FileVideoCamera,
-    LayoutGrid,
-    Microscope,
-    PillBottle,
-    Settings,
-    User,
-} from "lucide-react";
-
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarMenuButton
-} from "../ui/sidebar";
+import { SidebarBase } from "../ui/sidebarBase";
+import { SidebarMenuButton } from "../ui/sidebar";
 import { SidebarGroupComponent } from "../ui/SidebarGroup";
+import { CalendarCheck, FileHeart, FileVideoCamera, LayoutGrid, Microscope, PillBottle, Settings, User } from "lucide-react";
+
 
 const items = [
     {
@@ -59,26 +46,20 @@ const profileItems = [
         url: "#",
         icon: Settings,
     },
-    {
-        title: "Contactos de emergencia",
-        url: "#",
-        icon: BookUser,
-    },
 ];
+
 export function PatientSidebar() {
     return (
-        <Sidebar>
-            <SidebarContent>
-                <SidebarMenuButton asChild>
-                    <a href="#">
-                        <LayoutGrid />
-                        <span>INICIO</span>
-                    </a>
-                </SidebarMenuButton>
-                <SidebarGroupComponent label="GESTIÓN DE CITAS" items={items} />
-                <SidebarGroupComponent label="INFORMACIÓN DE SALUD" items={infoItems} />
-                <SidebarGroupComponent label="MI PERFIL" items={profileItems} />
-            </SidebarContent>
-        </Sidebar>
+        <SidebarBase label="Patient Sidebar">
+            <SidebarMenuButton className="font-sans" asChild>
+                <a href="#" className="flex items-center gap-2 hover:bg-cuidarte-tertiary/10 p-2 rounded-md">
+                    <LayoutGrid className="" />
+                    <span>Inicio</span>
+                </a>
+            </SidebarMenuButton>
+            <SidebarGroupComponent label="CITAS Y TELEMEDICINA" items={items} />
+            <SidebarGroupComponent label="INFORMACIÓN MÉDICA" items={infoItems} />
+            <SidebarGroupComponent label="PERFIL Y CONFIGURACIÓN" items={profileItems} />
+        </SidebarBase>
     );
 }

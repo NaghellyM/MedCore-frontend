@@ -8,7 +8,7 @@ vi.mock("../services/authService", () => ({
   login: vi.fn(),
 }));
 
-vi.mock("../utils/decodeToken", () => ({
+vi.mock("../lib/utils", () => ({
   decodeToken: vi.fn(),
 }));
 
@@ -62,8 +62,12 @@ describe("Role-based access and session safety tests (advanced)", () => {
    * and that only tokens are stored in localStorage, not the password.
    */
   it("stores only tokens and redirects by role ADMINISTRADOR -> /dashboard/administrador", async () => {
-    const { decodeToken } = await import("../utils/decodeToken");
+    const { decodeToken } = await import("../lib/utils");
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
+      sub: "admin-id",
+      email: "admin@example.com",
+      exp: Date.now() / 1000 + 3600,
+      iat: Date.now() / 1000,
       role: "ADMINISTRADOR",
     }));
 
@@ -101,9 +105,13 @@ describe("Role-based access and session safety tests (advanced)", () => {
    * Test case: Verify that PACIENTE and MEDICO users are redirected to their respective dashboards.
    */
   it("redirects PACIENTE -> /dashboard/paciente and MEDICO -> /doctorPage", async () => {
-    const { decodeToken } = await import("../utils/decodeToken");
+    const { decodeToken } = await import("../lib/utils");
 
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
+      sub: "admin-id",
+      email: "admin@example.com",
+      exp: Date.now() / 1000 + 3600,
+      iat: Date.now() / 1000,
       role: "PACIENTE",
     }));
 
@@ -135,6 +143,10 @@ describe("Role-based access and session safety tests (advanced)", () => {
     mockedNavigate.mockClear();
 
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
+      sub: "admin-id",
+      email: "admin@example.com",
+      exp: Date.now() / 1000 + 3600,
+      iat: Date.now() / 1000,
       role: "MEDICO",
     }));
     vi.mocked(mockedLogin).mockResolvedValueOnce({

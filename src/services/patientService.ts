@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3002"
 export interface RegisterUserDto {
   email: string
   fullname: string
-  role?: string
+  role: string 
   current_password: string
   status?: string
   specialization?: string

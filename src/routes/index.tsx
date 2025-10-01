@@ -5,6 +5,9 @@ import App from '../App';
 import { NurseDashboard } from '../pages/nurseDashboard';
 import { DoctorDashboard } from '../pages/doctorDashboard';
 import { AdminDashboard } from '../pages/adminDashboard';   
+import { PatientDashboard } from '../pages/patientDashboard';
+import { AdminRegisterUser } from '../components/admin/page/admiRegisterUser';
+import { AdminRegisterCSV } from '../components/admin/page/admiRegisterCSV';
 
 
 const router = createBrowserRouter([
@@ -25,12 +28,24 @@ const router = createBrowserRouter([
         element: <AdminDashboard />,
     },
     {
+        path: '/patientPage',
+        element: <PatientDashboard />,
+    },
+    {
         path: '/login',
         element: <Form />,
     },
     {
         path: '*',
         element: <NotFoundPage />,
+    },
+    {
+        path: '/admin/registerUser',
+        element: <AdminRegisterUser />,
+    },
+    {
+        path: '/admin/registerCSV',
+        element: <AdminRegisterCSV />,
     }
 ]);
 
