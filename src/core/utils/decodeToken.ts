@@ -7,7 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export interface TokenPayload {
-  sub: string;       
+  sub: string;     
+  fullname: string;  
   email: string;
   role: string;
   exp: number;
@@ -15,5 +16,7 @@ export interface TokenPayload {
 }
 
 export function decodeToken(token: string): TokenPayload {
-  return jwtDecode<TokenPayload>(token);
+  const decoded = jwtDecode<TokenPayload>(token);
+  console.log("Decoded token:", decoded);
+  return decoded;
 }

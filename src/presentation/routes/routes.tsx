@@ -1,6 +1,7 @@
 import App from '../../App';
 import Form from '../pages/login/loginDashboard';
 import NotFoundPage from '../pages/notFoundPage';
+import RootLayout from '../layouts/RootLayout';
 import { createBrowserRouter } from 'react-router-dom';
 import { AdminDashboard } from '../pages/admin/adminDashboard';
 import { NurseDashboard } from '../pages/nurse/nurseDashboard';
@@ -12,39 +13,45 @@ import { AdminRegisterUser } from '../pages/admin/pages/admiRegisterUser';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />,
-    },
-    {
-        path: '/doctorPage',
-        element: <DoctorDashboard />,
-    },
-    {
-        path: '/nursePage',
-        element: <NurseDashboard />,
-    },
-    {
-        path: '/adminPage',
-        element: <AdminDashboard />,
-    },
-    {
-        path: '/patientPage',
-        element: <PatientDashboard />,
-    },
-    {
-        path: '/login',
-        element: <Form />,
-    },
-    {
-        path: '*',
-        element: <NotFoundPage />,
-    },
-    {
-        path: '/admin/registerUser',
-        element: <AdminRegisterUser />,
-    },
-    {
-        path: '/admin/registerCSV',
-        element: <AdminRegisterCSV />,
+        element: <RootLayout />,
+        children: [
+            {
+                index: true,
+                element: <App />,
+            },
+            {
+                path: '/doctorPage',
+                element: <DoctorDashboard />,
+            },
+            {
+                path: '/nursePage',
+                element: <NurseDashboard />,
+            },
+            {
+                path: '/adminPage',
+                element: <AdminDashboard />,
+            },
+            {
+                path: '/patientPage',
+                element: <PatientDashboard />,
+            },
+            {
+                path: '/login',
+                element: <Form />,
+            },
+            {
+                path: '/admin/registerUser',
+                element: <AdminRegisterUser />,
+            },
+            {
+                path: '/admin/registerCSV',
+                element: <AdminRegisterCSV />,
+            },
+            {
+                path: '*',
+                element: <NotFoundPage />,
+            }
+        ]
     }
 ]);
 

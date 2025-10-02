@@ -1,19 +1,14 @@
 import React from "react"
 import { Button } from "../ui/button"
-import { useNavigate } from "react-router-dom"
-import { ArrowRightFromLine, Search } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { ArrowRightFromLine, Search, User } from "lucide-react"
+import { Avatar } from "../ui/avatar"
+import { getCurrentUser } from "../../../core/services/authService"
+import { useAuth } from "../../../core/context/authContext"
 
 
-interface UserHeaderProps {
-    name: string
-    role: string
-    avatarUrl?: string
-}
-
-export default function UserHeader({ name, role, avatarUrl }: UserHeaderProps) {
-    const navigate = useNavigate();
-
+export default function UserHeader() {
+    const user = getCurrentUser();
+    const { logoutUser } = useAuth();
     return (
         <header
             className="fixed top-0 left-0 right-0 w-full bg-white shadow-md px-6 py-3 flex items-center justify-between"
@@ -22,7 +17,7 @@ export default function UserHeader({ name, role, avatarUrl }: UserHeaderProps) {
 
             <div className="flex items-center flex-shrink-0">
                 <img
-                    src="/src/assets/images/Cuidarte_vive_al_100.png"
+                    src="/logoCuidarte.png"
                     alt="logo-cuidarte"
                     className="w-20 h-20 object-contain"
                 />
@@ -41,14 +36,14 @@ export default function UserHeader({ name, role, avatarUrl }: UserHeaderProps) {
 
             <div className="flex items-center gap-3 flex-shrink-0">
                 <Avatar className="w-10 h-10">
-                    {avatarUrl ? <AvatarImage src={avatarUrl} alt={name} /> : <AvatarFallback>{name[0]}</AvatarFallback>}
+                    <User />
                 </Avatar>
                 <div className="min-w-0">
-                    <div className="text-sm font-semibold text-slate-900 truncate">{name}</div>
-                    <div className="text-xs text-slate-500">{role}</div>
+                    <div className="text-sm font-semibold text-slate-900 truncate">{user?.fullname}</div>
+                    <div className="text-xs text-slate-500">{user?.role}</div>
                 </div>
                 <div>
-                    <Button onClick={() => navigate("/")} className="flex items-center gap-2 bg-cuidarte-accent text-white font-sans font-bold" variant="outline">
+                    <Button onClick={logoutUser} className="flex items-center gap-2 bg-cuidarte-accent text-white font-sans font-bold" variant="outline">
                         <ArrowRightFromLine />
                         Cerrar Sesión</Button>
                 </div>

@@ -5,7 +5,6 @@ const AdminHeader = () => {
         <UserHeader
         name="Fernando Gomez" 
         role="Administrador del sistema"
-        avatarUrl="https://i.pravatar.cc/48?img=3"
         />
     );
 };
