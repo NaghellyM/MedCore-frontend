@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/react,node,windows,linux,venv,dotenv,visualstudiocode,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=react,node,windows,linux,venv,dotenv,visualstudiocode,macos
 
+.vscode/
+
 ### dotenv ###
 .env
 
