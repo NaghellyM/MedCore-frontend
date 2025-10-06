@@ -1,5 +1,5 @@
 import "./App.css";
-import HomeDashboard from "./pages/homeDashboard";
+import HomeDashboard from "./presentation/pages/home/homeDashboard";
 function App() {
   return (
     <div>
