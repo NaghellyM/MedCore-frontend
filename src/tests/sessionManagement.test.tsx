@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import http from "../api/http";
+import http from "../infrastructure/http/http";
 
 /**
  * Tests for session management via HTTP request interceptor.

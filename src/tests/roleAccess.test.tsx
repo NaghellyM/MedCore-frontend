@@ -1,14 +1,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { screen, render, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { login as mockedLogin } from "../services/authService";
-import Form from "../pages/loginPage";
+import { login as mockedLogin } from "../core/services/authService";
+import Form from "../presentation/pages/login/loginDashboard";
+import { AuthProvider } from "../core/context/authContext";
 
-vi.mock("../services/authService", () => ({
+vi.mock("../core/services/authService", () => ({
   login: vi.fn(),
+  initializeAuth: vi.fn(),
+  getCurrentUser: vi.fn(),
+  logout: vi.fn(),
+  setAuthHeader: vi.fn(),
 }));
 
-vi.mock("../lib/utils", () => ({
+vi.mock("../core/utils/decodeToken", () => ({
   decodeToken: vi.fn(),
 }));
 
@@ -26,8 +31,8 @@ vi.mock("react-router-dom", async () => {
  * These tests ensure that users are redirected to the correct dashboard based on their role
  * and that sensitive information is not stored in localStorage.
  */
-describe("Role-based access and session safety tests (advanced)", () => {
-  beforeEach(() => {
+describe("Role-based access and session safety tests", () => {
+  beforeEach(async () => {
     const localStorageMock = (() => {
       let store: Record<string, string> = {};
       return {
@@ -51,6 +56,13 @@ describe("Role-based access and session safety tests (advanced)", () => {
     vi.resetAllMocks();
     cleanup();
     vi.stubGlobal("alert", vi.fn());
+
+    const { initializeAuth, getCurrentUser, logout, setAuthHeader } =
+      await import("../core/services/authService");
+    vi.mocked(initializeAuth).mockImplementation(() => {});
+    vi.mocked(getCurrentUser).mockReturnValue(null);
+    vi.mocked(logout).mockImplementation(() => {});
+    vi.mocked(setAuthHeader).mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -61,23 +73,33 @@ describe("Role-based access and session safety tests (advanced)", () => {
    * Test case: Verify that an ADMINISTRADOR user is redirected to the correct dashboard
    * and that only tokens are stored in localStorage, not the password.
    */
-  it("stores only tokens and redirects by role ADMINISTRADOR -> /dashboard/administrador", async () => {
-    const { decodeToken } = await import("../lib/utils");
+  it("stores only tokens and redirects by role ADMINISTRADOR -> /adminPage", async () => {
+    const { decodeToken } = await import("../core/utils/decodeToken");
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
       sub: "admin-id",
+      fullname: "Admin User",
       email: "admin@example.com",
       exp: Date.now() / 1000 + 3600,
       iat: Date.now() / 1000,
       role: "ADMINISTRADOR",
     }));
 
-    vi.mocked(mockedLogin).mockResolvedValueOnce({
-      message: "ok",
-      accessToken: "atoken",
-      refreshToken: "rtoken",
+    vi.mocked(mockedLogin).mockImplementationOnce(async () => {
+      const response = {
+        message: "ok",
+        accessToken: "atoken",
+        refreshToken: "rtoken",
+      };
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("refreshToken", response.refreshToken);
+      return response;
     });
 
-    render(<Form />);
+    render(
+      <AuthProvider>
+        <Form />
+      </AuthProvider>,
+    );
     const user = userEvent.setup();
 
     const emailInput = screen.getByLabelText(/Correo Electrónico/i);
@@ -97,31 +119,41 @@ describe("Role-based access and session safety tests (advanced)", () => {
 
     expect(localStorage.getItem("password")).toBeNull();
     await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/administrador"),
+      expect(mockedNavigate).toHaveBeenCalledWith("/adminPage"),
     );
   });
 
   /**
    * Test case: Verify that PACIENTE and MEDICO users are redirected to their respective dashboards.
    */
-  it("redirects PACIENTE -> /dashboard/paciente and MEDICO -> /doctorPage", async () => {
-    const { decodeToken } = await import("../lib/utils");
+  it("redirects PACIENTE -> /patientPage and MEDICO -> /doctorPage", async () => {
+    const { decodeToken } = await import("../core/utils/decodeToken");
 
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
       sub: "admin-id",
+      fullname: "Paciente Uno",
       email: "admin@example.com",
       exp: Date.now() / 1000 + 3600,
       iat: Date.now() / 1000,
       role: "PACIENTE",
     }));
 
-    vi.mocked(mockedLogin).mockResolvedValueOnce({
-      message: "ok",
-      accessToken: "ptoken",
-      refreshToken: "prtoken",
+    vi.mocked(mockedLogin).mockImplementationOnce(async () => {
+      const response = {
+        message: "ok",
+        accessToken: "ptoken",
+        refreshToken: "prtoken",
+      };
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("refreshToken", response.refreshToken);
+      return response;
     });
 
-    render(<Form />);
+    render(
+      <AuthProvider>
+        <Form />
+      </AuthProvider>,
+    );
 
     const emailInput = screen.getByLabelText(/Correo Electrónico/i);
     const passInput = screen.getByLabelText(/Contraseña/i);
@@ -135,7 +167,7 @@ describe("Role-based access and session safety tests (advanced)", () => {
     await user.click(submit);
 
     await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/dashboard/paciente"),
+      expect(mockedNavigate).toHaveBeenCalledWith("/patientPage"),
     );
 
     cleanup();
@@ -144,18 +176,28 @@ describe("Role-based access and session safety tests (advanced)", () => {
 
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
       sub: "admin-id",
+      fullname: "Doctor Who",
       email: "admin@example.com",
       exp: Date.now() / 1000 + 3600,
       iat: Date.now() / 1000,
       role: "MEDICO",
     }));
-    vi.mocked(mockedLogin).mockResolvedValueOnce({
-      message: "ok",
-      accessToken: "dtoken",
-      refreshToken: "drtoken",
+    vi.mocked(mockedLogin).mockImplementationOnce(async () => {
+      const response = {
+        message: "ok",
+        accessToken: "dtoken",
+        refreshToken: "drtoken",
+      };
+      localStorage.setItem("accessToken", response.accessToken);
+      localStorage.setItem("refreshToken", response.refreshToken);
+      return response;
     });
 
-    render(<Form />);
+    render(
+      <AuthProvider>
+        <Form />
+      </AuthProvider>,
+    );
 
     const email2 = screen.getByLabelText(/Correo Electrónico/i);
     const pass2 = screen.getByLabelText(/Contraseña/i);
