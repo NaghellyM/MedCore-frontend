@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { doctorsService } from "../../../../core/services/doctorsService"
-import { DoctorCard } from "../../doctor/components/DoctorCard"
+import DoctorCard from "../../doctor/components/DoctorCard"
 import { Search, ArrowLeftCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import Swal from "sweetalert2"
 
 interface Especializacion {
   id: string
@@ -38,9 +39,9 @@ export default function DoctorsList() {
   const itemsPerPage = 20
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
-
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
+
   const navigate = useNavigate()
 
   // 🔹 Debounce búsqueda
@@ -66,11 +67,10 @@ export default function DoctorsList() {
         console.error("❌ Error al cargar especialidades:", error)
       }
     }
-
     loadSpecialties()
   }, [])
 
-  // 🔹 Obtener doctores (con paginación)
+  // 🔹 Obtener doctores
   const fetchDoctors = async () => {
     try {
       setLoading(true)
@@ -86,8 +86,6 @@ export default function DoctorsList() {
       } else {
         response = await doctorsService.getAll(currentPage, itemsPerPage)
       }
-
-      console.log("🩺 Respuesta del backend (doctors):", response)
 
       let users: any[] = []
       let total = 0
@@ -131,7 +129,80 @@ export default function DoctorsList() {
     fetchDoctors()
   }, [statusFilter, selectedSpecialty, currentPage, debouncedSearch])
 
-  // 🔹 Filtros
+  // 🔹 Eliminar doctor
+  const handleDeleteDoctor = async (id: string) => {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará permanentemente el doctor.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await doctorsService.deleteDoctor(id)
+        // 🔥 Actualizar lista local:
+        setDoctors((prev) => prev.filter((doc) => doc.id !== id))
+
+        Swal.fire('Eliminado', 'El doctor fue eliminado correctamente.', 'success')
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar el doctor.', 'error')
+      }
+    }
+  })
+}
+
+
+  // 🔹 Editar doctor
+  const handleEditDoctor = async (doctor: DoctorCardData) => {
+    const { value: formValues } = await Swal.fire({
+      title: "Editar Doctor",
+      html: `
+        <input id="fullname" class="swal2-input" placeholder="Nombre completo" value="${doctor.name}">
+        <input id="identificacion" class="swal2-input" placeholder="Identificación" value="${doctor.identification}">
+        <input id="specialty" class="swal2-input" placeholder="Especialidad" value="${doctor.specialty}">
+        <select id="status" class="swal2-input">
+          <option value="ACTIVE" ${doctor.status === "ACTIVE" ? "selected" : ""}>Activo</option>
+          <option value="INACTIVE" ${doctor.status === "INACTIVE" ? "selected" : ""}>Inactivo</option>
+          <option value="PENDING" ${doctor.status === "PENDING" ? "selected" : ""}>Pendiente</option>
+        </select>
+      `,
+      focusConfirm: false,
+      confirmButtonText: "Guardar cambios",
+      showCancelButton: true,
+      preConfirm: () => {
+        return {
+          fullname: (document.getElementById("fullname") as HTMLInputElement).value,
+          identificacion: (document.getElementById("identificacion") as HTMLInputElement).value,
+          specialty: (document.getElementById("specialty") as HTMLInputElement).value,
+          status: (document.getElementById("status") as HTMLSelectElement).value,
+        }
+      },
+    })
+
+    if (formValues) {
+      try {
+        await doctorsService.updateDoctor(doctor.id, formValues)
+        Swal.fire({
+          icon: "success",
+          title: "Actualizado",
+          text: "El doctor se actualizó correctamente.",
+          timer: 1500,
+          showConfirmButton: false,
+        })
+        fetchDoctors()
+      } catch (error) {
+        console.error("❌ Error al actualizar doctor:", error)
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudo actualizar el doctor.",
+        })
+      }
+    }
+  }
+
   const handleStatusChange = (status: "active" | "inactive" | "pending" | "") => {
     setStatusFilter(status)
     setSelectedSpecialty("")
@@ -153,7 +224,6 @@ export default function DoctorsList() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Encabezado */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
           👨‍⚕️ Listado de Doctores
@@ -180,7 +250,6 @@ export default function DoctorsList() {
         >
           Todos
         </button>
-
         <button
           onClick={() => handleStatusChange("active")}
           className={`px-4 py-2 rounded-full font-medium shadow transition ${
@@ -191,7 +260,6 @@ export default function DoctorsList() {
         >
           Activos
         </button>
-
         <button
           onClick={() => handleStatusChange("inactive")}
           className={`px-4 py-2 rounded-full font-medium shadow transition ${
@@ -202,7 +270,6 @@ export default function DoctorsList() {
         >
           Inactivos
         </button>
-
         <button
           onClick={() => handleStatusChange("pending")}
           className={`px-4 py-2 rounded-full font-medium shadow transition ${
@@ -265,11 +332,17 @@ export default function DoctorsList() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {doctors.map((doctor) => (
-              <DoctorCard key={doctor.id} doctor={doctor} />
+              <DoctorCard
+                key={doctor.id}
+                doctor={doctor}
+                onDelete={handleDeleteDoctor}
+                onEdit={handleEditDoctor}
+                onUpdate={fetchDoctors}
+              />
             ))}
           </div>
 
-          {/* 🔹 Paginación */}
+          {/* Paginación */}
           <div className="flex items-center justify-center mt-8 gap-4">
             <button
               onClick={() => handlePageChange(currentPage - 1)}

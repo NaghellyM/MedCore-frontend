@@ -1,5 +1,6 @@
 import http from "../../infrastructure/http/http"
 import { ApiUrls } from "../../environments/environments"
+import { da } from "date-fns/locale"
 
 interface DoctorResponse {
   users: any[]
@@ -79,4 +80,44 @@ export const doctorsService = {
     const response = await http.get(`${ApiUrls.msSecurity}/specialties`)
     return response.data?.especialidades || []
   },
+
+async deleteDoctor(id: string): Promise<void> {
+  try {
+    const response = await http.delete(`${ApiUrls.msSecurity}/users/${id}`)
+    console.log(`✅ Doctor con ID ${id} eliminado correctamente.`)
+    return response.data
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      console.warn(`⚠️ El doctor con ID ${id} ya no existe (404 ignorado).`)
+      return
+    }
+  }
+},
+
+
+  // En doctorsService.ts
+async updateDoctor(id: string, data: any): Promise<any> {
+
+  console.log("este es la data que envio", data);
+  
+
+  try {
+    const response = await http.put(`${ApiUrls.msSecurity}/users/doctors/${id}`, data)
+    console.log(`✅ Doctor con ID ${id} actualizado correctamente.`)
+    return response.data
+  } catch (error) {
+    console.error(`❌ Error al actualizar el doctor con ID ${id}:`, error)
+    throw error
+  }
+},
+
+// Obtener doctor por ID
+async getDoctorById(id: string) {
+  console.log("este es el id mamastroso", id);
+  
+  const response = await http.get(`${ApiUrls.msSecurity}/users/${id}`)
+  return response.data
+},
+
+
 }
