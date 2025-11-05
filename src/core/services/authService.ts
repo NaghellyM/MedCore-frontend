@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import { decodeToken } from "../utils/decodeToken";
+import { decodeToken } from "../auth/decodeToken";
 import { ApiUrls } from "../../environments/environments";
 import { apiPost } from "../../infrastructure/http/apiPost";
 

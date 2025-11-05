@@ -80,7 +80,7 @@ export default function DoctorsList() {
       if (debouncedSearch.trim()) {
         response = await doctorsService.searchByNameOrId(debouncedSearch, currentPage, itemsPerPage)
       } else if (selectedSpecialty) {
-        response = await doctorsService.filterBySpecialty(selectedSpecialty, currentPage, itemsPerPage)
+        response = await doctorsService.filterBySpecialty(selectedSpecialty)
       } else if (statusFilter) {
         response = await doctorsService.filterByStatus(statusFilter, currentPage, itemsPerPage)
       } else {
@@ -114,7 +114,7 @@ export default function DoctorsList() {
         name: doc.fullname,
         identification: doc.identificacion || "N/A",
         specialty: doc.especializacion?.nombre || "Sin especialidad",
-        status: doc.status?.toUpperCase() || "UNKNOWN",
+        status: normalizeStatus(doc.status),
         avatar: `https://avatar.iran.liara.run/public/boy`,
       }))
 
@@ -150,6 +150,8 @@ export default function DoctorsList() {
     if (newPage < 1 || newPage > totalPages) return
     setCurrentPage(newPage)
   }
+
+  const isActive = (status?: string) => (status ?? "").toUpperCase() === "ACTIVE"
 
   return (
     <div className="p-6 space-y-6">
@@ -265,7 +267,13 @@ export default function DoctorsList() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {doctors.map((doctor) => (
-              <DoctorCard key={doctor.id} doctor={doctor} />
+              <DoctorCard
+                key={doctor.id}
+                doctor={{
+                  ...doctor,
+                  active: isActive((doctor as any).status), // ensure boolean present
+                }}
+              />
             ))}
           </div>
 
@@ -293,4 +301,12 @@ export default function DoctorsList() {
       )}
     </div>
   )
+}
+
+type DoctorStatus = "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN"
+
+const normalizeStatus = (s?: string): DoctorStatus => {
+  const v = (s || "UNKNOWN").toUpperCase()
+  const allowed: DoctorStatus[] = ["ACTIVE", "INACTIVE", "PENDING", "UNKNOWN"]
+  return allowed.includes(v as DoctorStatus) ? (v as DoctorStatus) : "UNKNOWN"
 }

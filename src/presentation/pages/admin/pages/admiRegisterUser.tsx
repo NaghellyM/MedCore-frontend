@@ -7,7 +7,7 @@ import { UserForm } from "../components/adminUserForm"
 import { registerUser } from "../../../../core/services/patientService"
 import { doctorsService } from "../../../../core/services/doctorsService"
 import type { RegisterUserDto } from "../../../../core/models/user"
-import { validationSchema } from "../../../../core/validators/validationSchema"
+import { validationSchema } from "../../../../core/validators/userSchemaValidator"
 import { UserPlus, ArrowLeft } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -30,11 +30,12 @@ export function AdminRegisterUser() {
       email: "",
       current_password: "",
       identificacion: "",
-      date_of_birth: "",
+      date_of_birth: "",   
       role: "PACIENTE",
       fullname: "",
     },
   })
+
 
   const selectedRole = watch("role")
 
@@ -110,7 +111,6 @@ export function AdminRegisterUser() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
-      {/* 🔙 Botón con fondo azul */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -150,7 +150,6 @@ export function AdminRegisterUser() {
           </p>
         </motion.div>
 
-        {/* 🔧 Formulario */}
         <UserForm
           control={control}
           onSubmit={handleSubmit(onSubmit)}

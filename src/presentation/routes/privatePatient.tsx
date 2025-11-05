@@ -2,6 +2,7 @@ import { type RouteObject } from "react-router-dom";
 import { RoleRoute } from "./guards";
 import RootLayout from "../layouts/RootLayout";
 import { PatientDashboard } from "../pages/patient/patientDashboard";
+import { QueuePatientPage } from "../pages/Queue/queuePatient";
 
 export const patientRoutes: RouteObject = {
     element: <RoleRoute allow={["patient"]} />,
@@ -10,6 +11,7 @@ export const patientRoutes: RouteObject = {
             element: <RootLayout />,
             children: [
                 { path: "patientPage", element: <PatientDashboard /> },
+                { path: "queue", element: <QueuePatientPage /> },
             ],
         },
     ],

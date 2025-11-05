@@ -6,9 +6,9 @@ import { Eye, EyeOff } from "lucide-react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { loginSchema } from '../../../core/validators/validationLogin';
+import { loginSchema } from '../../../core/validators/userLoginValidator';
 import { useAuth } from '../../../core/context/authContext';
-import type { IFormInput } from '../../../core/types/types';
+import type { IFormInput } from '../../../core/types/loginTypes';
 
 import FormInput from '../../components/globals/input';
 import FormButton from '../../components/globals/button';

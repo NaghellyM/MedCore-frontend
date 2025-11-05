@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom"; // 👈 Importa el hook
 import { AdminSidebar } from "./components/adminSidebar";
 
@@ -10,7 +11,7 @@ import {
 import { DashboardLayout } from "../../layouts/layout";
 
 export function AdminDashboard() {
-  const navigate = useNavigate(); // 👈 Inicializa el hook
+  const navigate = useNavigate(); 
 
   const sections = [
     {
@@ -19,7 +20,7 @@ export function AdminDashboard() {
       description: "Gestión completa de doctores registrados en el sistema.",
       color: "from-blue-100 to-blue-50",
       hover: "hover:shadow-blue-200",
-      action: () => navigate("/admin/doctorsList"), // 👈 Navegación
+      action: () => navigate("/admin/doctorsList"), 
     },
     {
       title: "Enfermeras",
@@ -27,7 +28,7 @@ export function AdminDashboard() {
       description: "Consulta y administración del personal de enfermería.",
       color: "from-pink-100 to-pink-50",
       hover: "hover:shadow-pink-200",
-      action: () => navigate("/admin/nursesList"), // ejemplo
+      action: () => navigate("/admin/nursesList"),
     },
     {
       title: "Crear Usuario",

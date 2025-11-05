@@ -1,16 +1,7 @@
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { initializeAuth, getCurrentUser, logout, login } from "../services/authService";
-
-interface AuthContextType {
-    isAuthenticated: boolean;
-    user: any;
-    loading: boolean;
-    error: string | null;
-    loginUser: (credentials: any) => Promise<any>;
-    logoutUser: () => void;
-    refreshUser: () => Promise<any>
-}
+import type { AuthContextType } from "../types/authContextTypes";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

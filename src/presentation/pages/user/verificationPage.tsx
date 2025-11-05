@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import FormButton from '../../components/globals/button';
 import { verifyEmail } from '../../../core/services/verifyEmailService';
-import { useRedirectByRole } from '../../hooks/useRedirectByRole';
+import { useRedirectByRole } from '../../../core/hooks/useRedirectByRole';
 import { House } from 'lucide-react';
 
 type Role = 'admin' | 'doctor' | 'nurse' | 'patient';

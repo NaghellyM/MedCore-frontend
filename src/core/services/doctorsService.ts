@@ -5,14 +5,14 @@ interface DoctorResponse {
   users: any[]
   totalPages: number
   currentPage: number
+  itemsPerPage?: number
 }
 
 export const doctorsService = {
   // Obtener todos los médicos con paginación opcional
   async getAll(page?: number, limit?: number): Promise<DoctorResponse> {
     const response = await http.get(
-      `${ApiUrls.msSecurity}/users/by-role-status?role=medico${
-        page ? `&page=${page}` : ""
+      `${ApiUrls.msSecurity}/users/by-role-status?role=medico${page ? `&page=${page}` : ""
       }${limit ? `&limit=${limit}` : ""}`
     )
     return {
@@ -25,8 +25,7 @@ export const doctorsService = {
   // Buscar por nombre o ID con paginación
   async searchByNameOrId(query: string, page?: number, limit?: number): Promise<DoctorResponse> {
     const response = await http.get(
-      `${ApiUrls.msSecurity}/users/search-by-role?query=${query}&role=medico${
-        page ? `&page=${page}` : ""
+      `${ApiUrls.msSecurity}/users/search-by-role?query=${query}&role=medico${page ? `&page=${page}` : ""
       }${limit ? `&limit=${limit}` : ""}`
     )
     return {
@@ -38,17 +37,22 @@ export const doctorsService = {
 
   // Filtrar por especialidad con paginación
   async filterBySpecialty(specialty: string): Promise<DoctorResponse> {
-     try {
-    console.log("Especialidad:", specialty)
+    try {
+      console.log("Especialidad:", specialty)
 
-    const response = await http.get(
-      `${ApiUrls.msSecurity}/users/doctors/by-specialty?specialty=${specialty}`
-    )
+      const response = await http.get(
+        `${ApiUrls.msSecurity}/users/doctors/by-specialty?specialty=${encodeURIComponent(specialty)}`
+      )
 
-    return response.data
-  } catch (error) {
-    console.error("Error al obtener doctores por especialidad:", error)
-  }
+      return {
+        users: response.data?.users || response.data?.doctors || [],
+        totalPages: response.data?.totalPages || 1,
+        currentPage: response.data?.currentPage || 1,
+      }
+    } catch (error) {
+      console.error("Error al obtener doctores por especialidad:", error)
+      return { users: [], totalPages: 1, currentPage: 1 }
+    }
   },
 
   // Filtrar por estado con paginación
@@ -59,8 +63,7 @@ export const doctorsService = {
   ): Promise<DoctorResponse> {
     try {
       const response = await http.get(
-        `${ApiUrls.msSecurity}/users/by-role-status?role=medico&status=${status.toUpperCase()}${
-          page ? `&page=${page}` : ""
+        `${ApiUrls.msSecurity}/users/by-role-status?role=medico&status=${status.toUpperCase()}${page ? `&page=${page}` : ""
         }${limit ? `&limit=${limit}` : ""}`
       )
       return {

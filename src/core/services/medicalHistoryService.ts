@@ -1,4 +1,4 @@
-import type { EncounterPayload } from "../types/medical"
+import type { EncounterPayload } from "../types/medicalHistoryTypes"
 
 const BASE = "/api/encounters"
 

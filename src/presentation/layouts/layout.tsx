@@ -4,8 +4,8 @@ import {
     SidebarTrigger,
 } from "../components/ui/sidebar";
 import UserHeader from "../components/globals/header";
-import { useIsCompact } from "../hooks/useBreakpoint";
-import { cn } from "../../core/utils/decodeToken";
+import { useIsCompact } from "../../core/hooks/useBreakpoint";
+import { cn } from "../../core/utils/cn";
 
 export function DashboardLayout({
     sidebar,
