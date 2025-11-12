@@ -1,7 +1,6 @@
-// modules/queue/hooks/useQueuePosition.ts
 import { useEffect, useMemo, useRef, useState } from "react";
-import { queueService } from "../../core/services/queueService";
-import type { QueuePositionDTO } from "../types/queue";
+import { queueService } from "../../services/queueService";
+import type { QueuePositionDTO } from "../../types/queue";
 
 type UseQueuePositionOptions = {
     pollMs?: number;       

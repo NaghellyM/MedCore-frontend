@@ -2,7 +2,7 @@ import { type RouteObject } from "react-router-dom";
 import { RoleRoute } from "./guards";
 import RootLayout from "../layouts/RootLayout";
 import { PatientDashboard } from "../pages/patient/patientDashboard";
-import { QueuePatientPage } from "../pages/Queue/queuePatient";
+import { QueuePatientPage } from "../pages/Queue/pages/queuePatient";
 
 export const patientRoutes: RouteObject = {
     element: <RoleRoute allow={["patient"]} />,

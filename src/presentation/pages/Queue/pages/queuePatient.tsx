@@ -1,6 +1,6 @@
-import { DashboardLayout } from "../../layouts/layout";
-import { PatientSidebar } from "../patient/components/patientSidebar";
-import { QueuePatientContainer } from "./containers/queuePatientContainer";
+import { DashboardLayout } from "../../../layouts/layout";
+import { PatientSidebar } from "../../patient/components/patientSidebar";
+import { QueuePatientContainer } from "../containers/queuePatientContainer";
 import { useNavigate, useParams } from "react-router-dom";
 
 export function QueuePatientPage() {

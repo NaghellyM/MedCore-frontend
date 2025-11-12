@@ -1,5 +1,5 @@
 import { QueuePatient } from "../components/queuePatient";
-import { useQueuePosition } from "../../../../core//hooks/useQueuePosition";
+import { useQueuePosition } from "../../../../core/hooks/queue/useQueuePosition";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 
