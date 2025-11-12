@@ -1,19 +1,19 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Separator } from "@radix-ui/themes";
-import { Clock, Users, ChevronLeft, Hash } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "../../../../core/utils/cn"; 
 import * as React from "react";
+import { Separator } from "@radix-ui/themes";
+import { cn } from "../../../../core/utils/cn";
+import { Button } from "../../../components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
+import { Clock, Users, ChevronLeft, Hash } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
 
 export type QueuePatientProps = {
     ticketNumber: string | number;
-    aheadCount: number; 
-    etaMinutes: number; 
+    aheadCount: number;
+    etaMinutes: number;
     onBack?: () => void;
     title?: string;
     subtitle?: string;
-    lastUpdatedISO?: string; 
+    lastUpdatedISO?: string;
     className?: string;
 };
 
@@ -71,7 +71,6 @@ export function QueuePatient({
 
             <CardContent className="pt-0">
                 <div className="grid gap-5">
-                    {/* Número de turno destacado */}
                     <div
                         className={
                             "flex items-center justify-between rounded-2xl border p-4 md:p-5 " +
@@ -101,13 +100,11 @@ export function QueuePatient({
                                 </AnimatePresence>
                             </div>
                         </div>
-                        {/* Pill visual con la paleta */}
                         <span className="hidden md:inline-flex rounded-full border px-3 py-1 text-xs font-medium text-slate-700 bg-[#8DBCC7]/20">
                             Turno activo
                         </span>
                     </div>
 
-                    {/* Métricas de cola */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <MetricTile
                             icon={<Users className="h-5 w-5" />}
@@ -126,7 +123,6 @@ export function QueuePatient({
                         />
                     </div>
 
-                    {/* Barra de progreso opcional simple basada en posición */}
                     <div className="space-y-2">
                         <div className="flex items-center justify-between text-xs text-slate-600">
                             <span>Progreso</span>
@@ -151,7 +147,7 @@ export function QueuePatient({
 
                 <Separator className="w-full opacity-50" />
 
-                <Button type="button" className="w-full rounded-xl bg-[#8DBCC7] hover:bg-[#A4CCD9] text-slate-900">
+                <Button type="button" onClick={onBack} className="w-full rounded-xl bg-[#8DBCC7] hover:bg-[#A4CCD9] text-slate-900">
                     Volver al inicio
                 </Button>
             </CardFooter>

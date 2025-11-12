@@ -11,7 +11,7 @@ export const patientRoutes: RouteObject = {
             element: <RootLayout />,
             children: [
                 { path: "patientPage", element: <PatientDashboard /> },
-                { path: "queue", element: <QueuePatientPage /> },
+                { path: "queuePatient", element: <QueuePatientPage /> },
             ],
         },
     ],

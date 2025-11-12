@@ -8,11 +8,13 @@ interface DoctorResponse {
   itemsPerPage?: number
 }
 
+const Url = `${ApiUrls.msSecurity}`
+
 export const doctorsService = {
   // Obtener todos los médicos con paginación opcional
   async getAll(page?: number, limit?: number): Promise<DoctorResponse> {
     const response = await http.get(
-      `${ApiUrls.msSecurity}/users/by-role-status?role=medico${page ? `&page=${page}` : ""
+      `${Url}/users/by-role-status?role=medico${page ? `&page=${page}` : ""
       }${limit ? `&limit=${limit}` : ""}`
     )
     return {
@@ -25,7 +27,7 @@ export const doctorsService = {
   // Buscar por nombre o ID con paginación
   async searchByNameOrId(query: string, page?: number, limit?: number): Promise<DoctorResponse> {
     const response = await http.get(
-      `${ApiUrls.msSecurity}/users/search-by-role?query=${query}&role=medico${page ? `&page=${page}` : ""
+      `${Url}/users/search-by-role?query=${query}&role=medico${page ? `&page=${page}` : ""
       }${limit ? `&limit=${limit}` : ""}`
     )
     return {
@@ -41,7 +43,7 @@ export const doctorsService = {
       console.log("Especialidad:", specialty)
 
       const response = await http.get(
-        `${ApiUrls.msSecurity}/users/doctors/by-specialty?specialty=${encodeURIComponent(specialty)}`
+        `${Url}/users/doctors/by-specialty?specialty=${encodeURIComponent(specialty)}`
       )
 
       return {
@@ -63,7 +65,7 @@ export const doctorsService = {
   ): Promise<DoctorResponse> {
     try {
       const response = await http.get(
-        `${ApiUrls.msSecurity}/users/by-role-status?role=medico&status=${status.toUpperCase()}${page ? `&page=${page}` : ""
+        `${Url}/users/by-role-status?role=medico&status=${status.toUpperCase()}${page ? `&page=${page}` : ""
         }${limit ? `&limit=${limit}` : ""}`
       )
       return {
@@ -79,7 +81,7 @@ export const doctorsService = {
 
   // Obtener todas las especialidades (sin paginación)
   async getSpecialties(): Promise<{ id: string; nombre: string; departamento?: any }[]> {
-    const response = await http.get(`${ApiUrls.msSecurity}/specialties`)
+    const response = await http.get(`${Url}/specialties`)
     return response.data?.especialidades || []
   },
 }

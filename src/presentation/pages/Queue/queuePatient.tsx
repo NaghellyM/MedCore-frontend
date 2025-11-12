@@ -1,31 +1,30 @@
 import { DashboardLayout } from "../../layouts/layout";
 import { PatientSidebar } from "../patient/components/patientSidebar";
-import { QueuePatient } from "./components/queuePatient";
-import { useNavigate } from "react-router-dom";
+import { QueuePatientContainer } from "./containers/queuePatientContainer";
+import { useNavigate, useParams } from "react-router-dom";
 
 export function QueuePatientPage() {
     const navigate = useNavigate();
+    const { ticketId } = useParams<{ ticketId: string }>();
+    const id = ticketId ?? "497cdc97-3b95-45eb-acd7-d0fa9632d074";
+
     return (
         <DashboardLayout
             sidebar={<PatientSidebar />}
-            showSearch={true}
+            showSearch
             headerHeightClass="pt-[80px]"
             contentMaxWidthClass="max-w-7xl"
             variant="inset"
             collapsible="offcanvas"
-            mainClassName=""
-            sidebarClassName=""
-            sidebarContentClassName=""
         >
             <div className="w-full max-w-md mx-auto mt-10">
-                <   QueuePatient
-                    ticketNumber={32}
-                    aheadCount={5}
-                    etaMinutes={15}
+                <QueuePatientContainer
+                    ticketId={id}
                     onBack={() => navigate("/patientPage")}
+                    pollMs={10000}
+                    enableLocalCountdown
                 />
             </div>
         </DashboardLayout>
-
     );
 }

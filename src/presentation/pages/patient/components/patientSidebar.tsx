@@ -1,6 +1,6 @@
 import { SidebarBase } from "../../../components/globals/sidebar/sidebarBase";
 import { SidebarGroupComponent } from "../../../components/globals/sidebar/SidebarGroup";
-import { CalendarCheck, FileHeart, FileVideoCamera, Microscope, PillBottle, Settings, User } from "lucide-react";
+import { CalendarCheck, FileHeart, History, Microscope, PillBottle, Settings, User } from "lucide-react";
 
 
 const items = [
@@ -10,9 +10,9 @@ const items = [
         icon: CalendarCheck,
     },
     {
-        title: "Telemedicina",
-        url: "#",
-        icon: FileVideoCamera,
+        title: "Turno de espera",
+        url: "/queuePatient",
+        icon: History,
     },
 ];
 
@@ -24,7 +24,7 @@ const infoItems = [
     },
     {
         title: "Resultados de laboratorio",
-        url: "#",
+        url: "/patientPage",
         icon: Microscope,
     },
     {

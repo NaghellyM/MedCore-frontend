@@ -16,7 +16,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     useEffect(() => {
-        // Inicializar el estado de autenticación al cargar la aplicación
         const initAuth = () => {
             try {
                 initializeAuth();
@@ -74,21 +73,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             loading: false,
             error: null,
         });
-        // Navigation will be handled by the component that calls logoutUser
         window.location.href = "/";
     };
     const refreshUser = async () => {
         try {
-            const currentUser = getCurrentUser(); // re-lee del storage/token
+            const currentUser = getCurrentUser(); 
             setAuthState((prev: any) => ({
                 ...prev,
                 isAuthenticated: !!currentUser,
                 user: currentUser,
-                // mantenemos loading y error tal cual estaban
             }));
             return currentUser;
         } catch (error) {
-            // no alteramos otras funciones; solo normalizamos estado si algo falla
             setAuthState((prev: any) => ({
                 ...prev,
                 isAuthenticated: false,

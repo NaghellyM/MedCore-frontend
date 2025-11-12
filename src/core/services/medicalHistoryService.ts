@@ -1,17 +1,17 @@
-import type { EncounterPayload } from "../types/medicalHistoryTypes"
+import http from "../../infrastructure/http/http";
+import { ApiUrls } from "../../environments/environments";
 
-const BASE = "/api/encounters"
+const medicalHistoryUrl = `${ApiUrls.msPatient}/medical-history`;
 
-export async function createEncounter(payload: EncounterPayload) {
-    const res = await fetch(BASE, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-        credentials: "include",
-    })
-    if (!res.ok) {
-        const text = await res.text().catch(() => "")
-        throw new Error(text || `Error ${res.status}`)
-    }
-    return res.json()
+export const medicalHistoryService = {
+
+    // Obtener el historial medico de un paciente por su ID
+    async getMedicalHistoryByPatientId(patientId: string) {
+        const response = await http.get(
+            `${medicalHistoryUrl}/patient/${patientId}`
+        )
+        return response.data
+    },
+
+    
 }
