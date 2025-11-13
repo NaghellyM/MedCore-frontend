@@ -1,4 +1,4 @@
-export type QueueStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export type QueueStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "CALLED";
 
 export interface QueuePositionDTO {
     ticketId: string;
@@ -28,4 +28,9 @@ export interface QueueItemDTO {
 export interface DoctorCurrentQueueResponse {
     message: string;
     queue: QueueItemDTO[];
+}
+
+export interface CallNextPatientResponse {
+    message: string;
+    queue: QueueItemDTO; 
 }
