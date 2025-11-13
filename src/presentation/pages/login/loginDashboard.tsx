@@ -54,11 +54,10 @@ const Form: React.FC = () => {
   const onSubmit = async (data: IFormInput) => {
     try {
       const res: any = await loginUser({ email: data.email, password: data.password });
-      console.log("Login response:", res);
 
-      // Señal del backend: requiere verificación de correo
+      
       if (res?.message && String(res.message).toLowerCase().includes("email")) {
-        // redirige a la vista de verificación con el email
+        
         navigate(`/verify?email=${encodeURIComponent(data.email)}`, {
           replace: true,
           state: { email: data.email },
@@ -68,15 +67,14 @@ const Form: React.FC = () => {
 
       const redirect = params.get('redirect');
       if (redirect && redirect !== '/login') {
-        console.log("Redirecting to:", redirect);
+        
         navigate(redirect, { replace: true });
         return;
       }
 
-      // Obtener el rol del usuario desde localStorage (ya guardado por authService)
+      
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const role: Role = mapRoleToEnglish(user?.role || '');
-      console.log("User role:", role, "from:", user?.role);
       goToRoleHome(role);
 
     } catch (err: any) {

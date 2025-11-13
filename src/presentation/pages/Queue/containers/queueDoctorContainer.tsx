@@ -1,13 +1,11 @@
 import { useDoctorCurrentQueue } from "../../../../core/hooks/queue/useDoctorCurrentQueue";
 import { DoctorQueue } from "../components/queueDoctor";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
+import { useAsyncOperation } from "../../../../core/hooks/queue/useAsyncOperation";
+import { StateWrapper } from "../../../components/globals/StateComponents";
+import { 
+    transformNextPatient
+} from "../../../../core/utils/queueTransformers";
+import { useToast } from "../../../../core/hooks/useToast";
 
 export type QueueDoctorContainerProps = {
     doctorId: string;
@@ -22,6 +20,9 @@ export function DoctorQueueContainer({
     pollMs = 15000,
     className,
 }: QueueDoctorContainerProps) {
+    const { warning } = useToast();
+    const asyncOperation = useAsyncOperation();
+    
     const {
         loading,
         error,
@@ -37,122 +38,70 @@ export function DoctorQueueContainer({
         completing,
     } = useDoctorCurrentQueue(doctorId, { pollMs });
 
-    if (loading) {
-        return (
-            <Card className="w-full max-w-2xl border-0 shadow-lg">
-                <CardHeader>
-                    <CardTitle className="text-slate-900">Cargando cola…</CardTitle>
-                    <CardDescription className="text-slate-600">
-                        Obteniendo información del doctor.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6 space-y-3">
-                    <div className="h-10 w-1/3 bg-slate-100 rounded animate-pulse" />
-                    <div className="h-16 w-full bg-slate-100 rounded animate-pulse" />
-                    <div className="h-16 w-full bg-slate-100 rounded animate-pulse" />
-                </CardContent>
-            </Card>
-        );
-    }
-
-    if (error) {
-        return (
-            <Card className="w-full max-w-2xl border-0 shadow-lg">
-                <CardHeader>
-                    <CardTitle className="text-slate-900">
-                        No pudimos cargar la cola
-                    </CardTitle>
-                    <CardDescription className="text-slate-600">{error}</CardDescription>
-                </CardHeader>
-                <CardContent className="p-6 flex items-center gap-2">
-                    <Button onClick={refetch}>Reintentar</Button>
-                    {onBack && (
-                        <Button variant="ghost" onClick={onBack}>
-                            Volver
-                        </Button>
-                    )}
-                </CardContent>
-            </Card>
-        );
-    }
-
     const canCallNext = (totalsByStatus["WAITING"] ?? 0) > 0 && !callingNext && !currentPatient;
 
     const handleCallNext = async () => {
+        if (!canCallNext) {
+            warning('No se puede llamar al siguiente paciente',
+                'No hay pacientes esperando o ya está llamando a alguien');
+            return;
+        }
+
         try {
-            console.log('Calling next patient for doctorId:', doctorId);
-            console.log('Current waiting patients:', totalsByStatus["WAITING"]);
-            console.log('Next up:', nextUp);
-            console.log('Current patient:', currentPatient);
-
-            if (!canCallNext) {
-                console.warn('Cannot call next: no waiting patients, already calling, or patient in attention');
-                return;
-            }
-
-            const called = await callNext();
-            console.log('Successfully called patient:', called);
-
-        } catch (e: any) {
-            console.error('Error calling next patient:', e);
-            console.error('Error details:', {
-                message: e.message,
-                response: e.response?.data,
-                status: e.response?.status,
-                doctorId
+            await asyncOperation.execute(() => callNext(), {
+                loadingMessage: 'Llamando al siguiente paciente...',
+                successMessage: `Turno ha sido llamado exitosamente`,
+                errorMessage: 'Ha ocurrido un error inesperado'
             });
-            
+        } catch (error) {
+            console.error('Error al llamar al siguiente paciente:', error);
         }
     };
 
     const handleCompleteAttention = async (appointmentId: string) => {
         try {
-            await completeAttention(appointmentId);
-
-        } catch (e: any) {
-            console.error('Error completing attention:', e);
-            console.error('Error details:', {
-                message: e.message,
-                response: e.response?.data,
-                status: e.response?.status,
-                appointmentId
+            await asyncOperation.execute(() => completeAttention(appointmentId), {
+                loadingMessage: 'Completando atención...',
+                successMessage: 'El paciente ha sido marcado como atendido exitosamente',
+                errorMessage: 'No se pudo marcar como atendido'
             });
-            ;
+        } catch (error) {
+            console.error('Error al completar la atención:', error);
         }
     };
 
     return (
-        <DoctorQueue
-            className={className}
-            items={items.map((i) => ({
-                id: i.id,
-                queueNumber: i.queueNumber,
-                patientId: i.patientId,
-                appointmentId: i.appointmentId,
-                status: i.status,
-                createdAt: i.createdAt,
-                updatedAt: i.updatedAt,
-            }))}
-            totalsByStatus={totalsByStatus}
-            lastUpdatedISO={lastUpdatedISO}
-            onRefresh={refetch}
-            title="Cola actual del doctor"
-            onCallNext={handleCallNext}
-            callingNext={callingNext}
-            canCallNext={canCallNext}
-            nextUp={nextUp ? { queueNumber: nextUp.queueNumber, patientId: nextUp.patientId } : null}
-            currentPatient={currentPatient ? {
-                id: currentPatient.id,
-                queueNumber: currentPatient.queueNumber,
-                patientId: currentPatient.patientId,
-                appointmentId: currentPatient.appointmentId,
-                status: currentPatient.status,
-                createdAt: currentPatient.createdAt,
-                updatedAt: currentPatient.updatedAt,
-            } : null}
-            onCompleteAttention={handleCompleteAttention}
-            completing={completing}
+        <StateWrapper
+            loading={loading}
+            error={error}
+            onRetry={refetch}
             onBack={onBack}
-        />
+            loadingProps={{
+                title: "Cargando cola…",
+                description: "Obteniendo información del doctor.",
+                className: className
+            }}
+            errorProps={{
+                title: "No pudimos cargar la cola",
+                className: className
+            }}
+        >
+            <DoctorQueue
+                className={className}
+                items={items}
+                totalsByStatus={totalsByStatus}
+                lastUpdatedISO={lastUpdatedISO}
+                onRefresh={refetch}
+                title="Cola actual del doctor"
+                onCallNext={handleCallNext}
+                callingNext={callingNext}
+                canCallNext={canCallNext}
+                nextUp={transformNextPatient(nextUp)}
+                currentPatient={currentPatient}
+                onCompleteAttention={handleCompleteAttention}
+                completing={completing}
+                onBack={onBack}
+            />
+        </StateWrapper>
     );
 }

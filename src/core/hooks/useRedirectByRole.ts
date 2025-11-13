@@ -6,9 +6,7 @@ export const useRedirectByRole = () => {
 
     const redirectByRole = (token: string) => {
         const payload = decodeToken(token);
-        console.log("Token payload:", payload);
         const role = payload.role.toUpperCase();
-        console.log("Redirecting based on role:", role);
         
         switch (role) {
             case "ADMINISTRADOR":

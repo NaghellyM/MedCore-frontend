@@ -1,4 +1,4 @@
-import http from "../../infrastructure/http/http"
+import http from "../../infrastructure/http/httpSecurity"
 import { ApiUrls } from "../../environments/environments";
 
 export const nursesService = {

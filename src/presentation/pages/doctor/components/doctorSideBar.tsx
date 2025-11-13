@@ -5,7 +5,7 @@ import {
   Calendar,
   User,
   Activity,
-  LayoutList,
+  BookUser,
   ClipboardPlus,
   HeartPulse,
 } from "lucide-react";
@@ -19,7 +19,7 @@ const gestionClinicaItems = [
 const pacienteItems = [
   { title: "Pacientes", url: "#", icon: User },
   { title: "Historiales médicos", url: "#", icon: ClipboardPlus },
-  { title: "Cola de espera", url: "/queueDoctor", icon: LayoutList },
+  { title: "Proximas citas", url: "/queueDoctor", icon: BookUser },
 ];
 export default function DoctorSidebar() {
   return (

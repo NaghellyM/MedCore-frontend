@@ -1,9 +1,9 @@
-export type QueueStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "CALLED";
+export type QueuePatientStatus = "WAITING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED" | "CALLED";
 
 export interface QueuePositionDTO {
     ticketId: string;
     doctorId: string;
-    status: QueueStatus;
+    status: QueuePatientStatus;
     queueNumber: number;
     position: number;
     estimatedWaitTimeMinutes: number;
@@ -20,7 +20,7 @@ export interface QueueItemDTO {
     patientId: string;
     doctorId: string;
     queueNumber: number;
-    status: QueueStatus;
+    status: QueuePatientStatus;
     createdAt: string;
     updatedAt: string;
 }
@@ -34,3 +34,21 @@ export interface CallNextPatientResponse {
     message: string;
     queue: QueueItemDTO; 
 }
+
+export type QueuePatient = {
+    id: string;
+    queueNumber: number;
+    patientId: string;
+    appointmentId: string;
+    status: QueuePatientStatus;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type CurrentPatientCardProps = {
+    patient: QueuePatient | null;
+    onComplete?: (queueItemId: string) => Promise<void> | void;
+    completing?: boolean;
+    className?: string;
+    debug?: boolean;
+};

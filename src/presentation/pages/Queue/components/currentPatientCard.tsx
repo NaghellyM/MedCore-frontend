@@ -1,56 +1,67 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
-import { Clock, CheckCircle, User, Calendar, Phone } from "lucide-react";
+import { memo } from "react";
 import { cn } from "../../../../core/utils/cn";
+import { Badge } from "../../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
+import type { CurrentPatientCardProps } from "../../../../core/types/queue";
+import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
+import { formatDateTime, getQueueStatusLabel } from "../../../../core/utils/format";
+import { usePatientActions } from "../../../../core/hooks/queue/usePatientActions";
+import { useRealTimeDuration } from "../../../../core/hooks/queue/useRealTimeDuration";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Clock, CheckCircle, User, Calendar, HeartPlus, Loader2, AlertCircle } from "lucide-react";
 
-export type CurrentPatientCardProps = {
-    patient: {
-        id: string;
-        queueNumber: number;
-        patientId: string;
-        appointmentId: string;
-        status: string;
-        createdAt: string;
-        updatedAt: string;
-    } | null;
-    onComplete?: (queueItemId: string) => void; 
-    completing?: boolean;
-    className?: string;
+const PatientNameDisplay = ({ 
+    displayState, 
+    displayText 
+}: { 
+    displayState: 'loading' | 'error' | 'success' | 'fallback';
+    displayText: string;
+}) => {
+    switch (displayState) {
+        case 'loading':
+            return (
+                <span className="flex items-center gap-2 text-slate-600">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {displayText}
+                </span>
+            );
+        case 'error':
+            return (
+                <span className="flex items-center gap-2 text-red-600">
+                    <AlertCircle className="h-4 w-4" />
+                    {displayText}
+                </span>
+            );
+        case 'success':
+            return (
+                <span className="font-medium text-slate-900">
+                    {displayText}
+                </span>
+            );
+        case 'fallback':
+            return (
+                <span className="text-slate-600 italic">
+                    {displayText}
+                </span>
+            );
+        default:
+            return <span>{displayText}</span>;
+    }
 };
 
-function formatDateTime(isoString: string) {
-    const date = new Date(isoString);
-    return date.toLocaleString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function getTimeDuration(startTime: string) {
-    const start = new Date(startTime).getTime();
-    const now = Date.now();
-    const diffMs = now - start;
-    const diffMins = Math.floor(diffMs / 60000);
-
-    if (diffMins < 1) return "Menos de 1 minuto";
-    if (diffMins === 1) return "1 minuto";
-    if (diffMins < 60) return `${diffMins} minutos`;
-
-    const hours = Math.floor(diffMins / 60);
-    const mins = diffMins % 60;
-    return `${hours}h ${mins}m`;
-}
-
-export function CurrentPatientCard({
+export const CurrentPatientCard = memo(function CurrentPatientCard({
     patient,
     onComplete,
     completing = false,
     className,
 }: CurrentPatientCardProps) {
+    const realTimeDuration = useRealTimeDuration(patient?.updatedAt || null);
+    const { displayState, displayText } = usePatientDisplay(patient?.patientId || null);
+    const { handleComplete, canComplete } = usePatientActions({
+        onComplete,
+        patientId: patient?.id || ''
+    });
+
     if (!patient) {
         return (
             <Card className={cn("border-2 border-slate-200", className)}>
@@ -62,16 +73,6 @@ export function CurrentPatientCard({
             </Card>
         );
     }
-
-    const duration = getTimeDuration(patient.updatedAt);
-
-    const handleComplete = () => {
-        if (onComplete) {
-            onComplete(patient.id);
-        } else {
-            console.warn('⚠️ onComplete function is not provided');
-        }
-    };
 
     return (
         <Card className={cn(
@@ -85,9 +86,14 @@ export function CurrentPatientCard({
                     </CardTitle>
                     <Badge
                         variant="default"
-                        className="bg-[#8DBCC7] text-slate-900 hover:bg-[#A4CCD9]"
+                        className={cn(
+                            "text-slate-900 transition-colors",
+                            patient.status === "CALLED" && "bg-amber-200 hover:bg-amber-300",
+                            patient.status === "IN_PROGRESS" && "bg-[#8DBCC7] hover:bg-[#A4CCD9]",
+                            patient.status === "WAITING" && "bg-slate-200 hover:bg-slate-300"
+                        )}
                     >
-                        {patient.status === "CALLED" ? "Llamado" : "En Curso"}
+                        {getQueueStatusLabel(patient.status)}
                     </Badge>
                 </div>
             </CardHeader>
@@ -98,7 +104,7 @@ export function CurrentPatientCard({
                     <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#8DBCC7]/30">
                             <span className="text-xl font-bold text-slate-900">
-                                #{patient.queueNumber}
+                                N°{patient.queueNumber}
                             </span>
                         </div>
                         <div>
@@ -111,40 +117,36 @@ export function CurrentPatientCard({
 
                     <div className="flex items-center gap-2 text-[#647FBC]">
                         <Clock className="h-4 w-4" />
-                        <span className="text-sm font-medium">{duration}</span>
+                        <span className="text-sm font-medium">{realTimeDuration}</span>
                     </div>
                 </div>
 
                 {/* Información del paciente */}
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 text-slate-700">
-                        <User className="h-4 w-4 text-slate-500" />
-                        <span className="text-sm">
-                            <span className="font-medium">ID Paciente:</span>{" "}
-                            {patient.patientId.slice(-8)}
-                        </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-slate-700">
-                        <Phone className="h-4 w-4 text-slate-500" />
+                        <HeartPlus className="h-4 w-4 text-slate-500" />
                         <span className="text-sm">
                             <span className="font-medium">ID Cita:</span>{" "}
                             {patient.appointmentId.slice(-8)}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-700">
+                        <User className="h-4 w-4 text-slate-500" />
+                        <span className="text-sm">
+                            <span className="font-medium">Nombre del Paciente:</span>{" "}
+                            <PatientNameDisplay 
+                                displayState={displayState} 
+                                displayText={displayText} 
+                            />
                         </span>
                     </div>
 
                     <div className="flex items-center gap-2 text-slate-700">
                         <Calendar className="h-4 w-4 text-slate-500" />
                         <span className="text-sm">
-                            <span className="font-medium">Llamado:</span>{" "}
+                            <span className="font-medium">Fecha y hora de atención:</span>{" "}
                             {formatDateTime(patient.updatedAt)}
                         </span>
-                    </div>
-
-                    {/* DEBUG INFO - Remover en producción */}
-                    <div className="p-2 bg-slate-50 rounded text-xs text-slate-500 font-mono">
-                        <div>Queue Item ID: {patient.id.slice(-12)}</div>
-                        <div>Appointment ID: {patient.appointmentId.slice(-12)}</div>
                     </div>
                 </div>
 
@@ -152,31 +154,32 @@ export function CurrentPatientCard({
                 <div className="pt-2">
                     <Button
                         onClick={handleComplete}
-                        disabled={completing}
-                        className="w-full bg-[#647FBC] hover:bg-[#8DBCC7] text-white disabled:opacity-50"
+                        disabled={completing || !canComplete}
+                        className="w-full bg-[#647FBC] hover:bg-[#8DBCC7] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         size="lg"
+                        aria-label={completing ? "Completando atención del paciente" : "Marcar paciente como atendido"}
                     >
                         {completing ? (
                             <>
-                                <Clock className="h-5 w-5 mr-2 animate-spin" />
+                                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                                 Completando atención...
                             </>
                         ) : (
                             <>
                                 <CheckCircle className="h-5 w-5 mr-2" />
-                                Completar Atención
+                                Paciente Atendido
                             </>
                         )}
                     </Button>
                 </div>
 
                 {/* Nota informativa */}
-                <div className="p-3 bg-[#FAFDD6]/50 border border-[#C4E1E6] rounded-lg">
+                <div className="p-3 bg-[#FAFDD6]/50 border border-[#e6c4c4] rounded-lg">
                     <p className="text-xs text-slate-600 text-center">
-                        Completa la atención de este paciente antes de llamar al siguiente
+                        Por favor, completa la atención de este paciente antes de llamar al siguiente.
                     </p>
                 </div>
             </CardContent>
         </Card>
     );
-}
+});

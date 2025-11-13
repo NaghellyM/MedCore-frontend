@@ -1,4 +1,3 @@
-import Swal from "sweetalert2"
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -10,9 +9,11 @@ import type { RegisterUserDto } from "../../../../core/models/user"
 import { validationSchema } from "../../../../core/validators/userSchemaValidator"
 import { UserPlus, ArrowLeft } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useToast } from "../../../../core/hooks/useToast"
 
 export function AdminRegisterUser() {
   const navigate = useNavigate()
+  const { success, error: showError } = useToast()
   const [loading, setLoading] = useState(false)
   const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([])
   const [departments, setDepartments] = useState<string[]>([])
@@ -74,12 +75,7 @@ export function AdminRegisterUser() {
     try {
       const res = await registerUser(data)
       console.log("✅ Respuesta del backend:", res)
-      Swal.fire({
-        icon: "success",
-        title: "Usuario registrado con éxito",
-        showConfirmButton: false,
-        timer: 2000,
-      })
+      success("¡Usuario registrado!", "El usuario ha sido creado exitosamente")
       reset()
     } catch (error: any) {
       console.error("❌ Error al registrar usuario:", error)
@@ -92,17 +88,9 @@ export function AdminRegisterUser() {
           })
         }
       } else if (error.response?.data?.message) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: error.response.data.message,
-        })
+        showError("Error al registrar usuario", error.response.data.message)
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Ocurrió un error inesperado. Intenta nuevamente.",
-        })
+        showError("Error inesperado", "Ocurrió un error inesperado. Intenta nuevamente.")
       }
     } finally {
       setLoading(false)

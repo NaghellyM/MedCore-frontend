@@ -1,4 +1,4 @@
-import http from "../../infrastructure/http/http"
+import http from "../../infrastructure/http/httpSecurity"
 import { ApiUrls } from "../../environments/environments"
 
 // 🔹 Envío del archivo CSV al backend usando el token de http

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { queueService } from "../../../core/services/queueService";
-import type { QueueItemDTO, QueueStatus } from "../../../core/types/queue";
+import type { QueueItemDTO, QueuePatientStatus } from "../../../core/types/queue";
 
 type UseDoctorCurrentQueueOptions = {
     pollMs?: number;
@@ -41,7 +41,7 @@ export function useDoctorCurrentQueue(doctorId: string, options?: UseDoctorCurre
     }, [fetchQueue, pollMs]);
 
     const totalsByStatus = useMemo(() => {
-        const acc: Record<QueueStatus, number> = {
+        const acc: Record<QueuePatientStatus, number> = {
             WAITING: 0, IN_PROGRESS: 0, COMPLETED: 0, CANCELLED: 0, CALLED: 0,
         };
         for (const it of items) acc[it.status] = (acc[it.status] ?? 0) + 1;
@@ -92,7 +92,7 @@ export function useDoctorCurrentQueue(doctorId: string, options?: UseDoctorCurre
             setItems(prev => {
                 return prev.map(item =>
                     item.id === queueItemId
-                        ? { ...item, status: "COMPLETED" as QueueStatus }
+                        ? { ...item, status: "COMPLETED" as QueuePatientStatus }
                         : item
                 );
             });
