@@ -1,5 +1,6 @@
 import httpClinical from "../../infrastructure/http/httpClinical"
 
+// URL base para la cola
 const queueUrl = `/queue`
 
 export const queueService = {

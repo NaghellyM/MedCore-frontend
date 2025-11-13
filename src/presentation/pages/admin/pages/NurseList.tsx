@@ -9,8 +9,8 @@ interface NurseApi {
   id: string;
   fullname: string;
   identificacion: string;
-  role: string | null;
-  status: string;
+  role?: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN";
   email?: string;
   phone?: string;
   license_number?: string;
@@ -24,10 +24,16 @@ export default function NursesList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
   const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const navigate = useNavigate();
+
+  // 🔹 Normalizar status
+  const normalizeStatus = (status?: string): "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN" => {
+    const normalized = (status || "UNKNOWN").toUpperCase();
+    const validStatuses: ("ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN")[] = ["ACTIVE", "INACTIVE", "PENDING", "UNKNOWN"];
+    return validStatuses.includes(normalized as any) ? normalized as any : "UNKNOWN";
+  };
 
   // 🔹 Debounce para búsqueda
   useEffect(() => {
@@ -71,15 +77,14 @@ export default function NursesList() {
         }
       }
 
-      setTotalItems(total);
       setTotalPages(Math.ceil(total / itemsPerPage));
 
-      const mappedNurses: NurseApi[] = users.map((n: NurseApi) => ({
+      const mappedNurses: NurseApi[] = users.map((n: any) => ({
         id: n.id,
         fullname: n.fullname,
         identificacion: n.identificacion || "N/A",
-        role: n.role ?? null,
-        status: n.status?.toUpperCase() || "INACTIVE",
+        role: n.role || undefined,
+        status: normalizeStatus(n.status),
         email: n.email || undefined,
         phone: n.phone || undefined,
         license_number: n.license_number || undefined,
@@ -151,7 +156,6 @@ export default function NursesList() {
       try {
         await nursesService.deleteNurse(id);
         setNurses((prev) => prev.filter((n) => n.id !== id));
-        setTotalItems((prev) => prev - 1);
 
         Swal.fire({
           title: "Eliminado",

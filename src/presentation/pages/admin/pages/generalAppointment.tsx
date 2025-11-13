@@ -59,7 +59,7 @@ export default function GeneralAppointment() {
       if (!filters.specialty) return
       try {
         const data = await doctorsService.filterBySpecialty(filters.specialty)
-        setDoctors(data?.doctors || [])
+        setDoctors(data?.users || [])
       } catch {
         MySwal.fire({
           icon: "error",

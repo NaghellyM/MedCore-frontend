@@ -23,14 +23,21 @@ interface NurseCardProps {
 }
 
 export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
-  const normalizedStatus = nurse.status?.toUpperCase()
   const statusConfig = {
     ACTIVE: { text: "Activo", color: "bg-green-200 text-green-800" },
     INACTIVE: { text: "Inactivo", color: "bg-red-200 text-red-800" },
     PENDING: { text: "Pendiente", color: "bg-yellow-200 text-yellow-800" },
     UNKNOWN: { text: "Desconocido", color: "bg-gray-200 text-gray-700" },
+  } as const
+
+  const normalizedStatus = nurse.status?.toUpperCase()
+  const isValidStatus = (status: string): status is keyof typeof statusConfig => {
+    return status in statusConfig
   }
-  const { text, color } = statusConfig[normalizedStatus] || statusConfig.UNKNOWN
+
+  const { text, color } = isValidStatus(normalizedStatus) 
+    ? statusConfig[normalizedStatus] 
+    : statusConfig.UNKNOWN
 
   const gender = Math.random() > 0.5 ? "girl" : "boy"
   const avatarUrl =
