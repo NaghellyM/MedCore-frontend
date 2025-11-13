@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { doctorsService } from "../../../../core/services/doctorsService"
-import { DoctorCard } from "../../doctor/components/DoctorCard"
+import DoctorCard from "../../doctor/components/DoctorCard"
 import { Search, ArrowLeftCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import Swal from "sweetalert2"
 
 interface Especializacion {
   id: string
@@ -24,6 +25,7 @@ interface DoctorCardData {
   identification: string
   specialty: string
   status: "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN"
+  active: boolean
   avatar: string
 }
 
@@ -38,9 +40,9 @@ export default function DoctorsList() {
   const itemsPerPage = 20
   const [totalPages, setTotalPages] = useState(1)
   const [totalItems, setTotalItems] = useState(0)
-
   const [searchTerm, setSearchTerm] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
+
   const navigate = useNavigate()
 
   // 🔹 Debounce búsqueda
@@ -66,11 +68,10 @@ export default function DoctorsList() {
         console.error("❌ Error al cargar especialidades:", error)
       }
     }
-
     loadSpecialties()
   }, [])
 
-  // 🔹 Obtener doctores (con paginación)
+  // 🔹 Obtener doctores
   const fetchDoctors = async () => {
     try {
       setLoading(true)
@@ -86,8 +87,6 @@ export default function DoctorsList() {
       } else {
         response = await doctorsService.getAll(currentPage, itemsPerPage)
       }
-
-      console.log("🩺 Respuesta del backend (doctors):", response)
 
       let users: any[] = []
       let total = 0
@@ -115,6 +114,7 @@ export default function DoctorsList() {
         identification: doc.identificacion || "N/A",
         specialty: doc.especializacion?.nombre || "Sin especialidad",
         status: normalizeStatus(doc.status),
+        active: isActive(doc.status),
         avatar: `https://avatar.iran.liara.run/public/boy`,
       }))
 
@@ -131,7 +131,33 @@ export default function DoctorsList() {
     fetchDoctors()
   }, [statusFilter, selectedSpecialty, currentPage, debouncedSearch])
 
-  // 🔹 Filtros
+  // 🔹 Eliminar doctor
+  const handleDeleteDoctor = async (id: string) => {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará permanentemente el doctor.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await doctorsService.deleteDoctor(id)
+        // 🔥 Actualizar lista local:
+        setDoctors((prev) => prev.filter((doc) => doc.id !== id))
+
+        Swal.fire('Eliminado', 'El doctor fue eliminado correctamente.', 'success')
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar el doctor.', 'error')
+      }
+    }
+  })
+}
+
+
+
+
   const handleStatusChange = (status: "active" | "inactive" | "pending" | "") => {
     setStatusFilter(status)
     setSelectedSpecialty("")
@@ -155,7 +181,6 @@ export default function DoctorsList() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Encabezado */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
           👨‍⚕️ Listado de Doctores
@@ -182,7 +207,6 @@ export default function DoctorsList() {
         >
           Todos
         </button>
-
         <button
           onClick={() => handleStatusChange("active")}
           className={`px-4 py-2 rounded-full font-medium shadow transition ${
@@ -193,7 +217,6 @@ export default function DoctorsList() {
         >
           Activos
         </button>
-
         <button
           onClick={() => handleStatusChange("inactive")}
           className={`px-4 py-2 rounded-full font-medium shadow transition ${
@@ -204,7 +227,6 @@ export default function DoctorsList() {
         >
           Inactivos
         </button>
-
         <button
           onClick={() => handleStatusChange("pending")}
           className={`px-4 py-2 rounded-full font-medium shadow transition ${
@@ -269,15 +291,14 @@ export default function DoctorsList() {
             {doctors.map((doctor) => (
               <DoctorCard
                 key={doctor.id}
-                doctor={{
-                  ...doctor,
-                  active: isActive((doctor as any).status), // ensure boolean present
-                }}
+                doctor={doctor}
+                onDelete={handleDeleteDoctor}
+                onUpdate={fetchDoctors}
               />
             ))}
           </div>
 
-          {/* 🔹 Paginación */}
+          {/* Paginación */}
           <div className="flex items-center justify-center mt-8 gap-4">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
