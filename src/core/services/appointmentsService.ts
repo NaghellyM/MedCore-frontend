@@ -84,5 +84,22 @@ export const appointmentsService = {
       console.error("❌ Error al cancelar cita:", error)
       throw error
     }
+  },
+
+  // 📝 Actualizar el doctor de una cita
+async updateDoctor(appointmentId: string, doctorId: string) {
+  try {
+    const response = await http.put(
+      `http://localhost:4001/api/v1/appointments/${appointmentId}/update-doctor`,
+      { doctorId }
+    );
+
+    console.log("✅ Doctor actualizado en la cita:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error al actualizar doctor:", error);
+    throw error;
   }
+}
+
 }

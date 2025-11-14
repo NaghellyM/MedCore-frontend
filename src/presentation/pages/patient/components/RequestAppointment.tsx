@@ -32,6 +32,8 @@
       endTime: "18:00",
     })
 
+    const selectedDoctor = doctors.find((doc) => doc.id === filters.doctorId)
+
     // ID del paciente (ejemplo: reemplaza con tu sesión o estado global)
     const patientId = "69090372f2a08c7fe006739a"
 
@@ -119,8 +121,9 @@
           startDate: filters.date,
           endDate: filters.date,
         })
-
-        const booked: Appointment[] = data.appointments || []
+        const booked: Appointment[] = (data.appointments || []).filter(
+  (a) => a.status !== "CANCELLED"
+)
         const occupied = booked.map((a) => ({
     start: new Date(a.startTime),
     end: new Date(a.endTime),
@@ -135,7 +138,7 @@
         // Crear fecha local sin desfase horario
       function createLocalDate(date: string, time: string) {
     const d = new Date(`${date}T${time}:00`)
-    d.setDate(d.getDate() + 1) // ✅ sumamos 1 día para compensar el desfase
+    d.setDate(d.getDate()) // ✅ sumamos 1 día para compensar el desfase
     return d
   }
 
@@ -339,49 +342,34 @@
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {availableSlots.map((slot, i) => (
-                  <div
-                    key={i}
-                    className="bg-white border border-gray-100 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all text-center"
-                  >
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/3774/3774299.png"
-                      alt="Doctor"
-                      className="w-20 h-20 rounded-full mx-auto mb-4"
-                    />
-                    <h3 className="text-lg font-semibold text-blue-700 mb-1">
-                      {doctors.find((d) => d.id === filters.doctorId)?.fullname || "Doctor"}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {filters.specialty || "Especialidad"}
-                    </p>
+                <div
+                  key={i}
+                  className="border rounded-xl px-5 py-4 shadow-sm bg-white hover:shadow-md transition-all cursor-pointer"
+                >
 
-                    <div className="flex flex-col items-center gap-2 text-gray-700 mb-4">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays className="w-4 h-4" />
-                        <span>
-                          {new Date(filters.date).toLocaleDateString("es-ES", {
-                            weekday: "long",
-                            day: "numeric",
-                            month: "long",
-                          })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        <span className="font-medium">
-                          {slot.start} - {slot.end}
-                        </span>
-                      </div>
-                    </div>
+{selectedDoctor && (
+  <p className="text-sm text-gray-600 font-medium mb-1">
+    {"Dr. " +  selectedDoctor.fullname}
+  </p>
+)}
+                  
+                  <div className="flex flex-col items-center">
+                    
+
+                    <p className="text-xl font-semibold text-blue-600 flex items-center gap-2">
+                      <Clock className="w-5 h-5" />
+                      {slot.start} - {slot.end}
+                    </p>
 
                     <button
                       onClick={() => handleReserve(slot.start)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-all"
+                      className="mt-4 w-full py-2 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition"
                     >
                       Reservar
                     </button>
                   </div>
-                ))}
+                </div>
+              ))}
               </div>
             )}
           </div>

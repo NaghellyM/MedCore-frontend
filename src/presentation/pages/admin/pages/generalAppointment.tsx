@@ -1,172 +1,272 @@
-import { useEffect, useState } from "react"
-import { Clock, CalendarDays } from "lucide-react"
-import Swal from "sweetalert2"
-import withReactContent from "sweetalert2-react-content"
-import { doctorsService } from "../../../../core/services/doctorsService"
-import { appointmentsService } from "../../../../core/services/appointmentsService"
+// --- IMPORTS IGUAL QUE ANTES ---
+import { useEffect, useState } from "react";
+import { Clock, CalendarDays, Pencil } from "lucide-react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { doctorsService } from "../../../../core/services/doctorsService";
+import { appointmentsService } from "../../../../core/services/appointmentsService";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
+
+interface Doctor {
+  id: string;
+  fullname: string;
+  specialty?: string;
+}
 
 interface Appointment {
-  id: string
-  startTime: string
-  endTime: string
-  patientName?: string
+  id: string;
+  doctorId: string;
+  patientId?: string;
+  patientName?: string;
+  startTime: string;
+  endTime: string;
+  status?: string;
 }
 
 export default function GeneralAppointment() {
-  // ────────────────────────────────
-  // ESTADOS
-  // ────────────────────────────────
-  const [specialties, setSpecialties] = useState<{ id: string; nombre: string }[]>([])
-  const [doctors, setDoctors] = useState<any[]>([])
-  const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(false)
+  const [specialties, setSpecialties] = useState<{ id: string; nombre: string }[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const today = new Date().toLocaleDateString("en-CA")
+  const today = new Date().toLocaleDateString("en-CA");
 
   const [filters, setFilters] = useState({
-    specialty: "",
-    doctorId: "",
+    specialty: "all",
+    doctorId: "all",
     date: today,
-  })
+    patientId: "",
+    status: "all",
+  });
 
-  // ────────────────────────────────
   // CARGAR ESPECIALIDADES
-  // ────────────────────────────────
   useEffect(() => {
-    const loadSpecialties = async () => {
+    const load = async () => {
       try {
-        const data = await doctorsService.getSpecialties()
-        setSpecialties(data)
+        const data = await doctorsService.getSpecialties();
+        setSpecialties([{ id: "all", nombre: "Todas" }, ...(data || [])]);
       } catch {
-        MySwal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudieron obtener las especialidades.",
-          confirmButtonColor: "#2563eb",
-        })
+        MySwal.fire("Error", "No se pudieron obtener las especialidades.", "error");
       }
-    }
-    loadSpecialties()
-  }, [])
+    };
+    load();
+  }, []);
 
-  // ────────────────────────────────
-  // CARGAR DOCTORES SEGÚN ESPECIALIDAD
-  // ────────────────────────────────
+  // CARGAR DOCTORES POR ESPECIALIDAD
   useEffect(() => {
     const loadDoctors = async () => {
-      if (!filters.specialty) return
       try {
-        const data = await doctorsService.filterBySpecialty(filters.specialty)
-        setDoctors(data?.doctors || [])
+        if (filters.specialty === "all") {
+          if ((doctorsService as any).getAllDoctors) {
+            const res = await (doctorsService as any).getAllDoctors();
+            setDoctors(res?.doctors || res || []);
+          }
+          setFilters((prev) => ({ ...prev, doctorId: "all" }));
+          return;
+        }
+
+        const res = await doctorsService.filterBySpecialty(filters.specialty);
+        const docs = res?.doctors || [];
+        setDoctors(docs);
+
+        setFilters((prev) => ({ ...prev, doctorId: docs[0]?.id || "" }));
       } catch {
-        MySwal.fire({
-          icon: "error",
-          title: "Error al cargar doctores",
-          text: "Ocurrió un problema al obtener los doctores.",
-          confirmButtonColor: "#2563eb",
-        })
+        setDoctors([]);
       }
-    }
-    loadDoctors()
-  }, [filters.specialty])
+    };
 
-  // ────────────────────────────────
-  // BUSCAR CITAS EXISTENTES
-  // ────────────────────────────────
+    loadDoctors();
+  }, [filters.specialty]);
+
+  // BUSCAR CITAS
   const fetchAppointments = async () => {
-    if (!filters.doctorId) {
-      setAppointments([])
-      return
-    }
-
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await appointmentsService.filterAppointments({
-        doctorId: filters.doctorId,
+      const payload: any = {
         startDate: filters.date,
         endDate: filters.date,
-      })
+      };
 
-      setAppointments(data.appointments || [])
+      if (filters.patientId.trim() !== "") payload.patientId = filters.patientId.trim();
+      if (filters.doctorId !== "all") payload.doctorId = filters.doctorId;
+
+      const data = await appointmentsService.filterAppointments(payload);
+
+      let list: Appointment[] = data.appointments || [];
+
+      if (filters.status !== "all") {
+        list = list.filter((a) => a.status?.toUpperCase() === filters.status.toUpperCase());
+      }
+
+      setAppointments(list);
     } catch {
-      MySwal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudieron obtener las citas del doctor.",
-        confirmButtonColor: "#2563eb",
-      })
+      setAppointments([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  // Autoactualizar al cambiar filtros
   useEffect(() => {
-    if (filters.doctorId && filters.date) {
-      fetchAppointments()
+    fetchAppointments();
+  }, [filters.doctorId, filters.date, filters.patientId, filters.specialty, filters.status]);
+
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // CAMBIAR DOCTOR CON SWEETALERT
+  const handleChangeDoctor = async (appointment: Appointment) => {
+  try {
+    const specialty = filters.specialty;
+
+    // Validar especialidad seleccionada
+    if (!specialty || specialty === "all") {
+      await MySwal.fire({
+        icon: "error",
+        title: "Selecciona una especialidad",
+        text: "Debes elegir una especialidad antes de cambiar el doctor.",
+      });
+      return;
     }
-  }, [filters.doctorId, filters.date])
 
-  // ────────────────────────────────
-  // MANEJO DE INPUTS
-  // ────────────────────────────────
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFilters((prev) => ({ ...prev, [name]: value }))
+    // Obtener doctores de la misma especialidad
+    const res = await doctorsService.filterBySpecialty(specialty);
+    const doctorsSame = res?.doctors || [];
+
+    if (doctorsSame.length === 0) {
+      await MySwal.fire({
+        icon: "info",
+        title: "Sin doctores disponibles",
+        text: "No hay doctores registrados en esta especialidad.",
+      });
+      return;
+    }
+
+    // ------------------------------
+    // 🔥 ALARMA MEJORADA Y ELEGANTE
+    // ------------------------------
+    const { value: newDoctorId } = await MySwal.fire({
+      title: `
+        <div style="font-size: 26px; font-weight: bold; color: #1e40af;">
+          Cambiar Doctor
+        </div>
+      `,
+      html: `
+        <div style="padding: 20px; text-align: left; background: #f8fafc; border-radius: 16px;">
+          <p style="margin-bottom: 10px; font-size: 15px; color:#334155;">
+            Selecciona el nuevo doctor para esta cita:
+          </p>
+
+          <select id="doctorSelect" style="
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            font-size: 15px;
+          ">
+            <option value="">Seleccionar...</option>
+            ${doctorsSame
+              .map((d) => `<option value="${d.id}">${d.fullname}</option>`)
+              .join("")}
+          </select>
+        </div>
+      `,
+      confirmButtonText: "Actualizar",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#2563eb",
+      cancelButtonColor: "#64748b",
+      width: 450,
+      focusConfirm: false,
+
+      preConfirm: () => {
+        const select = document.getElementById("doctorSelect") as HTMLSelectElement;
+        if (!select.value) {
+          MySwal.showValidationMessage("Debes seleccionar un doctor");
+          return false;
+        }
+        return select.value;
+      },
+    });
+
+    if (!newDoctorId) return;
+
+    // ------------------------------
+    // 🔥 LLAMADA REAL AL BACKEND
+    // ------------------------------
+    await appointmentsService.updateDoctor(appointment.id, newDoctorId);
+
+    await MySwal.fire({
+      icon: "success",
+      title: "Doctor actualizado",
+      text: "La cita ha sido reasignada correctamente.",
+      confirmButtonColor: "#2563eb",
+    });
+
+    fetchAppointments();
+  } catch (err) {
+    console.error(err);
+    MySwal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo cambiar el doctor.",
+    });
   }
+};
 
-  // ────────────────────────────────
+
+
+  const getDoctorName = (id?: string) => {
+    const d = doctors.find((x) => x.id === id);
+    return d?.fullname || "Doctor";
+  };
+
+  const statusBadge = (status?: string) => {
+    if (!status) return "bg-gray-100 text-gray-700";
+    const s = status.toUpperCase();
+    if (s === "CANCELLED") return "bg-red-100 text-red-700";
+    if (s === "SCHEDULED" || s === "CONFIRMED") return "bg-green-100 text-green-700";
+    return "bg-gray-100 text-gray-700";
+  };
+
   // RENDER
-  // ────────────────────────────────
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
-          📋 Lista de citas del doctor
+    <div className="flex flex-col items-center bg-gradient-to-b from-blue-50 to-white min-h-screen p-8">
+      <div className="w-full max-w-6xl bg-white p-10 rounded-3xl shadow-2xl border border-gray-100">
+
+        <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
+          🔍 Buscador General de Citas
         </h2>
 
         {/* FILTROS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+
           {/* Especialidad */}
           <div>
-            <label className="block text-sm font-medium mb-1">Especialidad</label>
-            <select
-              name="specialty"
-              value={filters.specialty}
-              onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Seleccione una especialidad</option>
-              {specialties.map((s) => (
-                <option key={s.id} value={s.nombre}>
-                  {s.nombre}
-                </option>
-              ))}
+            <label>Especialidad</label>
+            <select name="specialty" value={filters.specialty} onChange={handleChange} className="w-full p-3 border rounded-xl">
+              <option value="all">Todas</option>
+              {specialties
+                .filter((s) => s.id !== "all")
+                .map((s) => (
+                  <option key={s.id} value={s.nombre}>
+                    {s.nombre}
+                  </option>
+                ))}
             </select>
           </div>
 
           {/* Doctor */}
           <div>
-            <label className="block text-sm font-medium mb-1">Doctor</label>
-            <select
-              name="doctorId"
-              value={filters.doctorId}
-              onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-              disabled={!filters.specialty || doctors.length === 0}
-            >
-              <option value="">
-                {filters.specialty
-                  ? doctors.length > 0
-                    ? "Seleccione un doctor"
-                    : "Sin doctores disponibles"
-                  : "Seleccione una especialidad"}
-              </option>
-              {doctors.map((doc) => (
-                <option key={doc.id} value={doc.id}>
-                  {doc.fullname}
+            <label>Doctor</label>
+            <select name="doctorId" value={filters.doctorId} onChange={handleChange} className="w-full p-3 border rounded-xl">
+              {filters.specialty === "all" && <option value="all">Todos</option>}
+              {doctors.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.fullname}
                 </option>
               ))}
             </select>
@@ -174,83 +274,96 @@ export default function GeneralAppointment() {
 
           {/* Fecha */}
           <div>
-            <label className="block text-sm font-medium mb-1">Fecha</label>
+            <label>Fecha</label>
             <input
               type="date"
               name="date"
               min={today}
               value={filters.date}
-              onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              onChange={handleChange}
+              className="w-full p-3 border rounded-xl"
             />
+          </div>
+
+          {/* Paciente */}
+          <div>
+            <label>ID Paciente</label>
+            <input
+              name="patientId"
+              value={filters.patientId}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-xl"
+            />
+          </div>
+
+          {/* Estado */}
+          <div>
+            <label>Estado</label>
+            <select
+              name="status"
+              value={filters.status}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-xl"
+            >
+              <option value="all">Todos</option>
+              <option value="SCHEDULED">Scheduled</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
           </div>
         </div>
 
         {/* RESULTADOS */}
-        <div className="mt-10">
-          {loading ? (
-            <p className="text-center text-blue-600 font-medium animate-pulse">
-              Cargando citas...
-            </p>
-          ) : appointments.length === 0 ? (
-            <p className="text-center text-gray-500 italic">
-              No hay citas para esta fecha.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {appointments.map((a, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-gray-100 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all text-center"
-                >
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/512/3774/3774299.png"
-                    alt="Doctor"
-                    className="w-20 h-20 rounded-full mx-auto mb-4"
-                  />
-                  <h3 className="text-lg font-semibold text-blue-700 mb-1">
-                    {doctors.find((d) => d.id === filters.doctorId)?.fullname || "Doctor"}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    {filters.specialty || "Especialidad"}
-                  </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {appointments.map((a) => (
+            <div key={a.id} className="p-6 rounded-3xl border shadow-lg bg-white">
 
-                  <div className="flex flex-col items-center gap-2 text-gray-700 mb-4">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="w-4 h-4" />
-                      <span>
-                        {new Date(a.startTime).toLocaleDateString("es-ES", {
-                          weekday: "long",
-                          day: "numeric",
-                          month: "long",
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span className="font-medium">
-                        {new Date(a.startTime).toLocaleTimeString("es-ES", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {new Date(a.endTime).toLocaleTimeString("es-ES", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-gray-600 italic">
-                    Paciente: {a.patientName || "No registrado"}
-                  </p>
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold">{getDoctorName(a.doctorId)}</h3>
+                <div className={`text-sm px-3 py-1 rounded-full ${statusBadge(a.status)}`}>
+                  {a.status}
                 </div>
-              ))}
+              </div>
+
+              <p className="text-sm text-gray-500 mt-1">
+                Paciente: <strong>{a.patientName || "No registrado"}</strong>
+              </p>
+
+              <div className="mt-3 text-gray-600 flex flex-col">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="w-4" />
+                  {new Date(a.startTime).toLocaleDateString("es-ES", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })}
+                </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <Clock className="w-4" />
+                  {new Date(a.startTime).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  -{" "}
+                  {new Date(a.endTime).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
+              </div>
+
+              {/* BOTÓN EDITAR CON SWEETALERT */}
+              <button
+                onClick={() => handleChangeDoctor(a)}
+                className="mt-4 w-full flex items-center justify-center gap-2 px-3 py-2 text-blue-700 bg-blue-100 rounded-full hover:bg-blue-200"
+              >
+                <Pencil className="w-4" /> Editar Doctor
+              </button>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

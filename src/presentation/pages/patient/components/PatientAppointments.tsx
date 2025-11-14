@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Clock, CalendarDays } from "lucide-react";
+import { Clock, CalendarDays, User2, Stethoscope, XCircle } from "lucide-react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { appointmentsService } from "../../../../core/services/appointmentsService";
-import { id } from "date-fns/locale";
 
 const MySwal = withReactContent(Swal);
 
@@ -13,48 +12,34 @@ interface Appointment {
   specialty: string;
   startTime: string;
   endTime: string;
-  status: string; // "CONFIRMED", "PENDING", "CANCELLED"
+  status: string;
 }
 
 export default function PatientAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const today = new Date().toISOString().split("T")[0];
-
-  const [filters, setFilters] = useState({
-    date: today,
-    startTime: "07:00",
-    endTime: "18:00",
-  });
-
   const patientId = "69090372f2a08c7fe006739a";
 
   // ────────────────────────────────
-  // Manejo de filtros
-  // ────────────────────────────────
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // ────────────────────────────────
-  // Obtener citas filtradas
+  // Obtener citas del paciente (excepto CANCELLED)
   // ────────────────────────────────
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const startTimeISO = `${filters.date}T${filters.startTime}:00-05:00`;
-      const endTimeISO = `${filters.date}T${filters.endTime}:00-05:00`;
-
       const { appointments: data } = await appointmentsService.filterAppointments({
         patientId,
-        startTime: startTimeISO,
-        endTime: endTimeISO,
       });
 
-      // Mostrar solo las que NO estén canceladas
-      setAppointments((data || []).filter((appt) => appt.status !== "CANCELLED"));
+      const valid = (data || [])
+        .filter((a) => a.status !== "CANCELLED") // 👈 FILTRO AQUÍ
+        .sort(
+          (a, b) =>
+            new Date(a.startTime).getTime() -
+            new Date(b.startTime).getTime()
+        );
+
+      setAppointments(valid);
     } catch (error) {
       MySwal.fire({
         icon: "error",
@@ -69,17 +54,15 @@ export default function PatientAppointments() {
 
   useEffect(() => {
     fetchAppointments();
-  }, [filters.date, filters.startTime, filters.endTime]);
+  }, []);
 
   // ────────────────────────────────
   // Cancelar cita
   // ────────────────────────────────
   const handleCancelAppointment = async (appointmentId: string) => {
-    console.log("id cita:", appointmentId);
-    
     const result = await MySwal.fire({
       title: "¿Deseas cancelar esta cita?",
-      text: "Esta acción no se puede deshacer",
+      text: "Recuerde que no se puede cancelar cita 30 minutos antes de la misma. Esta acción es PERMANENTE",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -96,7 +79,8 @@ export default function PatientAppointments() {
           title: "Cita cancelada",
           confirmButtonColor: "#2563eb",
         });
-        fetchAppointments(); // Refrescar la lista
+
+        fetchAppointments();
       } catch (error) {
         MySwal.fire({
           icon: "error",
@@ -108,125 +92,95 @@ export default function PatientAppointments() {
     }
   };
 
-  // ────────────────────────────────
-  // Render
-  // ────────────────────────────────
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 p-6">
-      <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
-          📅 Mis citas
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-blue-50 to-white p-6">
+      <div className="w-full max-w-6xl">
+
+        <h2 className="text-3xl font-bold text-center text-blue-700 mb-10 tracking-tight">
+          📅 Mis Citas Médicas
         </h2>
 
-        {/* FILTROS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <label className="block text-sm font-medium mb-1">Fecha</label>
-            <input
-              type="date"
-              name="date"
-              value={filters.date}
-              min={today}
-              onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Hora inicio</label>
-            <input
-              type="time"
-              name="startTime"
-              value={filters.startTime}
-              onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Hora fin</label>
-            <input
-              type="time"
-              name="endTime"
-              value={filters.endTime}
-              onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-
-        {/* LISTA DE CITAS */}
         {loading ? (
           <p className="text-center text-blue-600 font-medium animate-pulse">
             Cargando citas...
           </p>
         ) : appointments.length === 0 ? (
           <p className="text-center text-gray-500 italic">
-            No hay citas disponibles.
+            No tienes citas activas.
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {appointments.map((appt) => (
               <div
                 key={appt.id}
-                className="bg-white border border-gray-100 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all flex flex-col justify-between"
+                className="bg-white shadow-xl border border-gray-100 rounded-3xl p-6 transition-all hover:shadow-2xl hover:-translate-y-1"
               >
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-700 mb-1">
-                    {appt.doctorName}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-2">{appt.specialty}</p>
-
-                  <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-3 bg-green-100 text-green-800">
-                    {appt.status}
-                  </span>
-
-                  <div className="flex flex-col items-center gap-2 text-gray-700 mb-4">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="w-4 h-4" />
-                      <span>
-                        {new Date(appt.startTime).toLocaleDateString("es-ES", {
-                          weekday: "long",
-                          day: "numeric",
-                          month: "long",
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      <span className="font-medium">
-                        {new Date(appt.startTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {new Date(appt.endTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
+                {/* Encabezado */}
+                <div className="flex items-center gap-3 mb-4">
+                  <User2 className="w-8 h-8 text-blue-600" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {appt.doctorName}
+                    </h3>
+                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                      <Stethoscope className="w-4 h-4" />
+                      {appt.specialty}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                
+
+                {/* Fecha y hora */}
+                <div className="bg-blue-50 rounded-xl p-4 mb-4">
+                  <div className="flex items-center gap-2 mb-2 text-gray-700">
+                    <CalendarDays className="w-5 h-5 text-blue-600" />
+                    <span className="capitalize">
+                      {new Date(appt.startTime).toLocaleDateString("es-ES", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                      })}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <Clock className="w-5 h-5 text-blue-600" />
+                    <span className="font-bold">
+                      {new Date(appt.startTime).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      -{" "}
+                      {new Date(appt.endTime).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex gap-3 mt-3">
                   <button
                     onClick={() =>
                       MySwal.fire({
                         icon: "info",
                         title: "Cita seleccionada",
-                        text: `Cita con ${appt.doctorName} a las ${new Date(
-                          appt.startTime
-                        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        text: `Cita con ${appt.doctorName}`,
                         confirmButtonColor: "#2563eb",
                       })
                     }
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-all"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-medium shadow-sm transition-all"
                   >
-                    Ver detalles
+                    Ver Detalles
                   </button>
+
                   <button
                     onClick={() => handleCancelAppointment(appt.id)}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-all"
+                    className="flex items-center justify-center gap-1 flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-medium shadow-sm transition-all"
                   >
+                    <XCircle className="w-4 h-4" />
                     Cancelar
                   </button>
                 </div>
