@@ -18,9 +18,12 @@ const gestionClinicaItems = [
 
 const pacienteItems = [
   { title: "Pacientes", url: "#", icon: User },
-  { title: "Historiales médicos", url: "#", icon: ClipboardPlus },
-  { title: "Proximas citas", url: "/queueDoctor", icon: BookUser },
+  { title: "Historiales médicos", url: "/medicalHistory/list", icon: ClipboardPlus },
+  { title: "Crear historia clínica", url: "/medicalHistory/create", icon: ClipboardPlus },
+  { title: "Próximas citas", url: "/queueDoctor", icon: BookUser },
 ];
+
+
 export default function DoctorSidebar() {
   return (
     <SidebarBase label="Doctor Sidebar">

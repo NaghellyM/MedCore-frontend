@@ -8,6 +8,11 @@ import { MedicalHistoryManagementPage } from "../pages/medicalHistory/pages/medi
 import { CreateDiagnosticPage } from "../pages/medicalHistory/pages/CreateDiagnosticPage";
 import { EditDiagnosticPage } from "../pages/medicalHistory/pages/EditDiagnosticPage";
 import { DiagnosticListPage } from "../pages/medicalHistory/pages/DiagnosticListPage";
+import { 
+    MedicalHistoriesListPageWrapper,
+    PatientMedicalSummaryPageWrapper,
+    MedicalHistoryDetailPageWrapper
+} from "../pages/medicalHistory/pages";
 
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
@@ -20,13 +25,16 @@ export const doctorRoutes: RouteObject = {
                 { path: "DoctorAppointmentsList", element: <DoctorAppointmentsList /> },
                 
                 // Rutas para historias clínicas
-                { path: "medical-history/create", element: <MedicalHistoryManagementPage /> },
-                { path: "medical-history/edit", element: <MedicalHistoryManagementPage /> },
+                { path: "medicalHistory/create", element: <MedicalHistoryManagementPage /> },
+                { path: "medicalHistory/edit", element: <MedicalHistoryManagementPage /> },
+                { path: "medicalHistory/list", element: <MedicalHistoriesListPageWrapper /> },
+                { path: "medicalHistory/patient/:patientId", element: <MedicalHistoryDetailPageWrapper /> },
+                { path: "patient/:patientId/summary", element: <PatientMedicalSummaryPageWrapper /> },
                 
                 // Rutas para diagnósticos
-                { path: "medical-history/:medicalHistoryId/diagnosis", element: <DiagnosticListPage /> },
-                { path: "medical-history/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticPage /> },
-                { path: "medical-history/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticPage /> },
+                { path: "medicalHistory/:medicalHistoryId/diagnosis", element: <DiagnosticListPage /> },
+                { path: "medicalHistory/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticPage /> },
+                { path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticPage /> },
             ],
         },
     ],
