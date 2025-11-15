@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { decodeToken } from '../auth/decodeToken';
+import { decodeToken } from '../../auth/decodeToken';
 
 export const useRedirectByRole = () => {
     const navigate = useNavigate();

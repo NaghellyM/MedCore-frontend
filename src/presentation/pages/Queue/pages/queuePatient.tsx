@@ -15,7 +15,7 @@ export function QueuePatientPage() {
             headerHeightClass="pt-[80px]"
             contentMaxWidthClass="max-w-7xl"
             variant="inset"
-            collapsible="offcanvas"
+            collapsible="icon"
         >
             <div className="w-full max-w-md mx-auto mt-10">
                 <QueuePatientContainer

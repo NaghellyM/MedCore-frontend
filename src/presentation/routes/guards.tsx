@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../core/context/authContext";
 
 
+
 type Role = "admin" | "doctor" | "nurse" | "patient";
 const mapRoleToEnglish = (role: string): Role => {
     const roleMap: Record<string, Role> = {

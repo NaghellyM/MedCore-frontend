@@ -1,7 +1,7 @@
 import React from 'react';
 import FormButton from '../../../components/globals/button';
 import { verifyEmail } from '../../../../core/services/verifyEmailService';
-import { useRedirectByRole } from '../../../../core/hooks/useRedirectByRole';
+import { useRedirectByRole } from '../../../../core/hooks/auth';
 
 interface VerificationFormProps {
     email: string;

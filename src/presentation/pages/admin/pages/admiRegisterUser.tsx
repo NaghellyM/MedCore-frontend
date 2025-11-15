@@ -9,7 +9,7 @@ import type { RegisterUserDto } from "../../../../core/models/user"
 import { validationSchema } from "../../../../core/validators/userSchemaValidator"
 import { UserPlus, ArrowLeft } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { useToast } from "../../../../core/hooks/useToast"
+import { useToast } from "../../../../core/hooks/notifications"
 
 export function AdminRegisterUser() {
   const navigate = useNavigate()

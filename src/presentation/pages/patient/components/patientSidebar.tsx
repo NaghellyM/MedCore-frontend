@@ -1,12 +1,12 @@
 import { SidebarBase } from "../../../components/globals/sidebar/sidebarBase";
 import { SidebarGroupComponent } from "../../../components/globals/sidebar/SidebarGroup";
-import { CalendarCheck, FileHeart, History, Microscope, PillBottle, Settings, User } from "lucide-react";
+import { CalendarCheck, FileHeart, History, Microscope, Settings, User } from "lucide-react";
 
 
 const items = [
     {
         title: "Mis citas",
-        url: "#",
+        url: "/PatientAppointments",
         icon: CalendarCheck,
     },
     {
@@ -18,19 +18,14 @@ const items = [
 
 const infoItems = [
     {
-        title: "Historial clínico",
-        url: "#",
+        title: "Mi historial clínico",
+        url: "/my-medical-history",
         icon: FileHeart,
     },
     {
         title: "Resultados de laboratorio",
         url: "/patientPage",
         icon: Microscope,
-    },
-    {
-        title: "Medicamentos",
-        url: "#",
-        icon: PillBottle,
     },
 ];
 

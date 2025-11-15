@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useToast } from '../useToast';
+import { useToast } from '../notifications';
 
 export interface AsyncOperationOptions {
     loadingMessage?: string;

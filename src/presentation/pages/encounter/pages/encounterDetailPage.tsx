@@ -53,7 +53,7 @@ export default function EncounterDetailPage() {
             showSearch={false}
             headerHeightClass="pt-[80px]"
             variant="inset"
-            collapsible="offcanvas"
+            collapsible="icon"
             mainClassName="pb-10"
         >
             <div className="pt-10 mx-auto max-w-3xl px-4">

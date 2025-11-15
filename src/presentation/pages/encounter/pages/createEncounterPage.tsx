@@ -25,7 +25,7 @@ export default function CreateEncounterPage() {
             showSearch={false}
             headerHeightClass="pt-[80px]"
             variant="inset"
-            collapsible="offcanvas"
+            collapsible="icon"
             mainClassName="pb-10 "
         >
             <div className="justify-center items-center pt-20 ">

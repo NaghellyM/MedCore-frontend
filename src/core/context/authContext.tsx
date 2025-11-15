@@ -2,7 +2,7 @@ import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { initializeAuth, getCurrentUser, logout, login } from "../services/authService";
 import type { AuthContextType } from "../types/authContextTypes";
-import { useToast } from "../hooks/useToast";
+import { useToast } from "../hooks/notifications";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

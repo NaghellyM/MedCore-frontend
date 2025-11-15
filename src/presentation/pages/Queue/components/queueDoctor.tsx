@@ -3,50 +3,12 @@ import { Separator } from "@radix-ui/themes";
 import { Badge } from "../../../components/ui/badge";
 import { cn } from "../../../../core/utils/cn";
 import { Button } from "../../../components/ui/button";
-import { ChevronLeft, SkipForward, Users, Clock, Loader2, AlertCircle } from "lucide-react";
+import { ChevronLeft, SkipForward, Users, Clock } from "lucide-react";
 import { CurrentPatientCard } from "./currentPatientCard";
+import { PatientNameDisplay } from "../../../components/ui/PatientNameDisplay";
 import { humanizeAgo, queueStatusToLabel, queueStatusToVariant } from "../../../../core/utils/format";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
 import type { QueuePatient, QueueItemDTO } from "../../../../core/types/queue";
-
-const PatientNameDisplay = ({ 
-    displayState, 
-    displayText 
-}: { 
-    displayState: 'loading' | 'error' | 'success' | 'fallback';
-    displayText: string;
-}) => {
-    switch (displayState) {
-        case 'loading':
-            return (
-                <span className="flex items-center gap-2 text-slate-600">
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                    <span className="text-sm font-medium">{displayText}</span>
-                </span>
-            );
-        case 'error':
-            return (
-                <span className="flex items-center gap-2 text-red-600">
-                    <AlertCircle className="h-3 w-3" />
-                    <span className="text-sm font-medium">{displayText}</span>
-                </span>
-            );
-        case 'success':
-            return (
-                <span className="text-sm font-medium text-slate-900">
-                    {displayText}
-                </span>
-            );
-        case 'fallback':
-            return (
-                <span className="text-sm font-medium text-slate-600 italic">
-                    {displayText}
-                </span>
-            );
-        default:
-            return <span className="text-sm font-medium text-slate-900">{displayText}</span>;
-    }
-};
 
 const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }) => {
     const { displayState, displayText } = usePatientDisplay(item.patientId);
@@ -60,7 +22,8 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
                 <div className="min-w-0">
                     <PatientNameDisplay 
                         displayState={displayState} 
-                        displayText={displayText} 
+                        displayText={displayText}
+                        className="text-sm font-medium"
                     />
                     <p className="text-xs text-slate-600">
                         Creado: {new Date(item.createdAt).toLocaleString()}

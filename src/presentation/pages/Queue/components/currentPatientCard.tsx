@@ -2,52 +2,14 @@ import { memo } from "react";
 import { cn } from "../../../../core/utils/cn";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
+import { PatientNameDisplay } from "../../../components/ui/PatientNameDisplay";
 import type { CurrentPatientCardProps } from "../../../../core/types/queue";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
 import { formatDateTime, getQueueStatusLabel } from "../../../../core/utils/format";
 import { usePatientActions } from "../../../../core/hooks/queue/usePatientActions";
 import { useRealTimeDuration } from "../../../../core/hooks/queue/useRealTimeDuration";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Clock, CheckCircle, User, Calendar, HeartPlus, Loader2, AlertCircle } from "lucide-react";
-
-const PatientNameDisplay = ({ 
-    displayState, 
-    displayText 
-}: { 
-    displayState: 'loading' | 'error' | 'success' | 'fallback';
-    displayText: string;
-}) => {
-    switch (displayState) {
-        case 'loading':
-            return (
-                <span className="flex items-center gap-2 text-slate-600">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {displayText}
-                </span>
-            );
-        case 'error':
-            return (
-                <span className="flex items-center gap-2 text-red-600">
-                    <AlertCircle className="h-4 w-4" />
-                    {displayText}
-                </span>
-            );
-        case 'success':
-            return (
-                <span className="font-medium text-slate-900">
-                    {displayText}
-                </span>
-            );
-        case 'fallback':
-            return (
-                <span className="text-slate-600 italic">
-                    {displayText}
-                </span>
-            );
-        default:
-            return <span>{displayText}</span>;
-    }
-};
+import { Clock, CheckCircle, User, Calendar, HeartPlus, Loader2 } from "lucide-react";
 
 export const CurrentPatientCard = memo(function CurrentPatientCard({
     patient,

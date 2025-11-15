@@ -7,7 +7,7 @@ export default function DoctorQueuePage() {
     const navigate = useNavigate();
     const { doctorId } = useParams<{ doctorId: string }>();
     
-    const id = doctorId ?? "69069ad1441b83b718aef936";
+    const id = doctorId ?? "6915e81c04aec134a1f67095";
     
     return (
         <DashboardLayout
@@ -16,7 +16,7 @@ export default function DoctorQueuePage() {
             headerHeightClass="pt-[80px]"
             contentMaxWidthClass="max-w-7xl"
             variant="inset"
-            collapsible="offcanvas"
+            collapsible="icon"
         >
             <div className="mx-auto mt-10 px-4">
                 <DoctorQueueContainer

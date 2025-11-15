@@ -5,7 +5,7 @@ import { StateWrapper } from "../../../components/globals/StateComponents";
 import { 
     transformNextPatient
 } from "../../../../core/utils/queueTransformers";
-import { useToast } from "../../../../core/hooks/useToast";
+import { useToast } from "../../../../core/hooks/notifications";
 
 export type QueueDoctorContainerProps = {
     doctorId: string;

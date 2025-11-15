@@ -6,6 +6,7 @@ import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
 import DoctorAppointmentsList from "../pages/doctor/page/DoctorAppointmentsList";
 
 
+
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
     children: [
@@ -15,6 +16,7 @@ export const doctorRoutes: RouteObject = {
                 { path: "doctorPage", element: <DoctorDashboard /> },
                 { path: "queueDoctor", element: <QueueDoctorPage /> },
                 { path: "DoctorAppointmentsList", element: <DoctorAppointmentsList /> },
+                
             ],
         },
     ],
