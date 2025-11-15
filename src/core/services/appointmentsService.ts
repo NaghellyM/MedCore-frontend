@@ -63,7 +63,6 @@ export const appointmentsService = {
         "http://localhost:4001/api/v1/appointments/create",
         data
       )
-
       console.log("✅ Cita creada con éxito:", response.data)
       return response.data
     } catch (error) {

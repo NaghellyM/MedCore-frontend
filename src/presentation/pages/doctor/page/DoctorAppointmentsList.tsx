@@ -10,7 +10,9 @@ interface Appointment {
   id: string;
   startTime: string;
   endTime: string;
-  patientName?: string;
+  patient: {
+    name: string;
+  };
   status?: string;
 }
 
@@ -99,7 +101,7 @@ export default function DoctorAppointmentsList() {
                 </div>
 
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {a.patientName || "Paciente sin nombre"}
+                  {a.patient.name || "Paciente sin nombre"}
                 </h3>
 
                 <div className="flex items-center justify-center gap-2 text-gray-600 mb-1">

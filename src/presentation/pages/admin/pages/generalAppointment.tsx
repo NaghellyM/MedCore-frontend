@@ -17,8 +17,10 @@ interface Doctor {
 interface Appointment {
   id: string;
   doctorId: string;
+  doctor: { name: string; };
   patientId?: string;
   patientName?: string;
+  patient: { name: string; };
   startTime: string;
   endTime: string;
   status?: string;
@@ -217,8 +219,6 @@ export default function GeneralAppointment() {
   }
 };
 
-
-
   const getDoctorName = (id?: string) => {
     const d = doctors.find((x) => x.id === id);
     return d?.fullname || "Doctor";
@@ -319,14 +319,14 @@ export default function GeneralAppointment() {
             <div key={a.id} className="p-6 rounded-3xl border shadow-lg bg-white">
 
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold">{getDoctorName(a.doctorId)}</h3>
+                <h3 className="font-semibold">Dr. {a.doctor.name}</h3>
                 <div className={`text-sm px-3 py-1 rounded-full ${statusBadge(a.status)}`}>
                   {a.status}
                 </div>
               </div>
 
               <p className="text-sm text-gray-500 mt-1">
-                Paciente: <strong>{a.patientName || "No registrado"}</strong>
+                Paciente: <strong>{a.patient.name || "No registrado"}</strong>
               </p>
 
               <div className="mt-3 text-gray-600 flex flex-col">

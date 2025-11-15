@@ -8,7 +8,9 @@ const MySwal = withReactContent(Swal);
 
 interface Appointment {
   id: string;
-  doctorName: string;
+  doctor:{
+    name: string;
+  }
   specialty: string;
   startTime: string;
   endTime: string;
@@ -120,7 +122,7 @@ export default function PatientAppointments() {
                   <User2 className="w-8 h-8 text-blue-600" />
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">
-                      {appt.doctorName}
+                      Dr. {appt.doctor.name}
                     </h3>
                     <div className="flex items-center gap-1 text-sm text-gray-500">
                       <Stethoscope className="w-4 h-4" />
