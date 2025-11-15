@@ -94,12 +94,12 @@ export default function NursesList() {
 
       setNurses(mappedNurses);
     } catch (err: any) {
-      console.error("Error al obtener enfermeros:", err);
       if (err.response?.status === 404) {
         setNurses([]);
         setError(null);
       } else {
         setError("Hubo un problema al cargar los enfermeros.");
+        showError("Error al cargar enfermeros", "No se pudieron obtener los datos de los enfermeros.");
       }
     } finally {
       setLoading(false);
@@ -129,7 +129,6 @@ export default function NursesList() {
       // Use toast for successful CRUD operations (non-blocking feedback)
       success("Enfermero actualizado", "Los datos se actualizaron correctamente");
     } catch (error) {
-      console.error(error);
       // Use toast for CRUD errors (quick feedback)
       showError("Error al actualizar", "No se pudo actualizar el enfermero");
     }
@@ -154,7 +153,6 @@ export default function NursesList() {
         // Use toast for successful deletion feedback (non-blocking)
         success("Enfermero eliminado", "El enfermero fue eliminado correctamente");
       } catch (error) {
-        console.error("Error al eliminar enfermero:", error);
         // Use toast for deletion errors (quick feedback)
         showError("Error al eliminar", "No se pudo eliminar el enfermero. Inténtalo nuevamente");
       }
@@ -190,23 +188,22 @@ export default function NursesList() {
       {/* 🔹 Filtros y búsqueda */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         {[{ label: "Todos", value: "" },
-          { label: "Activos", value: "active" },
-          { label: "Inactivos", value: "inactive" },
-          { label: "Pendientes", value: "pending" }].map((btn) => (
+        { label: "Activos", value: "active" },
+        { label: "Inactivos", value: "inactive" },
+        { label: "Pendientes", value: "pending" }].map((btn) => (
           <button
             key={btn.value}
             onClick={() => handleStatusChange(btn.value as any)}
-            className={`px-4 py-2 rounded-full font-medium shadow transition ${
-              statusFilter === btn.value
+            className={`px-4 py-2 rounded-full font-medium shadow transition ${statusFilter === btn.value
                 ? btn.value === "active"
                   ? "bg-green-600 text-white shadow-md scale-105"
                   : btn.value === "inactive"
-                  ? "bg-red-600 text-white shadow-md scale-105"
-                  : btn.value === "pending"
-                  ? "bg-yellow-500 text-white shadow-md scale-105"
-                  : "bg-blue-600 text-white shadow-md scale-105"
+                    ? "bg-red-600 text-white shadow-md scale-105"
+                    : btn.value === "pending"
+                      ? "bg-yellow-500 text-white shadow-md scale-105"
+                      : "bg-blue-600 text-white shadow-md scale-105"
                 : "bg-gray-200 hover:bg-gray-300"
-            }`}
+              }`}
           >
             {btn.label}
           </button>

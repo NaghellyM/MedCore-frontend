@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { usePatientMedicalHistory } from "../../../../core/hooks/MedicalHistory/useMedicalHistory";
 import { MedicalHistoryView } from "../components/MedicalHistoryView";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
-import { PatientNameDisplay } from "../../../components/ui/PatientNameDisplay";
+import { PatientNameDisplay } from "../../../components/globals/PatientNameDisplay";
 
 export const ViewPatientMedicalHistoryPage: React.FC = () => {
     const { patientId } = useParams<{ patientId: string }>();

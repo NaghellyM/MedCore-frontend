@@ -40,8 +40,6 @@ export const doctorsService = {
   // Filtrar por especialidad con paginación
   async filterBySpecialty(specialty: string): Promise<DoctorResponse> {
     try {
-      console.log("Especialidad:", specialty)
-
       const response = await http.get(
         `${Url}/users/doctors/by-specialty?specialty=${encodeURIComponent(specialty)}`
       )
@@ -52,7 +50,6 @@ export const doctorsService = {
         currentPage: response.data?.currentPage || 1,
       }
     } catch (error) {
-      console.error("Error al obtener doctores por especialidad:", error)
       return { users: [], totalPages: 1, currentPage: 1 }
     }
   },
@@ -74,7 +71,6 @@ export const doctorsService = {
         currentPage: response.data?.currentPage || 1,
       }
     } catch (err) {
-      console.error("❌ Error fetching doctors by status:", err)
       return { users: [], totalPages: 1, currentPage: 1 }
     }
   },
@@ -85,43 +81,33 @@ export const doctorsService = {
     return response.data?.especialidades || []
   },
 
-async deleteDoctor(id: string): Promise<void> {
-  try {
-    const response = await http.delete(`${ApiUrls.msSecurity}/users/${id}`)
-    console.log(`✅ Doctor con ID ${id} eliminado correctamente.`)
-    return response.data
-  } catch (error: any) {
-    if (error.response?.status === 404) {
-      console.warn(`⚠️ El doctor con ID ${id} ya no existe (404 ignorado).`)
-      return
+  async deleteDoctor(id: string): Promise<void> {
+    try {
+      const response = await http.delete(`${ApiUrls.msSecurity}/users/${id}`)
+      return response.data
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        return
+      }
     }
-  }
-},
+  },
 
 
   // En doctorsService.ts
-async updateDoctor(id: string, data: any): Promise<any> {
+  async updateDoctor(id: string, data: any): Promise<any> {
+    try {
+      const response = await http.put(`${ApiUrls.msSecurity}/users/doctors/${id}`, data)
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  },
 
-  console.log("este es la data que envio", data);
-  
-
-  try {
-    const response = await http.put(`${ApiUrls.msSecurity}/users/doctors/${id}`, data)
-    console.log(`✅ Doctor con ID ${id} actualizado correctamente.`)
+  // Obtener doctor por ID
+  async getDoctorById(id: string) {
+    const response = await http.get(`${ApiUrls.msSecurity}/users/${id}`)
     return response.data
-  } catch (error) {
-    console.error(`❌ Error al actualizar el doctor con ID ${id}:`, error)
-    throw error
-  }
-},
-
-// Obtener doctor por ID
-async getDoctorById(id: string) {
-  console.log("este es el id mamastroso", id);
-  
-  const response = await http.get(`${ApiUrls.msSecurity}/users/${id}`)
-  return response.data
-},
+  },
 
 
 }

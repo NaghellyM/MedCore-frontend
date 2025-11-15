@@ -65,7 +65,15 @@ export default function DoctorsList() {
         const response = await doctorsService.getSpecialties()
         setSpecialties(response || [])
       } catch (error) {
-        console.error("❌ Error al cargar especialidades:", error)
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al cargar especialidades',
+          text: 'No se pudieron cargar las especialidades médicas.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        })
       }
     }
     loadSpecialties()
@@ -120,8 +128,16 @@ export default function DoctorsList() {
 
       setDoctors(mappedDoctors)
     } catch (err) {
-      console.error("Error al obtener doctores:", err)
       setError("No se pudieron cargar los doctores.")
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al cargar doctores',
+        text: 'No se pudieron obtener los datos de los doctores.',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      })
     } finally {
       setLoading(false)
     }
@@ -133,27 +149,27 @@ export default function DoctorsList() {
 
   // 🔹 Eliminar doctor
   const handleDeleteDoctor = async (id: string) => {
-  Swal.fire({
-    title: '¿Estás seguro?',
-    text: 'Esta acción eliminará permanentemente el doctor.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        await doctorsService.deleteDoctor(id)
-        // 🔥 Actualizar lista local:
-        setDoctors((prev) => prev.filter((doc) => doc.id !== id))
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción eliminará permanentemente el doctor.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await doctorsService.deleteDoctor(id)
+          // 🔥 Actualizar lista local:
+          setDoctors((prev) => prev.filter((doc) => doc.id !== id))
 
-        Swal.fire('Eliminado', 'El doctor fue eliminado correctamente.', 'success')
-      } catch (error) {
-        Swal.fire('Error', 'No se pudo eliminar el doctor.', 'error')
+          Swal.fire('Eliminado', 'El doctor fue eliminado correctamente.', 'success')
+        } catch (error) {
+          Swal.fire('Error', 'No se pudo eliminar el doctor.', 'error')
+        }
       }
-    }
-  })
-}
+    })
+  }
 
 
 
@@ -199,41 +215,37 @@ export default function DoctorsList() {
       <div className="flex flex-wrap gap-3 mb-6 items-center">
         <button
           onClick={() => handleStatusChange("")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === ""
-              ? "bg-blue-600 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
+          className={`px-4 py-2 rounded-full font-medium shadow transition ${statusFilter === ""
+            ? "bg-blue-600 text-white shadow-md scale-105"
+            : "bg-gray-200 hover:bg-gray-300"
+            }`}
         >
           Todos
         </button>
         <button
           onClick={() => handleStatusChange("active")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === "active"
-              ? "bg-green-600 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
+          className={`px-4 py-2 rounded-full font-medium shadow transition ${statusFilter === "active"
+            ? "bg-green-600 text-white shadow-md scale-105"
+            : "bg-gray-200 hover:bg-gray-300"
+            }`}
         >
           Activos
         </button>
         <button
           onClick={() => handleStatusChange("inactive")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === "inactive"
-              ? "bg-red-600 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
+          className={`px-4 py-2 rounded-full font-medium shadow transition ${statusFilter === "inactive"
+            ? "bg-red-600 text-white shadow-md scale-105"
+            : "bg-gray-200 hover:bg-gray-300"
+            }`}
         >
           Inactivos
         </button>
         <button
           onClick={() => handleStatusChange("pending")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === "pending"
-              ? "bg-yellow-500 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
+          className={`px-4 py-2 rounded-full font-medium shadow transition ${statusFilter === "pending"
+            ? "bg-yellow-500 text-white shadow-md scale-105"
+            : "bg-gray-200 hover:bg-gray-300"
+            }`}
         >
           Pendientes
         </button>

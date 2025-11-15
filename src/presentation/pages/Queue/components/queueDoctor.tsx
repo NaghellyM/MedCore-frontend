@@ -5,7 +5,7 @@ import { cn } from "../../../../core/utils/cn";
 import { Button } from "../../../components/ui/button";
 import { ChevronLeft, SkipForward, Users, Clock } from "lucide-react";
 import { CurrentPatientCard } from "./currentPatientCard";
-import { PatientNameDisplay } from "../../../components/ui/PatientNameDisplay";
+import { PatientNameDisplay } from "../../../components/globals/PatientNameDisplay";
 import { humanizeAgo, queueStatusToLabel, queueStatusToVariant } from "../../../../core/utils/format";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
 import type { QueuePatient, QueueItemDTO } from "../../../../core/types/queue";

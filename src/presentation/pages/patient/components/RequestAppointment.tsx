@@ -35,12 +35,7 @@
     // ID del paciente (ejemplo: reemplaza con tu sesión o estado global)
     const patientId = "69090372f2a08c7fe006739a"
 
-    // Función auxiliar para formatear la fecha local sin desfase
-    function formatLocalDate(dateString: string) {
-      const [year, month, day] = dateString.split("-").map(Number)
-      const localDate = new Date(year, month - 1, day, 0, 0, 0)
-      return localDate.toISOString().split("T")[0]
-    }
+
 
     // ────────────────────────────────
     // CARGAR ESPECIALIDADES
@@ -70,7 +65,7 @@
         if (!filters.specialty) return
         try {
           const data = await doctorsService.filterBySpecialty(filters.specialty)
-          setDoctors(data?.doctors || [])
+          setDoctors(data?.users || [])
         } catch {
           MySwal.fire({
             icon: "error",

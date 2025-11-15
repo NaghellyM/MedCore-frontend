@@ -1,5 +1,5 @@
-import { Controller } from "react-hook-form"
 import { motion } from "framer-motion"
+import { FormField, PasswordField, DynamicSelectField } from "../../../components/ui"
 
 interface Props {
   control: any
@@ -20,211 +20,106 @@ export function UserForm({
   departments,
   selectedRole,
 }: Props) {
+  const roleOptions = [
+    { name: "Paciente", value: "PACIENTE" },
+    { name: "Médico", value: "MEDICO" },
+    { name: "Enfermera", value: "ENFERMERA" },
+  ]
+
+  const specialtyOptions = specialties.map(sp => ({
+    id: sp.id,
+    name: sp.name,
+    value: sp.name
+  }))
+
+  const departmentOptions = departments.map(dept => ({
+    name: dept,
+    value: dept
+  }))
+
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-4 text-left">
-      {/* Nombre completo */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Nombre completo
-        </label>
-        <Controller
-          name="fullname"
-          control={control}
-          render={({ field }) => (
-            <input
-              {...field}
-              type="text"
-              placeholder="Ej: Dr. Juan Pérez"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          )}
-        />
-        {errors.fullname && (
-          <p className="text-red-500 text-sm mt-1">{errors.fullname.message}</p>
+      <FormField
+        name="fullname"
+        label="Nombre completo"
+        placeholder="Ej: Dr. Juan Pérez"
+        control={control}
+        error={errors.fullname}
+      />
+
+      <FormField
+        name="identificacion"
+        label="Identificación"
+        placeholder="Ej: 1002389234"
+        control={control}
+        error={errors.identificacion}
+      />
+
+      <FormField
+        name="email"
+        label="Email"
+        type="email"
+        placeholder="usuario@correo.com"
+        control={control}
+        error={errors.email}
+      />
+
+      <PasswordField
+        name="current_password"
+        label="Contraseña"
+        placeholder="********"
+        control={control}
+        error={errors.current_password}
+      />
+
+      <FormField
+        name="date_of_birth"
+        label="Fecha de nacimiento"
+        type="date"
+        control={control}
+        error={errors.date_of_birth}
+      />
+
+      <FormField
+        name="role"
+        label="Rol"
+        control={control}
+        error={errors.role}
+      >
+        {(field) => (
+          <select
+            {...field}
+            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            {roleOptions.map((role) => (
+              <option key={role.value} value={role.value}>
+                {role.name}
+              </option>
+            ))}
+          </select>
         )}
-      </div>
+      </FormField>
 
-      {/* Identificación */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Identificación
-        </label>
-        <Controller
-          name="identificacion"
-          control={control}
-          render={({ field }) => (
-            <input
-              {...field}
-              type="text"
-              placeholder="Ej: 1002389234"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          )}
-        />
-        {errors.identificacion && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.identificacion.message}
-          </p>
-        )}
-      </div>
+      <DynamicSelectField
+        name="especializacion"
+        label="Especialización"
+        options={specialtyOptions}
+        placeholder="Selecciona una especialización"
+        control={control}
+        error={errors.especializacion}
+        isVisible={selectedRole === "MEDICO"}
+      />
 
-      {/* Email */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <input
-              {...field}
-              type="email"
-              placeholder="usuario@correo.com"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          )}
-        />
-        {errors.email && (
-          <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-        )}
-      </div>
+      <DynamicSelectField
+        name="departamento"
+        label="Departamento"
+        options={departmentOptions}
+        placeholder="Selecciona un departamento"
+        control={control}
+        error={errors.departamento}
+        isVisible={selectedRole === "ENFERMERA"}
+      />
 
-      {/* Contraseña */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Contraseña
-        </label>
-        <Controller
-          name="current_password"
-          control={control}
-          render={({ field }) => (
-            <input
-              {...field}
-              type="password"
-              placeholder="********"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          )}
-        />
-        {errors.current_password && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.current_password.message}
-          </p>
-        )}
-      </div>
-
-      {/* Fecha de nacimiento */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Fecha de nacimiento
-        </label>
-        <Controller
-          name="date_of_birth"
-          control={control}
-          render={({ field }) => (
-            <input
-              {...field}
-              type="date"
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          )}
-        />
-        {errors.date_of_birth && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.date_of_birth.message}
-          </p>
-        )}
-      </div>
-
-      {/* Rol */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Rol</label>
-        <Controller
-          name="role"
-          control={control}
-          render={({ field }) => (
-            <select
-              {...field}
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="PACIENTE">Paciente</option>
-              <option value="MEDICO">Médico</option>
-              <option value="ENFERMERA">Enfermera</option>
-            </select>
-          )}
-        />
-      </div>
-
-      {/* Campo dinámico para médicos */}
-      {selectedRole === "MEDICO" && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          transition={{ duration: 0.3 }}
-        >
-          <label className="block text-sm font-medium text-gray-700">
-            Especialización
-          </label>
-          <Controller
-            name="especializacion"
-            control={control}
-            render={({ field }) => (
-              <select
-                {...field}
-                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              >
-                <option value="">Selecciona una especialización</option>
-                {specialties.map((sp) => (
-                  <option key={sp.id} value={sp.name}>
-                    {sp.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          />
-          {errors.especializacion && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.especializacion.message}
-            </p>
-          )}
-        </motion.div>
-      )}
-
-      {/* Campo dinámico para enfermeras */}
-      {selectedRole === "ENFERMERA" && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <label className="block text-sm font-medium text-gray-700">
-            Departamento
-          </label>
-          <Controller
-            name="departamento"
-            control={control}
-            render={({ field }) => (
-              <select
-                {...field}
-                className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              >
-                <option value="">Selecciona un departamento</option>
-                {departments.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
-                  </option>
-                ))}
-              </select>
-            )}
-          />
-          {errors.departamento && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.departamento.message}
-            </p>
-          )}
-        </motion.div>
-      )}
-
-      {/* Botón */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

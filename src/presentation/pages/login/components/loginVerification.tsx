@@ -12,7 +12,7 @@ interface VerificationFormProps {
 
 const VerificationForm: React.FC<VerificationFormProps> = ({ email, code, setCode }) => {
     const redirectByRole = useRedirectByRole();
-    
+
     const onVerify = async () => {
         try {
             const res = await verifyEmail(email, code);
@@ -31,7 +31,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ email, code, setCod
                 Swal.fire({
                     icon: 'error',
                     title: 'Error de verificación',
-                    text: 'Respuesta inválida del servidor'
+                    text: 'Codigo inválido o expirado. Por favor, intenta de nuevo.'
                 });
             }
         } catch (err: any) {
@@ -54,7 +54,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ email, code, setCod
                 className="mt-1 p-2 w-full border rounded-md"
                 placeholder="Ingresa el código enviado a tu correo"
             />
-            <FormButton label="Verificar código" onClick={onVerify} type='button'/>
+            <FormButton label="Verificar código" onClick={onVerify} type='button' />
         </div>
     );
 };

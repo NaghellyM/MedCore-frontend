@@ -55,9 +55,9 @@ const Form: React.FC = () => {
     try {
       const res: any = await loginUser({ email: data.email, password: data.password });
 
-      
+
       if (res?.message && String(res.message).toLowerCase().includes("email")) {
-        
+
         navigate(`/verify?email=${encodeURIComponent(data.email)}`, {
           replace: true,
           state: { email: data.email },
@@ -67,31 +67,30 @@ const Form: React.FC = () => {
 
       const redirect = params.get('redirect');
       if (redirect && redirect !== '/login') {
-        
+
         navigate(redirect, { replace: true });
         return;
       }
 
-      
+
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const role: Role = mapRoleToEnglish(user?.role || '');
       goToRoleHome(role);
 
     } catch (err: any) {
       let errorMessage = err?.response?.data?.message || err?.message || String(err) || "Error al iniciar sesión";
-      
-      // Change various forms of "invalid credentials" to "Usuario o contraseña incorrecta"
-      if (errorMessage.toLowerCase().includes('credenciales inválidas') || 
-          errorMessage.toLowerCase().includes('credenciales invalidas') ||
-          errorMessage.toLowerCase().includes('invalid credentials') ||
-          errorMessage.toLowerCase().includes('credenciales incorrectas')) {
+
+      if (errorMessage.toLowerCase().includes('credenciales inválidas') ||
+        errorMessage.toLowerCase().includes('credenciales invalidas') ||
+        errorMessage.toLowerCase().includes('invalid credentials') ||
+        errorMessage.toLowerCase().includes('credenciales incorrectas')) {
         errorMessage = "Usuario o contraseña incorrecta";
       }
-      
-      Swal.fire({ 
-        icon: 'error', 
-        title: 'Error de autenticación', 
-        text: errorMessage 
+
+      Swal.fire({
+        icon: 'error',
+        title: 'No se pudo iniciar sesión',
+        text: errorMessage
       });
     }
   };

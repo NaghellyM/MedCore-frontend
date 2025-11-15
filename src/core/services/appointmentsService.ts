@@ -36,7 +36,6 @@ export const appointmentsService = {
       const response = await httpClinical.get(
         `${appointmentsUrl}/filter?${query.toString()}`
       );
-      console.log("📅 Citas filtradas:", response.data);
 
       return {
         appointments: response.data?.appointments || [],
@@ -45,7 +44,6 @@ export const appointmentsService = {
         currentPage: response.data?.currentPage || 1,
       };
     } catch (error) {
-      console.error("❌ Error al filtrar citas:", error);
       throw error;
     }
   },
@@ -56,18 +54,14 @@ export const appointmentsService = {
     doctorId: string;
     startTime: string;
   }) {
-    console.log("digame que le mando:", data);
-
     try {
       const response = await httpClinical.post(
         `${appointmentsUrl}/create`,
         data
       );
 
-      console.log("✅ Cita creada con éxito:", response.data);
       return response.data;
     } catch (error) {
-      console.error("❌ Error al crear cita:", error);
       throw error;
     }
   },
@@ -78,10 +72,8 @@ export const appointmentsService = {
       const response = await httpClinical.patch(
         `${appointmentsUrl}/${appointmentId}/cancel`
       );
-      console.log("✅ Cita cancelada con éxito:", response.data);
       return response.data;
     } catch (error) {
-      console.error("❌ Error al cancelar cita:", error);
       throw error;
     }
   },

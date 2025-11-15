@@ -2,7 +2,7 @@ import { memo } from "react";
 import { cn } from "../../../../core/utils/cn";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
-import { PatientNameDisplay } from "../../../components/ui/PatientNameDisplay";
+import { PatientNameDisplay } from "../../../components/globals/PatientNameDisplay";
 import type { CurrentPatientCardProps } from "../../../../core/types/queue";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
 import { formatDateTime, getQueueStatusLabel } from "../../../../core/utils/format";
