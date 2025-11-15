@@ -1,7 +1,7 @@
 import Papa, { type ParseResult } from "papaparse";
 import * as Yup from "yup";
 import { userCsvSchema } from "./userCsvSchema";
-import { type ImportError } from "../types/userCsvTypes";
+import type { ImportError } from "../types/user";
 
 export type UserCsv = Yup.InferType<typeof userCsvSchema>;
 

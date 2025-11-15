@@ -1,4 +1,4 @@
-import type { TokenPayload } from "../types/tokenTypes";
+import type { TokenPayload } from "../types/auth";
 
 export const isExpired = (p?: Pick<TokenPayload, "exp"> | null) =>
 !p || p.exp * 1000 <= Date.now();

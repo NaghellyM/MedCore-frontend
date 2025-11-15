@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import type { TokenPayload } from "../types/tokenTypes";
+import type { TokenPayload } from "../types/auth";
 import type { ITokenDecoder, ISafeTokenDecoder } from "./tokenDecoder";
 
 export class JwtTokenDecoder

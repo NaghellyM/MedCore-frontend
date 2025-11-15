@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { registerUser } from '../../../core/services/patientService'
+import { registerUser } from '../../services/authService'
 import { validationSchema } from '../../../core/validators/userSchemaValidator'
 import { useToast } from '../notifications'
 import type { RegisterUserDto } from '../../../core/models/user'

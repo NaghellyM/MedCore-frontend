@@ -1,4 +1,4 @@
-import type { TokenPayload } from "../types/tokenTypes";
+import type { TokenPayload } from "../types/auth";
 
 export interface ITokenDecoder<T = TokenPayload> {
 decode(token: string): T;

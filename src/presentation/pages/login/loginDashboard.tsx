@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { loginSchema } from '../../../core/validators/userLoginValidator';
 import { useAuth } from '../../../core/context/authContext';
-import type { IFormInput } from '../../../core/types/loginTypes';
+import type { IFormInput } from "../../../core/types/auth";
 
 import FormInput from '../../components/globals/input';
 import FormButton from '../../components/globals/button';

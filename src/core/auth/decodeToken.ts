@@ -1,6 +1,6 @@
 // core/auth/decodeToken.ts
 import { JwtTokenDecoder } from "./jwtTokenDecoder";
-import type { TokenPayload } from "../types/tokenTypes";
+import type { TokenPayload } from "../types/auth";
 
 const decoder = new JwtTokenDecoder();
 
