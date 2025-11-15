@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import FormButton from '../../../components/globals/button';
 import { verifyEmail } from '../../../../core/services/verifyEmailService';
 import { useRedirectByRole } from '../../../../core/hooks/auth';
@@ -18,13 +19,28 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ email, code, setCod
             if (res && res.accessToken && res.refreshToken) {
                 localStorage.setItem("accessToken", res.accessToken);
                 localStorage.setItem("refreshToken", res.refreshToken);
+                await Swal.fire({
+                    icon: 'success',
+                    title: '¡Verificación exitosa!',
+                    text: 'Tu cuenta ha sido verificada correctamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 redirectByRole(res.accessToken);
             } else {
-                alert("Respuesta inválida del servidor");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de verificación',
+                    text: 'Respuesta inválida del servidor'
+                });
             }
         } catch (err: any) {
             const errorMessage = err?.message || err?.toString() || "Error al verificar el código";
-            alert(errorMessage);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de verificación',
+                text: errorMessage
+            });
         }
     };
 

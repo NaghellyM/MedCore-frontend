@@ -78,8 +78,21 @@ const Form: React.FC = () => {
       goToRoleHome(role);
 
     } catch (err: any) {
-      const errorMessage = err?.message || String(err) || "Error al iniciar sesión";
-      Swal.fire({ icon: 'warning', title: '', text: errorMessage });
+      let errorMessage = err?.response?.data?.message || err?.message || String(err) || "Error al iniciar sesión";
+      
+      // Change various forms of "invalid credentials" to "Usuario o contraseña incorrecta"
+      if (errorMessage.toLowerCase().includes('credenciales inválidas') || 
+          errorMessage.toLowerCase().includes('credenciales invalidas') ||
+          errorMessage.toLowerCase().includes('invalid credentials') ||
+          errorMessage.toLowerCase().includes('credenciales incorrectas')) {
+        errorMessage = "Usuario o contraseña incorrecta";
+      }
+      
+      Swal.fire({ 
+        icon: 'error', 
+        title: 'Error de autenticación', 
+        text: errorMessage 
+      });
     }
   };
 

@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from "lucide-react"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
+import { toast } from "sonner"
 
 const MySwal = withReactContent(Swal)
 
@@ -84,12 +85,10 @@ export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
       const { identificacion, ...dataToSend } = formValues
 
       await onEdit({ ...nurse, ...dataToSend })
-      MySwal.fire({
-        icon: "success",
-        title: "Actualizado",
-        text: "La enfermera fue actualizada correctamente.",
-        timer: 1500,
-        showConfirmButton: false,
+      // Use toast for successful CRUD operations (non-blocking feedback) 
+      toast.success("Enfermera actualizada", {
+        description: "Los datos fueron actualizados correctamente",
+        duration: 4000
       })
     }
   }
@@ -107,7 +106,11 @@ export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
 
     if (result.isConfirmed) {
       await onDelete(nurse.id)
-      MySwal.fire("Eliminado", "La enfermera fue eliminada correctamente.", "success")
+      // Use toast for successful deletion (non-blocking feedback)
+      toast.success("Enfermera eliminada", {
+        description: "La enfermera fue eliminada correctamente",
+        duration: 4000  
+      })
     }
   }
 

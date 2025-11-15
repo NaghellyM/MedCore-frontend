@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from "lucide-react"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { doctorsService } from "../../../../core/services/doctorsService"
+import { toast } from "sonner"
 
 const MySwal = withReactContent(Swal)
 
@@ -32,9 +33,9 @@ export default function DoctorCard({ doctor, onDelete, onUpdate }: DoctorCardPro
     ACTIVE: { text: "Activo", color: "bg-green-100 text-green-700 border-green-300" },
     INACTIVE: { text: "Inactivo", color: "bg-red-100 text-red-700 border-red-300" },
     PENDING: { text: "Pendiente", color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
-  }
+  } as const
 
-  const { text, color } = statusConfig[normalizedStatus] || statusConfig.INACTIVE
+  const { text, color } = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.INACTIVE
 
   const gender = Math.random() > 0.5 ? "boy" : "girl"
   const avatarUrl =
@@ -116,12 +117,20 @@ export default function DoctorCard({ doctor, onDelete, onUpdate }: DoctorCardPro
         // 🔹 Llamada actualizada al servicio
         await doctorsService.updateDoctor(doctor.id, formValues)
 
-        MySwal.fire("Actualizado", "Los datos del doctor fueron actualizados correctamente.", "success")
+        // Use toast for successful CRUD operations (non-blocking feedback)
+        toast.success("Doctor actualizado", {
+          description: "Los datos del doctor fueron actualizados correctamente",
+          duration: 4000
+        })
         onUpdate()
       }
     } catch (error) {
       console.error("Error al editar doctor:", error)
-      MySwal.fire("Error", "No se pudo cargar o actualizar el doctor.", "error")
+      // Use toast for CRUD errors (quick feedback)
+      toast.error("Error al actualizar", {
+        description: "No se pudo cargar o actualizar el doctor",
+        duration: 6000
+      })
     }
   }
 

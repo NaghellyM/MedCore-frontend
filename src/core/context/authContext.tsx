@@ -2,14 +2,13 @@ import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { initializeAuth, getCurrentUser, logout, login } from "../services/authService";
 import type { AuthContextType } from "../types/authContextTypes";
-import { useToast } from "../hooks/notifications";
+import { toast } from "sonner";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const { success, error: showError } = useToast();
     const [authState, setAuthState] = useState<any>({
         isAuthenticated: false,
         user: null,
@@ -52,7 +51,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 loading: false,
                 error: null,
             });
-            success("¡Bienvenido!", `Hola ${currentUser?.fullname }`);
+            
+            // Show success toast for login (non-blocking feedback)
+            toast.success("¡Bienvenido!", {
+                description: `Hola ${currentUser?.fullname}`,
+                duration: 3000,
+            });
+            
             return response;
         } catch (error: any) {
             setAuthState({
@@ -61,8 +66,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 loading: false,
                 error: "Login failed",
             });
-            showError("Error de autenticación", 
-                error.response?.data?.message || error.message || "Credenciales inválidas");
+            // Don't show the error message here to avoid duplicates
+            // Let the calling component handle the error display
             throw error;
         }
     };
@@ -74,7 +79,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             loading: false,
             error: null,
         });
-        success("Sesión cerrada", "Has cerrado sesión exitosamente");
+        
+        // Show success toast for logout (non-blocking feedback)
+        toast.success("Sesión cerrada", {
+            description: "Has cerrado sesión exitosamente",
+            duration: 3000,
+        });
+        
         window.location.href = "/";
     };
     const refreshUser = async () => {

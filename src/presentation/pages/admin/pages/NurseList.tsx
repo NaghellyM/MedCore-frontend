@@ -4,6 +4,7 @@ import { nursesService } from "../../../../core/services/nursesService";
 import { Search, ArrowLeftCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useToast } from "../../../../core/hooks/notifications";
 
 interface NurseApi {
   id: string;
@@ -27,6 +28,7 @@ export default function NursesList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const navigate = useNavigate();
+  const { success, error: showError } = useToast();
 
   // 🔹 Normalizar status
   const normalizeStatus = (status?: string): "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN" => {
@@ -124,20 +126,12 @@ export default function NursesList() {
         prev.map((n) => (n.id === updatedNurse.id ? updatedNurse : n))
       );
 
-      Swal.fire({
-        icon: "success",
-        title: "Actualizado",
-        text: "El enfermero fue actualizado correctamente.",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      // Use toast for successful CRUD operations (non-blocking feedback)
+      success("Enfermero actualizado", "Los datos se actualizaron correctamente");
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo actualizar el enfermero",
-      });
+      // Use toast for CRUD errors (quick feedback)
+      showError("Error al actualizar", "No se pudo actualizar el enfermero");
     }
   };
 
@@ -157,20 +151,12 @@ export default function NursesList() {
         await nursesService.deleteNurse(id);
         setNurses((prev) => prev.filter((n) => n.id !== id));
 
-        Swal.fire({
-          title: "Eliminado",
-          text: "El enfermero fue eliminado correctamente.",
-          icon: "success",
-          timer: 1800,
-          showConfirmButton: false,
-        });
+        // Use toast for successful deletion feedback (non-blocking)
+        success("Enfermero eliminado", "El enfermero fue eliminado correctamente");
       } catch (error) {
         console.error("Error al eliminar enfermero:", error);
-        Swal.fire({
-          title: "Error",
-          text: "No se pudo eliminar el enfermero. Inténtalo nuevamente.",
-          icon: "error",
-        });
+        // Use toast for deletion errors (quick feedback)
+        showError("Error al eliminar", "No se pudo eliminar el enfermero. Inténtalo nuevamente");
       }
     }
   };

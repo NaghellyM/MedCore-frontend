@@ -3,6 +3,7 @@ import FormButton from '../../../components/globals/button';
 import { verifyEmail, requestVerificationCode } from '../../../../core/services/verifyEmailService';
 import { useAuth } from '../../../../core/context/authContext';
 import Swal from 'sweetalert2';
+import { toast } from 'sonner';
 
 type Props = {
     initialEmail?: string;
@@ -26,7 +27,11 @@ const VerifyEmailCard: React.FC<Props> = ({ initialEmail, initialVerified }) => 
             });
             setBusy(true);
             await requestVerificationCode(email);
-            alert('Te enviamos un código a tu correo.');
+            // Use toast for informational feedback (non-blocking)
+            toast.success('¡Código enviado!', {
+                description: 'Te enviamos un código a tu correo',
+                duration: 4000
+            });
             setCooldown(60);
             const t = setInterval(() => setCooldown((s) => {
                 if (s <= 1) { clearInterval(t); return 0; }
