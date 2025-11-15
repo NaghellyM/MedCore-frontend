@@ -4,7 +4,7 @@ import { getCurrentUser } from "../../services/authService";
 import type {
     PatientMedicalHistoryResponse,
     MedicalHistory,
-} from "../../types/medicalHistory";
+} from "../../types/medicalHistory/index";
 
 interface UsePatientMedicalHistoryOptions {
     enabled?: boolean;

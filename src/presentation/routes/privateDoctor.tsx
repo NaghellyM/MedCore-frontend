@@ -5,6 +5,9 @@ import { DoctorDashboard } from "../pages/doctor/doctorDashboard";
 import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
 import DoctorAppointmentsList from "../pages/doctor/page/DoctorAppointmentsList";
 import { MedicalHistoryManagementPage } from "../pages/medicalHistory/pages/medicalHistoryManagementPage";
+import { CreateDiagnosticPage } from "../pages/medicalHistory/pages/CreateDiagnosticPage";
+import { EditDiagnosticPage } from "../pages/medicalHistory/pages/EditDiagnosticPage";
+import { DiagnosticListPage } from "../pages/medicalHistory/pages/DiagnosticListPage";
 
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
@@ -19,6 +22,11 @@ export const doctorRoutes: RouteObject = {
                 // Rutas para historias clínicas
                 { path: "medical-history/create", element: <MedicalHistoryManagementPage /> },
                 { path: "medical-history/edit", element: <MedicalHistoryManagementPage /> },
+                
+                // Rutas para diagnósticos
+                { path: "medical-history/:medicalHistoryId/diagnosis", element: <DiagnosticListPage /> },
+                { path: "medical-history/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticPage /> },
+                { path: "medical-history/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticPage /> },
             ],
         },
     ],

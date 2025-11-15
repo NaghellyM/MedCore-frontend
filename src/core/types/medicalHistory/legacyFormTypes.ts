@@ -1,3 +1,12 @@
+/**
+ * TIPOS LEGACY - FORMULARIOS
+ * ==========================
+ * Este archivo contiene tipos legacy para formularios que pueden ser 
+ * necesarios para compatibilidad con código existente. NO usar para nuevos desarrollos.
+ * 
+ * @deprecated Usar tipos desde ./forms.ts
+ */
+
 import type { PatientSearchResult } from "../patient";
 
 // Tipos base para la historia clínica

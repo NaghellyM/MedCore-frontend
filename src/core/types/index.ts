@@ -77,3 +77,6 @@ export * from './queue';
 
 // Dominio de usuarios
 export * from './user';
+
+// Dominio de diagnósticos
+export * from './diagnostic';

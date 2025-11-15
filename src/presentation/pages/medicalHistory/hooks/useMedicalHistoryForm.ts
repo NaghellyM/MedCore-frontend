@@ -255,10 +255,12 @@ export function useMedicalHistoryForm(
                 ...prev, 
                 isSaving: false, 
                 isDirty: false,
-                historyId: formState.mode === "create" ? result.id : prev.historyId
+                historyId: formState.mode === "create" ? result.data.historyId : prev.historyId
             }));
 
-            onSaveSuccess?.(result.id || formState.historyId!);
+            onSaveSuccess?.(
+                formState.mode === "create" ? result.data.historyId : formState.historyId!
+            );
         } catch (error) {
             setFormState(prev => ({ ...prev, isSaving: false }));
             const errorMessage = error instanceof Error ? error.message : "Error al guardar la historia clínica";
@@ -277,7 +279,7 @@ export function useMedicalHistoryForm(
             const formattedData: Partial<MedicalHistoryFormData> = {
                 // Mapear los datos según la estructura de la API
                 patientInfo: {
-                    id: history.patientId,
+                    id: history.data.patientId,
                     fullname: "Paciente", // Obtener del servicio de pacientes
                     identificacion: "" // Obtener del servicio de pacientes
                 },

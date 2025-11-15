@@ -1,3 +1,12 @@
+/**
+ * TIPOS LEGACY - ENCUENTROS MÉDICOS
+ * =================================
+ * Este archivo contiene tipos legacy para encuentros médicos que pueden ser 
+ * necesarios para compatibilidad con código existente. NO usar para nuevos desarrollos.
+ * 
+ * @deprecated Usar tipos desde ./entities.ts y ./encounters.ts
+ */
+
 export type DiagnosisType = "principal" | "secundario";
 export type OrderType = "lab" | "imagen" | "interconsulta";
 export type OrderStatus = "pendiente" | "en_proceso" | "listo";

@@ -6,7 +6,7 @@
  */
 
 // Enums y tipos base
-export type DiagnosticState = "ACTIVE" | "INACTIVE";
+export type DiagnosticState = "ACTIVE" | "INACTIVE" | "DELETED";
 export type DiagnosisType = "principal" | "secundario";
 export type OrderType = "lab" | "imagen" | "interconsulta" | "laboratory" | "imaging" | "procedure" | "consultation";
 export type OrderStatus = "pendiente" | "en_proceso" | "listo" | "routine" | "urgent" | "stat";
@@ -98,13 +98,21 @@ export interface MedicalOrder {
     instructions?: string;
 }
 
-// Documentos diagnósticos
+// Documentos diagnósticos (según respuesta real del backend)
 export interface DiagnosticDocument {
     id: string;
-    url: string;
-    name: string;
-    type: string;
-    uploadedAt: string;
+    diagnosticId: string;
+    filename: string;
+    storedFilename: string;
+    filePath: string;
+    fileType: string;
+    mimeType: string;
+    fileSize: number;
+    description: string | null;
+    uploadedBy: string;
+    currentVersion: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 // Diagnóstico completo (entidad del backend)
@@ -130,13 +138,104 @@ export interface Diagnostic {
     documents: DiagnosticDocument[];
 }
 
-// Historia médica principal
+// Paginación (según respuesta del backend)
+export interface Pagination {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
+// Historia médica principal (según respuesta del backend)
 export interface MedicalHistory {
     id: string;
     patientId: string;
     createdBy: string;
     createdAt: string;
     updatedAt: string;
-    diagnostics: Diagnostic[];
+    diagnostics: Diagnostic[]; // Array de diagnósticos (relación 1:N)
     doctor: DoctorSummary;
+    pagination?: Pagination; // Solo presente en respuestas paginadas
+}
+
+// DTOs para operaciones CRUD
+
+// DTO para crear diagnóstico
+export interface CreateDiagnosticDto {
+    title: string;
+    description?: string;
+    symptoms?: string;
+    diagnosis?: string;
+    treatment?: string;
+    observations?: string;
+    prescriptions?: string;
+    physicalExam?: string;
+    vitalSigns?: string;
+    consultDate: string; // ISO date string
+    nextAppointment?: string; // ISO date string
+    customFields?: Record<string, unknown>;
+}
+
+// DTO para actualizar diagnóstico
+export interface UpdateDiagnosticDto {
+    title?: string;
+    description?: string;
+    symptoms?: string;
+    diagnosis?: string;
+    treatment?: string;
+    observations?: string;
+    prescriptions?: string;
+    physicalExam?: string;
+    vitalSigns?: string;
+    consultDate?: string; // ISO date string
+    nextAppointment?: string; // ISO date string
+    customFields?: Record<string, unknown>;
+}
+
+// DTO para actualizar estado
+export interface UpdateDiagnosticStateDto {
+    state: DiagnosticState;
+}
+
+// Tipos extendidos para vistas detalladas
+export interface DiagnosticDetails extends Diagnostic {
+    doctor?: DoctorSummary;
+    patient?: {
+        id: string;
+        fullName: string;
+        documentNumber: string;
+        documentType: string;
+    };
+    medicalHistory?: {
+        id: string;
+        patientId: string;
+        createdAt: string;
+    };
+}
+
+// Resumen de diagnóstico para listas
+export interface DiagnosticSummary {
+    id: string;
+    title: string;
+    diagnosis: string | null;
+    consultDate: string;
+    state: DiagnosticState;
+    doctorName?: string;
+}
+
+// Filtros para búsqueda de diagnósticos
+export interface DiagnosticFilters {
+    state?: DiagnosticState;
+    doctorId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    searchTerm?: string;
+}
+
+// Parámetros de búsqueda paginada
+export interface DiagnosticSearchParams extends DiagnosticFilters {
+    page?: number;
+    limit?: number;
+    sortBy?: 'consultDate' | 'createdAt' | 'title';
+    sortOrder?: 'asc' | 'desc';
 }

@@ -1,5 +1,10 @@
 import httpPatient from "../../infrastructure/http/httpPatient";
-import type { PatientMedicalHistoryResponse } from "../types/medicalHistory";
+import type { 
+    PatientMedicalHistoryResponse, 
+    MedicalHistoryByIdResponse,
+    CreateMedicalHistoryResponse,
+    UpdateMedicalHistoryResponse 
+} from "../types/medicalHistory";
 
 // URL base para el historial medico de pacientes
 const medicalHistoryUrl = `/medical-history`;
@@ -7,8 +12,8 @@ const medicalHistoryUrl = `/medical-history`;
 export const medicalHistoryService = {
 
     //Crear historia clínica de un paciente
-    async createMedicalHistory(patientId: string, data: any) {
-        const response = await httpPatient.post(
+    async createMedicalHistory(patientId: string, data: any): Promise<CreateMedicalHistoryResponse> {
+        const response = await httpPatient.post<CreateMedicalHistoryResponse>(
             `${medicalHistoryUrl}/patient/${patientId}`,
             data
         );
@@ -42,16 +47,16 @@ export const medicalHistoryService = {
     },
     
     // Obtener historia clínica por ID
-    async getMedicalHistoryById(historyId: string) {
-        const response = await httpPatient.get(
+    async getMedicalHistoryById(historyId: string): Promise<MedicalHistoryByIdResponse> {
+        const response = await httpPatient.get<MedicalHistoryByIdResponse>(
             `${medicalHistoryUrl}/${historyId}`
         );
         return response.data;
     },
 
     //Actualizar historia clínica
-    async updateMedicalHistory(historyId: string, data: any) {
-        const response = await httpPatient.patch(
+    async updateMedicalHistory(historyId: string, data: any): Promise<UpdateMedicalHistoryResponse> {
+        const response = await httpPatient.patch<UpdateMedicalHistoryResponse>(
             `${medicalHistoryUrl}/${historyId}`,
             data
         );

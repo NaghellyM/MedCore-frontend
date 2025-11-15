@@ -1,4 +1,13 @@
 
+/**
+ * TIPOS LEGACY - BACKEND
+ * ======================
+ * Este archivo contiene tipos legacy del backend que pueden ser necesarios
+ * para compatibilidad con código existente. NO usar para nuevos desarrollos.
+ * 
+ * @deprecated Usar tipos desde ./entities.ts y ./api-responses.ts
+ */
+
 export interface Pagination {
     page: number;
     limit: number;

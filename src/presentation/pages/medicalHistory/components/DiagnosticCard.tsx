@@ -1,5 +1,5 @@
 import React from "react";
-import type { Diagnostic } from "../../../../core/types/medicalHistory";
+import type { Diagnostic } from "../../../../core/types/diagnostic";
 
 interface DiagnosticCardProps {
     diagnostic: Diagnostic;
@@ -23,12 +23,19 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({ diagnostic }) =>
                     </p>
                 </div>
                 <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${diagnostic.state === "ACTIVE"
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${
+                        diagnostic.state === "ACTIVE"
                             ? "bg-emerald-50 text-emerald-700"
-                            : "bg-slate-100 text-slate-500"
+                            : diagnostic.state === "INACTIVE"
+                            ? "bg-slate-100 text-slate-500"
+                            : "bg-red-50 text-red-700"
                         }`}
                 >
-                    {diagnostic.state === "ACTIVE" ? "Activa" : "Inactiva"}
+                    {diagnostic.state === "ACTIVE" 
+                        ? "Activa" 
+                        : diagnostic.state === "INACTIVE" 
+                        ? "Inactiva" 
+                        : "Eliminada"}
                 </span>
             </header>
 
@@ -73,6 +80,24 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({ diagnostic }) =>
                     <p className="text-sm text-slate-600 whitespace-pre-line">
                         {diagnostic.prescriptions}
                     </p>
+                </section>
+            )}
+
+            {diagnostic.documents && diagnostic.documents.length > 0 && (
+                <section>
+                    <h4 className="text-sm font-semibold text-slate-700 mb-1">
+                        Documentos ({diagnostic.documents.length})
+                    </h4>
+                    <div className="flex flex-wrap gap-1">
+                        {diagnostic.documents.map((doc: any) => (
+                            <span 
+                                key={doc.id}
+                                className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
+                            >
+                                📄 {doc.filename}
+                            </span>
+                        ))}
+                    </div>
                 </section>
             )}
 

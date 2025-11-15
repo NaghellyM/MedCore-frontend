@@ -5,6 +5,7 @@
  */
 
 import type { PatientSearchResult } from "../patient";
+import type { ValidationError as BaseValidationError, ValidationResult } from "../shared";
 import type { VitalSigns, Prescription, MedicalOrder } from "./entities";
 
 // Secciones del formulario
@@ -120,10 +121,7 @@ export interface SectionConfig {
     order: number;
 }
 
-import type { ValidationError as BaseValidationError, ValidationResult } from "../shared";
 
-// Re-exportar ValidationError base para compatibilidad
-export type { ValidationError as BaseValidationError } from "../shared";
 
 // Validación específica del historial médico
 export interface ValidationError extends BaseValidationError {
@@ -134,7 +132,109 @@ export interface FormValidationResult extends ValidationResult {
     errors: ValidationError[];
 }
 
-// Contexto del módulo
+// === FORMULARIOS DE DIAGNÓSTICO ===
+
+// Datos del formulario de diagnóstico (alineado con CreateDiagnosticDto)
+export interface DiagnosticFormData {
+    title: string;
+    description?: string;
+    symptoms?: string;
+    diagnosis?: string;
+    treatment?: string;
+    observations?: string;
+    prescriptions?: string;
+    physicalExam?: string;
+    vitalSigns?: string;
+    consultDate: string; // ISO date string
+    nextAppointment?: string; // ISO date string
+    customFields?: Record<string, unknown>;
+}
+
+// Campos requeridos del formulario de diagnóstico
+export interface DiagnosticFormRequiredFields {
+    title: string;
+    consultDate: string;
+}
+
+// Estado del formulario de diagnóstico
+export interface DiagnosticFormState {
+    mode: "create" | "edit";
+    isLoading: boolean;
+    isSaving: boolean;
+    isDirty: boolean;
+    errors: Record<string, string>;
+    diagnosticId?: string;
+    medicalHistoryId?: string;
+    patientId?: string;
+}
+
+// Configuración del formulario de diagnóstico
+export interface DiagnosticFormConfig {
+    showOptionalFields: boolean;
+    enableAutoSave: boolean;
+    validationMode: "onChange" | "onBlur" | "onSubmit";
+}
+
+// Datos iniciales del formulario de diagnóstico
+export interface DiagnosticFormInitialData extends Partial<DiagnosticFormData> {
+    patientId: string;
+    medicalHistoryId?: string;
+}
+
+// Errores de validación del diagnóstico
+export interface DiagnosticValidationErrors {
+    [key: string]: string;
+}
+
+// Props para el formulario de diagnóstico
+export interface DiagnosticFormProps {
+    initialData?: DiagnosticFormInitialData;
+    config?: Partial<DiagnosticFormConfig>;
+    onSubmit: (data: DiagnosticFormData) => Promise<void>;
+    onCancel?: () => void;
+    isReadOnly?: boolean;
+}
+
+// Props para secciones del formulario de diagnóstico
+export interface DiagnosticFormSectionProps {
+    data: Partial<DiagnosticFormData>;
+    onUpdate: (sectionData: Partial<DiagnosticFormData>) => void;
+    errors?: DiagnosticValidationErrors;
+    isReadOnly?: boolean;
+}
+
+// Configuración de campos del formulario
+export interface DiagnosticFieldConfig {
+    required: boolean;
+    multiline?: boolean;
+    placeholder?: string;
+    helperText?: string;
+    validation?: (value: any) => string | null;
+}
+
+export interface DiagnosticFieldsConfig {
+    [key: string]: DiagnosticFieldConfig;
+}
+
+// === FORMULARIOS DE FILTROS ===
+
+// Datos del formulario de filtros de diagnóstico  
+export interface DiagnosticFilterFormData {
+    state?: "ACTIVE" | "INACTIVE" | "DELETED";
+    doctorId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    searchTerm?: string;
+}
+
+// Props para el formulario de filtros
+export interface DiagnosticFilterFormProps {
+    initialFilters?: DiagnosticFilterFormData;
+    onFiltersChange: (filters: DiagnosticFilterFormData) => void;
+    onReset?: () => void;
+}
+
+// Contexto del módulo de historia médica
 export interface MedicalHistoryContextValue {
     // Estado del formulario
     formData: Partial<MedicalHistoryFormData>;
