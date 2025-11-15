@@ -4,6 +4,7 @@ import RootLayout from "../layouts/RootLayout";
 import { PatientDashboard } from "../pages/patient/patientDashboard";
 import FiltrarCitas from "../pages/patient/components/RequestAppointment";
 import PatientAppointments from "../pages/patient/components/PatientAppointments";
+import PatientDocumentsList from "../pages/patient/page/patientDocuments";
 
 export const patientRoutes: RouteObject = {
     element: <RoleRoute allow={["patient"]} />,
@@ -14,6 +15,7 @@ export const patientRoutes: RouteObject = {
                 { path: "patientPage", element: <PatientDashboard /> },
                 { path: "requestAppointment", element: <FiltrarCitas /> },
                 { path: "PatientAppointments", element: <PatientAppointments /> },
+                { path: "patientDocuments", element: <PatientDocumentsList /> },    
             ],
         },
     ],
