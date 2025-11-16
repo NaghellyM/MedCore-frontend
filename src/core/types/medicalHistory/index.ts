@@ -51,6 +51,7 @@ export type {
     // Historial médico
     MedicalHistoryByIdResponse,
     PatientMedicalHistoryResponse,
+    AllMedicalHistoriesResponse,
     CreateMedicalHistoryResponse,
     UpdateMedicalHistoryResponse,
     

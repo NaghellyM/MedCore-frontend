@@ -1,8 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { medicalHistoryService } from "../../services/medicalHistoryService";
-import { patientService } from "../../services/patientService";
 import type { Pagination } from "../../types/medicalHistory";
-import type { PatientSearchResult } from "../../types/patient";
 
 interface MedicalHistoryListItem {
     id: string;
@@ -46,8 +44,6 @@ interface UseMedicalHistoryListResult {
     isError: boolean;
     errorMessage: string | null;
     filters: MedicalHistoryFilters;
-    
-    // Actions
     setFilters: (filters: MedicalHistoryFilters) => void;
     clearFilters: () => void;
     loadPage: (page: number) => Promise<void>;
@@ -80,128 +76,78 @@ export function useMedicalHistoryList(
         setErrorMessage(null);
 
         try {
-            // Obtener lista de pacientes
-            let patientResults: PatientSearchResult[] = [];
-            
-            // Si hay filtros de búsqueda, buscar pacientes específicos
-            if (filters.searchTerm || filters.patientName || filters.patientDocument) {
-                const searchTerm = filters.searchTerm || filters.patientName || filters.patientDocument || "";
-                try {
-                    const searchResponse = await patientService.searchPatients(searchTerm, 1, 100);
-                    patientResults = searchResponse.patients;
-                } catch (error) {
-                
-                    // Si falla la búsqueda, intentar obtener todos los pacientes
-                    const allPatientsResponse = await patientService.getAllPatients(1, 100);
-                    patientResults = allPatientsResponse.patients;
-                }
-            } else {
-                // Si no hay filtros, obtener todos los pacientes
-                const allPatientsResponse = await patientService.getAllPatients(1, 100);
-                patientResults = allPatientsResponse.patients;
-            }
-
-            // Si tenemos filtros pero no encontramos pacientes, devolver lista vacía
-            if ((filters.searchTerm || filters.patientName || filters.patientDocument) && patientResults.length === 0) {
-                setMedicalHistories([]);
-                setPagination({
-                    page: 1,
-                    limit: pageSize,
-                    total: 0,
-                    totalPages: 0
-                });
-                return;
-            }
-
-            // Obtener historias clínicas para cada paciente
-            const historiesPromises = patientResults.map(async (patient) => {
-                try {
-                    // Usar el ID del paciente (no la identificación)
-                    const historyResponse = await medicalHistoryService.getMedicalHistoryByPatientId(
-                        patient.id, // Usar patient.id que es el ObjectId correcto
-                        { page: 1, limit: 50 }
-                    );
-                    
-                    return {
-                        patient,
-                        history: historyResponse
-                    };
-                } catch (error) {
-                    // Silenciosamente ignorar pacientes sin historia clínica
-                    return null;
-                }
+            // Obtener todas las historias médicas con el nuevo servicio
+            const allHistoriesResponse = await medicalHistoryService.getAllMedicalHistories({ 
+                page: 1, 
+                limit: 1000 // Obtener todas para poder filtrar y paginar en el frontend
             });
 
-            const historiesResults = await Promise.all(historiesPromises);
+            let patientsWithHistories = allHistoriesResponse.patients || [];
 
-            // Procesar resultados y formatear datos
-            const formattedHistories: MedicalHistoryListItem[] = [];
-            
-            for (const result of historiesResults) {
-                if (result && result.history) {
-                    const { patient, history } = result;
-                    
-                    
-                    const matchesDateRange = (!filters.dateFrom || new Date(history.createdAt) >= new Date(filters.dateFrom)) &&
-                                                (!filters.dateTo || new Date(history.createdAt) <= new Date(filters.dateTo));
-                    
-                    const matchesDoctor = !filters.doctorId || history.doctor.id === filters.doctorId;
-                    
-                    if (matchesDateRange && matchesDoctor) {
-                        // Encontrar el diagnóstico más reciente
-                        const lastDiagnostic = history.diagnostics.length > 0 
-                            ? history.diagnostics.sort((a: any, b: any) => 
-                                new Date(b.consultDate).getTime() - new Date(a.consultDate).getTime()
-                            )[0]
-                            : null;
-
-                        formattedHistories.push({
-                            id: history.id,
-                            patient: {
-                                id: patient.id, // Usar el ID correcto del paciente
-                                fullname: patient.fullname,
-                                identificacion: patient.identificacion,
-                                email: patient.email,
-                                historyNumber: patient.historyNumber
-                            },
-                            totalDiagnostics: history.diagnostics.length,
-                            lastDiagnosticDate: lastDiagnostic?.consultDate,
-                            doctor: history.doctor,
-                            createdAt: history.createdAt,
-                            updatedAt: history.updatedAt
-                        });
-                    }
-                }
-            }
-
-            // Aplicar filtros adicionales si es necesario
-            let filteredHistories = formattedHistories;
-
-            // Los filtros principales ya se aplicaron arriba, solo aplicamos filtros adicionales si es necesario
-            if (filters.searchTerm) {
-                const searchTerm = filters.searchTerm.toLowerCase();
-                filteredHistories = filteredHistories.filter(history => 
-                    history.patient.fullname.toLowerCase().includes(searchTerm) ||
-                    history.patient.identificacion.includes(searchTerm)
+            // Aplicar filtros de búsqueda
+            if (filters.searchTerm || filters.patientName || filters.patientDocument) {
+                const searchTerm = (filters.searchTerm || filters.patientName || filters.patientDocument || "").toLowerCase();
+                patientsWithHistories = patientsWithHistories.filter(patient => 
+                    patient.fullname.toLowerCase().includes(searchTerm) ||
+                    patient.identificacion.includes(searchTerm) ||
+                    (patient.email && patient.email.toLowerCase().includes(searchTerm))
                 );
             }
 
+            // Aplicar filtros de fecha y doctor
+            if (filters.dateFrom || filters.dateTo || filters.doctorId) {
+                patientsWithHistories = patientsWithHistories.filter(patient => {
+                    if (!patient.medicalHistory) return false;
+
+                    const matchesDateRange = (!filters.dateFrom || new Date(patient.medicalHistory.createdAt) >= new Date(filters.dateFrom)) &&
+                                            (!filters.dateTo || new Date(patient.medicalHistory.createdAt) <= new Date(filters.dateTo));
+                    
+                    const matchesDoctor = !filters.doctorId || (patient.doctor && patient.doctor.id === filters.doctorId);
+                    
+                    return matchesDateRange && matchesDoctor;
+                });
+            }
+
+            // Filtrar solo pacientes que tienen historia médica
+            const patientsWithValidHistory = patientsWithHistories.filter(patient => patient.medicalHistory);
+
+            // Formatear los datos para la interfaz
+            const formattedHistories: MedicalHistoryListItem[] = patientsWithValidHistory.map(patient => ({
+                id: patient.medicalHistory!.id,
+                patient: {
+                    id: patient.id,
+                    fullname: patient.fullname,
+                    identificacion: patient.identificacion,
+                    email: patient.email,
+                    historyNumber: patient.historyNumber
+                },
+                totalDiagnostics: patient.medicalHistory!.totalDiagnostics,
+                lastDiagnosticDate: patient.medicalHistory!.lastDiagnosticDate || undefined,
+                doctor: patient.doctor || {
+                    id: "",
+                    fullname: "Sin asignar",
+                    email: ""
+                },
+                createdAt: patient.medicalHistory!.createdAt,
+                updatedAt: patient.medicalHistory!.updatedAt
+            }));
+
             // Ordenar por fecha de actualización (más recientes primero)
-            filteredHistories.sort((a, b) => 
+            formattedHistories.sort((a, b) => 
                 new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
             );
 
-            // Aplicar paginación
+            // Aplicar paginación manual
             const startIndex = (page - 1) * pageSize;
             const endIndex = startIndex + pageSize;
-            const paginatedHistories = filteredHistories.slice(startIndex, endIndex);
+            const paginatedHistories = formattedHistories.slice(startIndex, endIndex);
 
             setMedicalHistories(paginatedHistories);
             setPagination({
                 page: page,
                 limit: pageSize,
-                total: filteredHistories.length,
-                totalPages: Math.ceil(filteredHistories.length / pageSize)
+                total: formattedHistories.length,
+                totalPages: Math.ceil(formattedHistories.length / pageSize)
             });
 
         } catch (error) {

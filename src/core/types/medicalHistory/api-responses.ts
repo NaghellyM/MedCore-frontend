@@ -33,6 +33,30 @@ export interface PatientMedicalHistoryResponse extends MedicalHistory {
     pagination: Pagination;
 }
 
+// Respuesta para obtener todas las historias médicas
+export interface AllMedicalHistoriesResponse {
+    patients: {
+        id: string;
+        fullname: string;
+        identificacion: string;
+        email?: string;
+        historyNumber?: string;
+        medicalHistory?: {
+            id: string;
+            totalDiagnostics: number;
+            lastDiagnosticDate?: string | null;
+            createdAt: string;
+            updatedAt: string;
+        };
+        doctor?: {
+            id: string;
+            fullname: string;
+            email: string;
+        };
+    }[];
+    pagination?: Pagination;
+}
+
 // Respuestas para operaciones CRUD del historial médico
 export interface CreateMedicalHistoryResponse {
     success: boolean;

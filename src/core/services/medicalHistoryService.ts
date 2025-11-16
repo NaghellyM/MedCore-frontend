@@ -3,7 +3,8 @@ import type {
     PatientMedicalHistoryResponse, 
     MedicalHistoryByIdResponse,
     CreateMedicalHistoryResponse,
-    UpdateMedicalHistoryResponse 
+    UpdateMedicalHistoryResponse,
+    AllMedicalHistoriesResponse
 } from "../types/medicalHistory";
 
 // URL base para el historial medico de pacientes
@@ -62,4 +63,15 @@ export const medicalHistoryService = {
         );
         return response.data;
     },
+
+    //Obtener todas las historias clínicas
+    async getAllMedicalHistories(
+        params?: { page?: number; limit?: number }
+    ): Promise<AllMedicalHistoriesResponse> {
+        const response = await httpPatient.get<AllMedicalHistoriesResponse>(
+            `${medicalHistoryUrl}`,
+            { params }
+        );
+        return response.data;
+    }
 }
