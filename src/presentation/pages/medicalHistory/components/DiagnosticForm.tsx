@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, AlertCircle, User, FileText, Calendar } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, User, FileText } from "lucide-react";
 import { useDiagnosticForm } from "../hooks/useDiagnosticForm";
 import type { Diagnostic } from "../../../../core/types/diagnostic";
 
@@ -25,9 +25,9 @@ export function DiagnosticForm({
     const navigate = useNavigate();
     const params = useParams();
     
-    // Usar parámetros de URL si no se proporcionan como props
+    
     const finalPatientId = patientId || params.patientId;
-    const finalMedicalHistoryId = medicalHistoryId || params.medicalHistoryId;
+    const finalMedicalHistoryId = medicalHistoryId || params.medicalHisANtoryId;
     const finalDiagnosticId = diagnosticId || params.diagnosticId;
 
     const {
@@ -286,98 +286,6 @@ export function DiagnosticForm({
                                 <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
                                     <AlertCircle className="w-4 h-4" />
                                     {formErrors.diagnosis.message}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tratamiento y Observaciones */}
-                <div className="bg-white rounded-lg border p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                        <Calendar className="w-5 h-5 text-purple-600" />
-                        <h2 className="text-lg font-semibold text-gray-900">
-                            Tratamiento y Observaciones
-                        </h2>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Tratamiento
-                            </label>
-                            <textarea
-                                {...register("treatment")}
-                                rows={4}
-                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    formErrors.treatment ? "border-red-300" : "border-gray-300"
-                                }`}
-                                placeholder="Plan de tratamiento recomendado..."
-                            />
-                            {formErrors.treatment && (
-                                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                                    <AlertCircle className="w-4 h-4" />
-                                    {formErrors.treatment.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Prescripciones
-                            </label>
-                            <textarea
-                                {...register("prescriptions")}
-                                rows={4}
-                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    formErrors.prescriptions ? "border-red-300" : "border-gray-300"
-                                }`}
-                                placeholder="Medicamentos prescritos con dosis y frecuencia..."
-                            />
-                            {formErrors.prescriptions && (
-                                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                                    <AlertCircle className="w-4 h-4" />
-                                    {formErrors.prescriptions.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Observaciones Adicionales
-                            </label>
-                            <textarea
-                                {...register("observations")}
-                                rows={3}
-                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    formErrors.observations ? "border-red-300" : "border-gray-300"
-                                }`}
-                                placeholder="Observaciones adicionales, recomendaciones, etc..."
-                            />
-                            {formErrors.observations && (
-                                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                                    <AlertCircle className="w-4 h-4" />
-                                    {formErrors.observations.message}
-                                </p>
-                            )}
-                        </div>
-
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Descripción General
-                            </label>
-                            <textarea
-                                {...register("description")}
-                                rows={3}
-                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                                    formErrors.description ? "border-red-300" : "border-gray-300"
-                                }`}
-                                placeholder="Descripción general de la consulta..."
-                            />
-                            {formErrors.description && (
-                                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                                    <AlertCircle className="w-4 h-4" />
-                                    {formErrors.description.message}
                                 </p>
                             )}
                         </div>

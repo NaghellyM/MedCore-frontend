@@ -59,19 +59,19 @@ export interface AllMedicalHistoriesResponse {
 
 // Respuestas para operaciones CRUD del historial médico
 export interface CreateMedicalHistoryResponse {
-    success: boolean;
+    success?: boolean;
     message: string;
     data: {
-        historyId: string;
+        id: string;           // Backend devuelve 'id', no 'historyId'
         patientId: string;
     };
 }
 
 export interface UpdateMedicalHistoryResponse {
-    success: boolean;
+    success?: boolean;
     message: string;
     data: {
-        historyId: string;
+        id: string;           // Backend devuelve 'id', no 'historyId'
         updatedAt: string;
     };
 }

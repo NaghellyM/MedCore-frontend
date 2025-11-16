@@ -16,6 +16,7 @@ interface UseMedicalHistoryFormOptions {
     historyId?: string;
     onSaveSuccess?: (historyId: string) => void;
     onSaveError?: (error: string) => void;
+    onDocumentsReadyToUpload?: () => Promise<void>;
 }
 
 interface UseMedicalHistoryFormReturn {
@@ -51,10 +52,7 @@ const SECTION_ORDER: MedicalHistorySection[] = [
     "patient-search",
     "consultation",
     "physical-exam", 
-    "medical-history",
-    "diagnostics",
-    "treatment",
-    "follow-up"
+    "diagnostics"
 ];
 
 export function useMedicalHistoryForm(
@@ -65,7 +63,8 @@ export function useMedicalHistoryForm(
         mode = "create",
         historyId,
         onSaveSuccess,
-        onSaveError
+        onSaveError,
+        onDocumentsReadyToUpload
     } = options;
 
     // Estado del formulario
@@ -251,19 +250,49 @@ export function useMedicalHistoryForm(
                 );
             }
 
+            let savedHistoryId: string;
+            if (formState.mode === "create") {
+                savedHistoryId = result.data.id;
+                if (!savedHistoryId) {
+                    throw new Error("No se pudo obtener el ID de la historia médica creada");
+                }
+            } else {
+                savedHistoryId = result.data.id;
+            }
+
             setFormState(prev => ({ 
                 ...prev, 
                 isSaving: false, 
                 isDirty: false,
-                historyId: formState.mode === "create" ? result.data.historyId : prev.historyId
+                historyId: savedHistoryId
             }));
 
-            onSaveSuccess?.(
-                formState.mode === "create" ? result.data.historyId : formState.historyId!
-            );
+            // Si hay documentos pendientes, intentar subirlos
+            if (formState.mode === "create" && onDocumentsReadyToUpload) {
+                try {
+                    await onDocumentsReadyToUpload();
+                } catch (documentError) {
+                    // Los errores de documentos no deben fallar la creación de historia
+                }
+            }
+
+            onSaveSuccess?.(savedHistoryId);
         } catch (error) {
+            console.error("❌ Error al guardar historia médica:", error);
             setFormState(prev => ({ ...prev, isSaving: false }));
-            const errorMessage = error instanceof Error ? error.message : "Error al guardar la historia clínica";
+            
+            let errorMessage = "Error al guardar la historia clínica";
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as any;
+                if (axiosError.response?.data?.message) {
+                    errorMessage = axiosError.response.data.message;
+                } else if (axiosError.response?.status) {
+                    errorMessage = `Error del servidor (${axiosError.response.status})`;
+                }
+            } else if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            
             onSaveError?.(errorMessage);
         }
     }, [formData, formState.mode, formState.historyId, validateForm, onSaveSuccess, onSaveError]);

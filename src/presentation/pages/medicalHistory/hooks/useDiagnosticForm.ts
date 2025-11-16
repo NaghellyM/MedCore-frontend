@@ -198,12 +198,14 @@ export function useDiagnosticForm(
             };
 
             if (formState.mode === "create") {
-                await diagnosticService.createDiagnostic(patientId, diagnosticData as CreateDiagnosticDto);
-                // Crear un diagnóstico temporal para el callback (el servicio no retorna el objeto completo)
+                const response = await diagnosticService.createDiagnostic(patientId, diagnosticData as CreateDiagnosticDto);
+                console.log("✅ Diagnóstico creado, respuesta del servidor:", response);
+                
+                // Usar datos del servidor en lugar de valores hardcodeados
                 result = {
-                    id: 'temp-' + Date.now(),
-                    medicalHistoryId: medicalHistoryId,
-                    doctorId: 'current-doctor',
+                    id: response?.data?.diagnosticId || 'unknown-id',  
+                    medicalHistoryId: response?.data?.medicalHistoryId || medicalHistoryId,
+                    doctorId: 'current-doctor', // TODO: Obtener del contexto de autenticación
                     title: formData.title,
                     description: formData.description || null,
                     symptoms: formData.symptoms || null,

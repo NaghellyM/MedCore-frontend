@@ -7,7 +7,6 @@
 import { useState, useCallback } from 'react';
 import { diagnosticService } from '../../services/diagnosticService';
 import type {
-    Diagnostic,
     DiagnosticSummary,
     DiagnosticSearchParams,
     CreateDiagnosticDto,
@@ -55,7 +54,7 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
     const createDiagnostic = useCallback(async (
         patientId: string, 
         data: CreateDiagnosticDto
-    ): Promise<Diagnostic> => {
+    ): Promise<void> => {
         try {
             setError(null);
             await diagnosticService.createDiagnostic(patientId, data);
@@ -63,30 +62,10 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
             // Actualizar la lista después de crear
             await fetchDiagnostics();
             
-            // Crear un diagnóstico temporal basado en los datos de entrada
-            const tempDiagnostic: Diagnostic = {
-                id: 'temp-' + Date.now(),
-                medicalHistoryId: 'temp-history',
-                doctorId: 'temp-doctor',
-                title: data.title,
-                description: data.description || null,
-                symptoms: data.symptoms || null,
-                diagnosis: data.diagnosis || null,
-                treatment: data.treatment || null,
-                observations: data.observations || null,
-                prescriptions: data.prescriptions || null,
-                physicalExam: data.physicalExam || null,
-                vitalSigns: data.vitalSigns || null,
-                consultDate: data.consultDate,
-                nextAppointment: data.nextAppointment || null,
-                state: 'ACTIVE',
-                customFields: data.customFields || null,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                documents: []
-            };
+            console.log("✅ Diagnóstico creado correctamente, esperando respuesta del servidor...");
             
-            return tempDiagnostic;
+            // No retornamos un diagnóstico temporal con datos hardcodeados
+            // El hook fetchDiagnostics() actualizará la lista con los datos reales del servidor
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Error al crear diagnóstico';
             setError(errorMessage);

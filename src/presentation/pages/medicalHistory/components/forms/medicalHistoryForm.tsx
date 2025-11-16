@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Save, FileText, User, Activity, Stethoscope, Pill, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Save, FileText, User, Activity, Stethoscope } from "lucide-react";
 import { useMedicalHistoryForm } from "../../hooks/useMedicalHistoryForm";
 import { PatientInfoSection } from "./sections/patientInfoSection";
 import { ConsultationSection } from "./sections/consultationSection";
 import { PhysicalExamSection } from "./sections/physicalExamSection";
-import { DiagnosticsSection } from "./sections/diagnosticsSection";
-import type { 
-    MedicalHistorySection, 
+import { DiagnosticsWithOptionalDocuments } from "./sections/diagnosticsWithOptionalDocuments";
+import type {
+    MedicalHistorySection,
     MedicalHistoryFormData,
     SectionConfig
 } from "../../../../../core/types/medicalHistory";
@@ -53,22 +53,6 @@ const SECTION_CONFIGS: SectionConfig[] = [
         icon: Stethoscope,
         isRequired: true,
         order: 4
-    },
-    {
-        id: "treatment",
-        title: "Tratamiento",
-        description: "Plan de tratamiento y prescripciones",
-        icon: Pill,
-        isRequired: false,
-        order: 5
-    },
-    {
-        id: "follow-up",
-        title: "Seguimiento",
-        description: "Próxima cita y observaciones",
-        icon: Calendar,
-        isRequired: false,
-        order: 6
     }
 ];
 
@@ -99,7 +83,7 @@ export function MedicalHistoryForm({
     });
 
     const [showValidationErrors, setShowValidationErrors] = useState(false);
-    
+
     // Configurar paciente cuando se selecciona
     useState(() => {
         if (selectedPatient && !formData.patientInfo) {
@@ -159,29 +143,7 @@ export function MedicalHistoryForm({
             case "physical-exam":
                 return <PhysicalExamSection {...commonProps} />;
             case "diagnostics":
-                return <DiagnosticsSection {...commonProps} />;
-            case "treatment":
-                return (
-                    <div className="bg-white rounded-lg border p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                            Tratamiento y Prescripciones
-                        </h3>
-                        <p className="text-gray-500">
-                            Esta sección será implementada próximamente
-                        </p>
-                    </div>
-                );
-            case "follow-up":
-                return (
-                    <div className="bg-white rounded-lg border p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                            Seguimiento y Próximas Citas
-                        </h3>
-                        <p className="text-gray-500">
-                            Esta sección será implementada próximamente
-                        </p>
-                    </div>
-                );
+                return <DiagnosticsWithOptionalDocuments {...commonProps} />;
             default:
                 return null;
         }
@@ -215,7 +177,7 @@ export function MedicalHistoryForm({
                         Paso {currentSectionIndex + 1} de {SECTION_CONFIGS.length}
                     </div>
                 </div>
-                
+
                 <div className="mt-4">
                     <div className="flex items-center space-x-2 overflow-x-auto">
                         {SECTION_CONFIGS.map((section, index) => {
@@ -224,21 +186,20 @@ export function MedicalHistoryForm({
                             const hasErrors = formState.errors && Object.keys(formState.errors).some(
                                 key => key.startsWith(section.id)
                             );
-                            
+
                             return (
                                 <button
                                     key={section.id}
                                     onClick={() => handleSectionClick(section.id)}
                                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
-                                              transition-colors whitespace-nowrap ${
-                                        isActive
+                                                transition-colors whitespace-nowrap ${isActive
                                             ? "bg-blue-100 text-blue-700 border border-blue-200"
                                             : isCompleted
-                                            ? "bg-green-100 text-green-700 border border-green-200"
-                                            : hasErrors && showValidationErrors
-                                            ? "bg-red-100 text-red-700 border border-red-200"
-                                            : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
-                                    }`}
+                                                ? "bg-green-100 text-green-700 border border-green-200"
+                                                : hasErrors && showValidationErrors
+                                                    ? "bg-red-100 text-red-700 border border-red-200"
+                                                    : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
+                                        }`}
                                 >
                                     <section.icon className="w-4 h-4" />
                                     {section.title}
@@ -265,15 +226,15 @@ export function MedicalHistoryForm({
                             onClick={handlePreviousSection}
                             disabled={!canGoPrevious}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg border font-medium
-                                      ${canGoPrevious
-                                        ? "border-gray-300 text-gray-700 hover:bg-gray-50"
-                                        : "border-gray-200 text-gray-400 cursor-not-allowed"
-                                      }`}
+                                    ${canGoPrevious
+                                    ? "border-gray-300 text-gray-700 hover:bg-gray-50"
+                                    : "border-gray-200 text-gray-400 cursor-not-allowed"
+                                }`}
                         >
                             <ChevronLeft className="w-4 h-4" />
                             Anterior
                         </button>
-                        
+
                         {canGoNext && (
                             <button
                                 onClick={handleNextSection}
@@ -289,10 +250,10 @@ export function MedicalHistoryForm({
                         onClick={handleSave}
                         disabled={formState.isSaving}
                         className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium
-                                  ${formState.isSaving
-                                    ? "bg-gray-400 text-white cursor-not-allowed"
-                                    : "bg-green-600 text-white hover:bg-green-700"
-                                  }`}
+                                ${formState.isSaving
+                                ? "bg-gray-400 text-white cursor-not-allowed"
+                                : "bg-green-600 text-white hover:bg-green-700"
+                            }`}
                     >
                         {formState.isSaving ? (
                             <>

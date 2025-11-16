@@ -31,7 +31,7 @@ export interface UseDiagnosticsState {
 // Acciones de hook de diagnósticos
 export interface UseDiagnosticsActions {
     fetchDiagnostics: (params?: DiagnosticSearchParams) => Promise<void>;
-    createDiagnostic: (patientId: string, data: CreateDiagnosticDto) => Promise<Diagnostic>;
+    createDiagnostic: (patientId: string, data: CreateDiagnosticDto) => Promise<void>;
     updateDiagnostic: (id: string, data: UpdateDiagnosticDto) => Promise<void>;
     deleteDiagnostic: (id: string) => Promise<void>;
     updateDiagnosticState: (id: string, state: DiagnosticState) => Promise<void>;

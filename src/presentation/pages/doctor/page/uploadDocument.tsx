@@ -5,19 +5,22 @@ import { Upload, FileText, Stethoscope } from "lucide-react";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { documentsService } from "../../../../core/services/documentsService";
+// import { documentsService } from "../../../../core/services/documentsService"; // Temporalmente deshabilitado
 
 const MySwal = withReactContent(Swal);
 
 export default function UploadDiagnosticDocument() {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState("");
 
   const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
   const maxSize = 10 * 1024 * 1024; // 10MB
 
-  const handleFileChange = (e) => {
-    const selected = Array.from(e.target.files);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList) return;
+    
+    const selected = Array.from(fileList);
 
     for (const file of selected) {
       if (!allowedTypes.includes(file.type)) {
@@ -34,54 +37,16 @@ export default function UploadDiagnosticDocument() {
     setFiles(selected);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (files.length === 0) {
-      MySwal.fire({
-        icon: "warning",
-        title: "No hay archivos",
-        text: "Selecciona al menos un archivo para subir.",
-      });
-      return;
-    }
-
-    try {
-      MySwal.fire({
-        title: "Subiendo...",
-        text: "Por favor espera",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-
-      // 🔵 Cambia estos IDs según tu flujo REAL
-      const patientId = "123";
-      const diagnosticId = "987";
-
-      const response = await documentsService.uploadDocuments({
-  patientId,
-  diagnosticId,
-  files,
-});
-
-console.log("Respuesta del backend:", response.data);
-
-      MySwal.fire({
-        icon: "success",
-        title: "Documento subido",
-        text: "El documento se ha subido correctamente.",
-      });
-
-      setFiles([]);
-
-    } catch (err) {
-      console.error("Error al subir documento:", err);
-      MySwal.fire({
-        icon: "error",
-        title: "Error al subir",
-        text: err?.response?.data?.message || "Ocurrió un error inesperado.",
-      });
-    }
+    // ❌ TEMPORALMENTE DESHABILITADO - Este componente tiene valores quemados
+    MySwal.fire({
+      icon: "warning",
+      title: "Función no disponible",
+      text: "Esta función está siendo refactorizada. Use la carga de documentos desde el formulario de historia médica.",
+    });
+    return;
   };
 
   return (

@@ -7,21 +7,41 @@ import type {
     AllMedicalHistoriesResponse
 } from "../types/medicalHistory";
 
-// URL base para el historial medico de pacientes
 const medicalHistoryUrl = `/medical-history`;
 
 export const medicalHistoryService = {
-
-    //Crear historia clínica de un paciente
     async createMedicalHistory(patientId: string, data: any): Promise<CreateMedicalHistoryResponse> {
+        const transformedData = { ...data };
+        
+        if (data.diagnostics && typeof data.diagnostics === 'object' && !Array.isArray(data.diagnostics)) {
+            const diagnosticObject = {
+                title: data.diagnostics.primaryDiagnosis || "Diagnóstico",
+                description: data.diagnostics.diagnosticImpression || null,
+                symptoms: data.diagnostics.symptoms || null,
+                diagnosis: data.diagnostics.primaryDiagnosis || null,
+                treatment: null,
+                observations: data.diagnostics.clinicalFindings || null,
+                prescriptions: null,
+                physicalExam: data.physicalExam ? JSON.stringify(data.physicalExam) : null,
+                vitalSigns: data.physicalExam?.vitalSigns ? JSON.stringify(data.physicalExam.vitalSigns) : null,
+                consultDate: new Date().toISOString(),
+                nextAppointment: null,
+                state: 'ACTIVE',
+                customFields: data.diagnostics.secondaryDiagnosis ? {
+                    secondaryDiagnosis: data.diagnostics.secondaryDiagnosis
+                } : null,
+            };
+            
+            transformedData.diagnostics = [diagnosticObject];
+        }
+        
         const response = await httpPatient.post<CreateMedicalHistoryResponse>(
             `${medicalHistoryUrl}/patient/${patientId}`,
-            data
+            transformedData
         );
         return response.data;
     },
 
-    // Obtener historial medico de un paciente por su ID desde el rol de doctor/administrador
     async getMedicalHistoryByPatientId(
         patientId: string,
         params?: { page?: number; limit?: number }
@@ -31,7 +51,6 @@ export const medicalHistoryService = {
         return response.data;
     },
     
-    // Obtener mi propia historia médica rol de pacientes
     async getMyMedicalHistory(
         params?: { page?: number; limit?: number }
     ): Promise<PatientMedicalHistoryResponse> {
@@ -39,7 +58,7 @@ export const medicalHistoryService = {
         const response = await httpPatient.get(url, { params });
         return response.data;        
     },
-    //obtener linea de tiempo del historial medico de un paciente por su ID
+
     async getMedicalHistoryTimelineByPatientId(patientId: string) {
         const response = await httpPatient.get(
             `${medicalHistoryUrl}/patient/${patientId}/timeline`
@@ -47,7 +66,6 @@ export const medicalHistoryService = {
         return response.data;
     },
     
-    // Obtener historia clínica por ID
     async getMedicalHistoryById(historyId: string): Promise<MedicalHistoryByIdResponse> {
         const response = await httpPatient.get<MedicalHistoryByIdResponse>(
             `${medicalHistoryUrl}/${historyId}`
@@ -55,7 +73,6 @@ export const medicalHistoryService = {
         return response.data;
     },
 
-    //Actualizar historia clínica
     async updateMedicalHistory(historyId: string, data: any): Promise<UpdateMedicalHistoryResponse> {
         const response = await httpPatient.patch<UpdateMedicalHistoryResponse>(
             `${medicalHistoryUrl}/${historyId}`,
@@ -64,7 +81,6 @@ export const medicalHistoryService = {
         return response.data;
     },
 
-    //Obtener todas las historias clínicas
     async getAllMedicalHistories(
         params?: { page?: number; limit?: number }
     ): Promise<AllMedicalHistoriesResponse> {

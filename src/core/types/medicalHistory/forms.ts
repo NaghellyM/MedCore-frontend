@@ -6,7 +6,7 @@
 
 import type { PatientSearchResult } from "../patient";
 import type { ValidationError as BaseValidationError, ValidationResult } from "../shared";
-import type { VitalSigns, Prescription, MedicalOrder } from "./entities";
+import type { VitalSigns } from "./entities";
 
 // Secciones del formulario
 export type MedicalHistorySection = 
@@ -45,13 +45,6 @@ export interface MedicalHistoryFormData {
         systemicExam: string;
     };
 
-    // Antecedentes
-    medicalHistory: {
-        personalHistory: string;
-        familyHistory: string;
-        allergies: string;
-        currentMedications: string;
-    };
 
     // Diagnósticos
     diagnostics: {
@@ -62,20 +55,7 @@ export interface MedicalHistoryFormData {
         diagnosticImpression: string;
     };
 
-    // Tratamiento y órdenes
-    treatment: {
-        treatmentPlan: string;
-        prescriptions: Prescription[];
-        medicalOrders: MedicalOrder[];
-        recommendations: string;
-    };
 
-    // Seguimiento
-    followUp: {
-        nextAppointmentDate?: string;
-        observations: string;
-        warningFlags: string;
-    };
 
     // Campos adicionales personalizables
     customFields?: Record<string, any>;

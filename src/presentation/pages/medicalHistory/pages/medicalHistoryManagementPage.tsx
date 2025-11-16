@@ -36,7 +36,6 @@ export function MedicalHistoryManagementPage() {
     // Función para cargar historia clínica existente
     const loadExistingHistory = async (id: string) => {
         try {
-            // Aquí cargarías los datos desde el servicio
             // const historyData = await medicalHistoryService.getMedicalHistoryById(id);
             // setInitialData(historyData);
             // setSelectedPatient(historyData.patientInfo);
@@ -104,15 +103,16 @@ export function MedicalHistoryManagementPage() {
 
     // Manejar error de guardado
     const handleSaveError = (error: string) => {
+        console.error("❌ Error en el manejo de la historia médica:", error);
         setSaveStatus({
             type: "error",
             message: error
         });
 
-        // Limpiar mensaje después de 5 segundos
+        // Limpiar mensaje después de 8 segundos para dar más tiempo de lectura
         setTimeout(() => {
             setSaveStatus({ type: null, message: "" });
-        }, 5000);
+        }, 8000);
     };
 
     return (
