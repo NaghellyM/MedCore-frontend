@@ -4,6 +4,7 @@ import RootLayout from "../layouts/RootLayout";
 import { DoctorDashboard } from "../pages/doctor/doctorDashboard";
 import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
 import DoctorAppointmentsList from "../pages/doctor/page/DoctorAppointmentsList";
+<<<<<<< HEAD
 import { MedicalHistoryManagementPage } from "../pages/medicalHistory/pages/medicalHistoryManagementPage";
 import { CreateDiagnosticPage } from "../pages/medicalHistory/pages/CreateDiagnosticPage";
 import { EditDiagnosticPage } from "../pages/medicalHistory/pages/EditDiagnosticPage";
@@ -13,6 +14,10 @@ import {
     PatientMedicalSummaryPageWrapper,
     MedicalHistoryDetailPageWrapper
 } from "../pages/medicalHistory/pages";
+=======
+import UploadDiagnosticDocument from "../pages/doctor/page/uploadDocument";
+
+>>>>>>> origin/user-management
 
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
@@ -23,6 +28,7 @@ export const doctorRoutes: RouteObject = {
                 { path: "doctorPage", element: <DoctorDashboard /> },
                 { path: "queueDoctor", element: <QueueDoctorPage /> },
                 { path: "DoctorAppointmentsList", element: <DoctorAppointmentsList /> },
+                { path: "documentsUpload", element: <UploadDiagnosticDocument /> },
                 
                 // Rutas para historias clínicas
                 { path: "medicalHistory/create", element: <MedicalHistoryManagementPage /> },

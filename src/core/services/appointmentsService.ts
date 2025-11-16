@@ -77,4 +77,21 @@ export const appointmentsService = {
       throw error;
     }
   },
-};
+
+  // 📝 Actualizar el doctor de una cita
+async updateDoctor(appointmentId: string, doctorId: string) {
+  try {
+    const response = await httpClinical.put(
+      `${appointmentsUrl}/${appointmentId}/update-doctor`,
+      { doctorId }
+    );
+
+    console.log("✅ Doctor actualizado en la cita:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error al actualizar doctor:", error);
+    throw error;
+  }
+}
+
+}

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { login as mockedLogin } from "../core/services/authService";
 import Form from "../presentation/pages/login/loginDashboard";
 import { AuthProvider } from "../core/context/authContext";
+import { BrowserRouter } from "react-router-dom";
 
 vi.mock("../core/services/authService", () => ({
   login: vi.fn(),
@@ -92,18 +93,21 @@ describe("Role-based access and session safety tests", () => {
       };
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("user", JSON.stringify({ role: "ADMINISTRADOR" }));
       return response;
     });
 
     render(
-      <AuthProvider>
-        <Form />
-      </AuthProvider>,
+      <BrowserRouter>
+        <AuthProvider>
+          <Form />
+        </AuthProvider>
+      </BrowserRouter>,
     );
     const user = userEvent.setup();
 
     const emailInput = screen.getByLabelText(/Correo Electrónico/i);
-    const passInput = screen.getByLabelText(/Contraseña/i);
+    const passInput = screen.getByLabelText(/Contraseña/i, { selector: 'input' });
     const submit = screen.getByRole("button", {
       name: /Iniciar sesión|Entrar|Login|Acceder/i,
     });
@@ -119,7 +123,7 @@ describe("Role-based access and session safety tests", () => {
 
     expect(localStorage.getItem("password")).toBeNull();
     await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/adminPage"),
+      expect(mockedNavigate).toHaveBeenCalledWith("/adminPage", { replace: true }),
     );
   });
 
@@ -146,17 +150,20 @@ describe("Role-based access and session safety tests", () => {
       };
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("user", JSON.stringify({ role: "PACIENTE" }));
       return response;
     });
 
     render(
-      <AuthProvider>
-        <Form />
-      </AuthProvider>,
+      <BrowserRouter>
+        <AuthProvider>
+          <Form />
+        </AuthProvider>
+      </BrowserRouter>,
     );
 
     const emailInput = screen.getByLabelText(/Correo Electrónico/i);
-    const passInput = screen.getByLabelText(/Contraseña/i);
+    const passInput = screen.getByLabelText(/Contraseña/i, { selector: 'input' });
     const submit = screen.getByRole("button", {
       name: /Iniciar sesión|Entrar|Login|Acceder/i,
     });
@@ -167,7 +174,7 @@ describe("Role-based access and session safety tests", () => {
     await user.click(submit);
 
     await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/patientPage"),
+      expect(mockedNavigate).toHaveBeenCalledWith("/patientPage", { replace: true }),
     );
 
     cleanup();
@@ -190,17 +197,20 @@ describe("Role-based access and session safety tests", () => {
       };
       localStorage.setItem("accessToken", response.accessToken);
       localStorage.setItem("refreshToken", response.refreshToken);
+      localStorage.setItem("user", JSON.stringify({ role: "MEDICO" }));
       return response;
     });
 
     render(
-      <AuthProvider>
-        <Form />
-      </AuthProvider>,
+      <BrowserRouter>
+        <AuthProvider>
+          <Form />
+        </AuthProvider>
+      </BrowserRouter>,
     );
 
     const email2 = screen.getByLabelText(/Correo Electrónico/i);
-    const pass2 = screen.getByLabelText(/Contraseña/i);
+    const pass2 = screen.getByLabelText(/Contraseña/i, { selector: 'input' });
     const submit2 = screen.getByRole("button", {
       name: /Iniciar sesión|Entrar|Login|Acceder/i,
     });
@@ -210,7 +220,7 @@ describe("Role-based access and session safety tests", () => {
     await user.click(submit2);
 
     await waitFor(() => {
-      expect(mockedNavigate).toHaveBeenCalledWith("/doctorPage");
+      expect(mockedNavigate).toHaveBeenCalledWith("/doctorPage", { replace: true });
     });
   });
 });

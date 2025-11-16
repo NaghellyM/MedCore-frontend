@@ -7,6 +7,7 @@ import FiltrarCitas from "../pages/patient/components/RequestAppointment";
 import PatientAppointments from "../pages/patient/components/PatientAppointments";
 import { MedicalHistoryPage } from "../pages/medicalHistory/medicalHistory";
 import { MyMedicalHistoryPage } from "../pages/medicalHistory/myMedicalHistory";
+import PatientDocumentsList from "../pages/patient/page/patientDocuments";
 
 export const patientRoutes: RouteObject = {
     element: <RoleRoute allow={["patient"]} />,
@@ -20,6 +21,7 @@ export const patientRoutes: RouteObject = {
                 { path: "PatientAppointments", element: <PatientAppointments /> },
                 { path: "medical-history/patient/:patientId", element: <MedicalHistoryPage /> },
                 { path: "my-medical-history", element: <MyMedicalHistoryPage /> },
+                { path: "patientDocuments", element: <PatientDocumentsList patientId={undefined} /> },    
             ],
         },
     ],
