@@ -44,7 +44,7 @@ export default function UserHeader({ showSearch = true }: UserHeaderProps) {
                     <User />
                 </Avatar>
                 <div className="min-w-0">
-                    <div className="text-sm font-semibold text-slate-900 truncate">{user?.fullname}</div>
+                    <div className="text-sm font-semibold text-slate-900 truncate">{user?.fullname || "Usuario"}</div>
                     <div className="text-xs text-slate-500">{user?.role}</div>
                 </div>
                 <div>

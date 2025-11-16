@@ -98,7 +98,7 @@ export function MedicalHistoryManagementPage() {
 
         // Redirigir después de un breve delay
         setTimeout(() => {
-            navigate("/medical-history/list");
+            navigate("/medicalHistory/list");
         }, 2000);
     };
 

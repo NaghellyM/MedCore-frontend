@@ -4,20 +4,16 @@ import RootLayout from "../layouts/RootLayout";
 import { DoctorDashboard } from "../pages/doctor/doctorDashboard";
 import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
 import DoctorAppointmentsList from "../pages/doctor/page/DoctorAppointmentsList";
-<<<<<<< HEAD
 import { MedicalHistoryManagementPage } from "../pages/medicalHistory/pages/medicalHistoryManagementPage";
 import { CreateDiagnosticPage } from "../pages/medicalHistory/pages/CreateDiagnosticPage";
 import { EditDiagnosticPage } from "../pages/medicalHistory/pages/EditDiagnosticPage";
 import { DiagnosticListPage } from "../pages/medicalHistory/pages/DiagnosticListPage";
-import { 
+import {
     MedicalHistoriesListPageWrapper,
     PatientMedicalSummaryPageWrapper,
-    MedicalHistoryDetailPageWrapper
+    MedicalHistoryDetailPageWrapper,
 } from "../pages/medicalHistory/pages";
-=======
 import UploadDiagnosticDocument from "../pages/doctor/page/uploadDocument";
-
->>>>>>> origin/user-management
 
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
@@ -27,20 +23,45 @@ export const doctorRoutes: RouteObject = {
             children: [
                 { path: "doctorPage", element: <DoctorDashboard /> },
                 { path: "queueDoctor", element: <QueueDoctorPage /> },
-                { path: "DoctorAppointmentsList", element: <DoctorAppointmentsList /> },
+                { path: "doctorAppointmentsList", element: <DoctorAppointmentsList /> },
                 { path: "documentsUpload", element: <UploadDiagnosticDocument /> },
-                
+
                 // Rutas para historias clínicas
-                { path: "medicalHistory/create", element: <MedicalHistoryManagementPage /> },
-                { path: "medicalHistory/edit", element: <MedicalHistoryManagementPage /> },
-                { path: "medicalHistory/list", element: <MedicalHistoriesListPageWrapper /> },
-                { path: "medicalHistory/patient/:patientId", element: <MedicalHistoryDetailPageWrapper /> },
-                { path: "patient/:patientId/summary", element: <PatientMedicalSummaryPageWrapper /> },
-                
+                {
+                    path: "medicalHistory/create",
+                    element: <MedicalHistoryManagementPage />,
+                },
+                {
+                    path: "medicalHistory/edit",
+                    element: <MedicalHistoryManagementPage />,
+                },
+                {
+                    path: "medicalHistory/list",
+                    element: <MedicalHistoriesListPageWrapper />,
+                },
+                {
+                    path: "medicalHistory/patient/:patientId",
+                    element: <MedicalHistoryDetailPageWrapper />,
+                },
+                {
+                    path: "patient/:patientId/summary",
+                    element: <PatientMedicalSummaryPageWrapper />,
+                },
+
                 // Rutas para diagnósticos
-                { path: "medicalHistory/:medicalHistoryId/diagnosis", element: <DiagnosticListPage /> },
-                { path: "medicalHistory/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticPage /> },
-                { path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticPage /> },
+                {
+                    path: "medicalHistory/:medicalHistoryId/diagnosis",
+                    element: <DiagnosticListPage />,
+                },
+                {
+                    path: "medicalHistory/:medicalHistoryId/diagnosis/new",
+                    element: <CreateDiagnosticPage />,
+                },
+                {
+                    path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit",
+                    element: <EditDiagnosticPage />,
+                },
+                
             ],
         },
     ],

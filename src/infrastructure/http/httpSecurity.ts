@@ -1,12 +1,12 @@
 import axios from "axios";
 import { ApiUrls } from "../../environments/environments";
 
-const http = axios.create({
+const httpSecurity = axios.create({
   baseURL: ApiUrls.msSecurity,
   timeout: 10000,
 });
 
-http.interceptors.request.use((config) => {
+httpSecurity.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -14,4 +14,4 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
-export default http;
+export default httpSecurity;

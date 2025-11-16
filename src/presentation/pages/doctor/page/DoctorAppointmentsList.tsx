@@ -1,66 +1,47 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Clock, CalendarDays, User2 } from "lucide-react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { appointmentsService } from "../../../../core/services/appointmentsService";
+import { useMyAppointments } from "../../../../core/hooks/appointments";
+import BackButton from "../../encounter/components/button";
 
 const MySwal = withReactContent(Swal);
 
-interface Appointment {
-  id: string;
-  startTime: string;
-  endTime: string;
-  patient: {
-    name: string;
-  };
-  status?: string;
-}
-
 export default function DoctorAppointmentsList() {
-  const doctorId = "69069ad1441b83b718aef936";
   const today = new Date().toLocaleDateString("en-CA");
-
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(today);
 
-  const fetchAppointments = async () => {
-    setLoading(true);
-    try {
-      const data = await appointmentsService.filterAppointments({
-        doctorId,
-        startDate: date,
-        endDate: date,
-      });
+  const { appointments, loading, error } = useMyAppointments({
+    date,
+    excludeCancelled: true,
+  });
 
-      const filtered = (data.appointments || []).filter(
-        (a: Appointment) => a.status !== "CANCELLED"
-      );
-
-      setAppointments(filtered);
-    } catch {
+  // Mostrar error si existe (excepto errores de autenticación)
+  useEffect(() => {
+    if (error && error !== "Usuario no autenticado") {
       MySwal.fire({
         icon: "error",
         title: "Error",
-        text: "No se pudieron obtener las citas.",
+        text: error,
         confirmButtonColor: "#2563eb",
       });
-    } finally {
-      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchAppointments();
-  }, [date]);
+  }, [error]);
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-blue-50 to-white p-6">
       <div className="w-full max-w-5xl bg-white p-10 rounded-3xl shadow-xl border border-gray-100">
-
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-10 tracking-tight">
-          📘 MIS CITAS PROGRAMADAS
-        </h2>
+        
+        {/* Header con título y botón de volver */}
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex-1">
+            <BackButton />
+          </div>
+          <h2 className="text-3xl font-bold text-center text-blue-700 tracking-tight flex-2">
+            📘 MIS CITAS PROGRAMADAS
+          </h2>
+          <div className="flex-1"></div>
+        </div>
 
         {/* Filtro fecha */}
         <div className="flex justify-center mb-10">
@@ -83,6 +64,23 @@ export default function DoctorAppointmentsList() {
           <p className="text-center text-blue-600 font-medium animate-pulse">
             Cargando citas...
           </p>
+        ) : error === "Usuario no autenticado" ? (
+          <div className="text-center p-8">
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-yellow-700">
+                    Sesión no válida. Por favor, inicia sesión nuevamente.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         ) : appointments.length === 0 ? (
           <p className="text-center text-gray-500 italic">
             No hay citas programadas para esta fecha.

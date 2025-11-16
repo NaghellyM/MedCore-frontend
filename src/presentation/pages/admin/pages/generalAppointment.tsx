@@ -59,10 +59,6 @@ export default function GeneralAppointment() {
   useEffect(() => {
     const loadDoctors = async () => {
       try {
-<<<<<<< HEAD
-        const data = await doctorsService.filterBySpecialty(filters.specialty)
-        setDoctors(data?.users || [])
-=======
         if (filters.specialty === "all") {
           if ((doctorsService as any).getAllDoctors) {
             const res = await (doctorsService as any).getAllDoctors();
@@ -73,11 +69,10 @@ export default function GeneralAppointment() {
         }
 
         const res = await doctorsService.filterBySpecialty(filters.specialty);
-        const docs = res?.doctors || [];
+        const docs = res?.users || [];
         setDoctors(docs);
 
         setFilters((prev) => ({ ...prev, doctorId: docs[0]?.id || "" }));
->>>>>>> origin/user-management
       } catch {
         setDoctors([]);
       }
@@ -140,7 +135,7 @@ export default function GeneralAppointment() {
 
     // Obtener doctores de la misma especialidad
     const res = await doctorsService.filterBySpecialty(specialty);
-    const doctorsSame = res?.doctors || [];
+    const doctorsSame = res?.users || [];
 
     if (doctorsSame.length === 0) {
       await MySwal.fire({

@@ -41,110 +41,11 @@ export default function RequestAppointment() {
     return localDate.toISOString().split("T")[0]
   }
 
-<<<<<<< HEAD
-  export default function RequestAppointment() {
-    // ────────────────────────────────
-    // ESTADOS
-    // ────────────────────────────────
-    const [specialties, setSpecialties] = useState<{ id: string; nombre: string }[]>([])
-    const [doctors, setDoctors] = useState<any[]>([])
-    const [availableSlots, setAvailableSlots] = useState<{ start: string; end: string }[]>([])
-    const [loading, setLoading] = useState(false)
-
-    const today = new Date().toLocaleDateString("en-CA") // → "YYYY-MM-DD" sin desfase
-
-
-    const [filters, setFilters] = useState({
-      specialty: "",
-      doctorId: "",
-      date: today,
-      startTime: "07:00",
-      endTime: "18:00",
-    })
-
-    // ID del paciente (ejemplo: reemplaza con tu sesión o estado global)
-    const patientId = "69090372f2a08c7fe006739a"
-
-
-
-    // ────────────────────────────────
-    // CARGAR ESPECIALIDADES
-    // ────────────────────────────────
-    useEffect(() => {
-      const loadSpecialties = async () => {
-        try {
-          const data = await doctorsService.getSpecialties()
-          setSpecialties(data)
-        } catch {
-          MySwal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudieron obtener las especialidades.",
-            confirmButtonColor: "#2563eb",
-          })
-        }
-      }
-      loadSpecialties()
-    }, [])
-
-    // ────────────────────────────────
-    // CARGAR DOCTORES SEGÚN ESPECIALIDAD
-    // ────────────────────────────────
-    useEffect(() => {
-      const loadDoctors = async () => {
-        if (!filters.specialty) return
-        try {
-          const data = await doctorsService.filterBySpecialty(filters.specialty)
-          setDoctors(data?.users || [])
-        } catch {
-          MySwal.fire({
-            icon: "error",
-            title: "Error al cargar doctores",
-            text: "Ocurrió un problema al obtener los doctores.",
-            confirmButtonColor: "#2563eb",
-          })
-        }
-      }
-      loadDoctors()
-    }, [filters.specialty])
-
-    // ────────────────────────────────
-    // GENERAR HORARIOS DISPONIBLES
-    // ────────────────────────────────
-    const generateTimeSlots = (start: string, end: string, interval: number) => {
-      const times: string[] = []
-      let [h, m] = start.split(":").map(Number)
-      const [eh, em] = end.split(":").map(Number)
-
-      while (h < eh || (h === eh && m < em)) {
-        const hour = `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`
-        times.push(hour)
-        m += interval
-        if (m >= 60) {
-          h++
-          m -= 60
-        }
-      }
-      return times
-    }
-
-    // ────────────────────────────────
-    // BUSCAR DISPONIBILIDAD
-    // ────────────────────────────────
-    const fetchAppointments = async () => {
-      if (!filters.doctorId) {
-        setAvailableSlots([])
-        return
-      }
-
-      setLoading(true)
-=======
   // ────────────────────────────────
   // CARGAR ESPECIALIDADES
   // ────────────────────────────────
   useEffect(() => {
     const loadSpecialties = async () => {
->>>>>>> origin/user-management
       try {
         const data = await doctorsService.getSpecialties()
         setSpecialties(data)
@@ -170,7 +71,7 @@ export default function RequestAppointment() {
 
       try {
         const data = await doctorsService.filterBySpecialty(filters.specialty)
-        setDoctors(data?.doctors || [])
+        setDoctors(data?.users || [])
       } catch {
         MySwal.fire({
           icon: "error",

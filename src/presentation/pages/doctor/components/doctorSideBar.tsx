@@ -4,16 +4,14 @@ import { SidebarGroupComponent } from "../../../components/globals/sidebar/Sideb
 import {
   Calendar,
   User,
-  Activity,
   BookUser,
   ClipboardPlus,
   HeartPulse,
 } from "lucide-react";
 
 const gestionClinicaItems = [
-  { title: "Agenda", url: "/encounter", icon: Calendar },
-  { title: "Medicamentos", url: "#", icon: Activity },
-  { title: "Diagnósticos", url: "#", icon: HeartPulse },
+  { title: "Agenda", url: "/doctorAppointmentsList", icon: Calendar },
+  { title: "Diagnósticos", url: "/doctorDiagnosticos", icon: HeartPulse },
 ];
 
 const pacienteItems = [
@@ -21,6 +19,7 @@ const pacienteItems = [
   { title: "Historiales médicos", url: "/medicalHistory/list", icon: ClipboardPlus },
   { title: "Crear historia clínica", url: "/medicalHistory/create", icon: ClipboardPlus },
   { title: "Próximas citas", url: "/queueDoctor", icon: BookUser },
+  { title: "Mis citas", url: "/admin/adminAppointments", icon: Calendar },
 ];
 
 

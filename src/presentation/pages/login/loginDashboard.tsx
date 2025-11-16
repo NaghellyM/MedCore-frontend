@@ -1,11 +1,9 @@
-// src/features/auth/pages/Form.tsx
 import Swal from 'sweetalert2';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff } from "lucide-react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
 import { loginSchema } from '../../../core/validators/userLoginValidator';
 import { useAuth } from '../../../core/context/authContext';
 import type { IFormInput } from "../../../core/types/auth";
