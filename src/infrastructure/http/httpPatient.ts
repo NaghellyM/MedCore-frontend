@@ -1,17 +1,13 @@
 import axios from "axios";
 import { ApiUrls } from "../../environments/environments";
+import { setupAuthInterceptors } from "./authInterceptor";
 
 const httpPatient = axios.create({
     baseURL: ApiUrls.msPatient,
     timeout: 10000,
 });
 
-httpPatient.interceptors.request.use((config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+// Configurar interceptores de autenticación
+setupAuthInterceptors(httpPatient, 'Servicio de Pacientes');
 
 export default httpPatient;

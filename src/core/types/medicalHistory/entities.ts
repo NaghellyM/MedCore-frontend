@@ -161,18 +161,22 @@ export interface MedicalHistory {
 // DTOs para operaciones CRUD
 
 // DTO para crear diagnóstico
+// ✅ CORREGIDO: Campos obligatorios según backend (diagnosticController.js líneas 56-59)
 export interface CreateDiagnosticDto {
-    title: string;
-    description?: string;
-    symptoms?: string;
-    diagnosis?: string;
-    treatment?: string;
+    // 🔴 CAMPOS OBLIGATORIOS (backend los valida)
+    title: string;        // OBLIGATORIO - Mínimo 3 caracteres
+    description: string;  // OBLIGATORIO
+    symptoms: string;     // OBLIGATORIO
+    diagnosis: string;    // OBLIGATORIO
+    treatment: string;    // OBLIGATORIO - ⚠️ CRÍTICO: Nunca debe ser undefined
+
+    // 🟡 CAMPOS OPCIONALES
     observations?: string;
     prescriptions?: string;
-    physicalExam?: string;
-    vitalSigns?: string;
-    consultDate: string; // ISO date string
-    nextAppointment?: string; // ISO date string
+    physicalExam?: string;     // JSON stringificado si es objeto
+    vitalSigns?: string;       // JSON stringificado si es objeto
+    consultDate: string;       // ISO date string - OBLIGATORIO (corregido para coincidir con servicio)
+    nextAppointment?: string;  // ISO date string
     customFields?: Record<string, unknown>;
 }
 

@@ -1,6 +1,5 @@
 /**
  * ENTIDADES DE DIAGNÓSTICO
- * ========================
  * Tipos específicos para el manejo de diagnósticos médicos
  */
 

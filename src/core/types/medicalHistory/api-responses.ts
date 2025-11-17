@@ -58,12 +58,16 @@ export interface AllMedicalHistoriesResponse {
 }
 
 // Respuestas para operaciones CRUD del historial médico
+// ✅ CORREGIDO: Alineado exactamente con respuesta del backend
 export interface CreateMedicalHistoryResponse {
-    success?: boolean;
     message: string;
     data: {
-        id: string;           // Backend devuelve 'id', no 'historyId'
-        patientId: string;
+        id: string;           // ✅ Backend devuelve 'id'
+        patientId: string;    // ✅ Backend devuelve 'patientId'
+        createdBy: string;    // ✅ Backend devuelve 'createdBy'
+        createdAt: string;    // ✅ Backend devuelve 'createdAt'
+        updatedAt: string;    // ✅ Backend devuelve 'updatedAt'
+        // ❌ Backend NO devuelve: diagnostics[], success
     };
 }
 
@@ -101,13 +105,23 @@ export interface GetDiagnosticsResponse {
 }
 
 // Respuesta al crear un diagnóstico
+// ✅ ACTUALIZADO: Alineado con la respuesta REAL del backend (ahora incluye diagnosticId)
 export interface CreateDiagnosticResponse {
-    success: boolean;
     message: string;
     data: {
-        diagnosticId: string;
-        medicalHistoryId: string;
-        patientId: string;
+        patient: {
+            id: string;
+            createdAt: string;
+            updatedAt: string;
+        };
+        doctor: {
+            id: string;
+            email: string;
+            role: string;
+            fullname: string;
+        };
+        documents: any[]; // Array vacío inicialmente
+        diagnosticId: string; // ✅ ¡AHORA SÍ INCLUIDO! UUID del diagnóstico creado
     };
 }
 

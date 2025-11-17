@@ -1,6 +1,5 @@
 /**
  * HOOK - DIAGNÓSTICOS POR PACIENTE
- * =================================
  * Hook específico para obtener diagnósticos de un paciente
  */
 

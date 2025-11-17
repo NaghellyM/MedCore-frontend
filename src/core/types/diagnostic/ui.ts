@@ -1,6 +1,5 @@
 /**
  * TIPOS DE UI - DIAGNÓSTICOS
- * ===========================
  * Tipos específicos para componentes de interfaz de usuario
  */
 

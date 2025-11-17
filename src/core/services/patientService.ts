@@ -1,6 +1,6 @@
 import httpPatient from "../../infrastructure/http/httpPatient"
+import { PatientValidator } from "../validators"
 
-// Importar todas las interfaces desde el dominio patient
 import type { 
     Patient,
     GetPatientResponse,
@@ -11,10 +11,11 @@ import type {
     CreatePatientResponse, 
     UpdatePatientResponse,
     AdvancedSearchParams 
-} from "../types/patient"// URL base para pacientes
+} from "../types/patient"
+
+// URL base para pacientes
 const patientBaseUrl = "/patients";
 
-// Servicio de pacientes completamente alineado con el backend
 export const patientService = {
   /**
    * Obtiene todos los pacientes con paginación
@@ -24,20 +25,20 @@ export const patientService = {
    */
   async getAllPatients(page: number = 1, limit: number = 20): Promise<PatientSearchResponse> {
     try {
-      const response = await httpPatient.get(patientBaseUrl, {
-        params: { page, limit }
-      });
+      const { page: validPage, limit: validLimit } = PatientValidator.validatePaginationParams(page, limit);
 
+      const response = await httpPatient.get(patientBaseUrl, {
+        params: { page: validPage, limit: validLimit }
+      });
       return {
         patients: response.data.patients || response.data.data || [],
         total: response.data.total || 0,
-        page: response.data.page || page,
+        page: response.data.page || validPage,
         totalPages: response.data.totalPages || 1,
-        currentPage: response.data.currentPage || page
+        currentPage: response.data.currentPage || validPage
       };
     } catch (error) {
-      console.error("Error fetching all patients:", error);
-      throw error;
+      throw new Error(`Error al obtener pacientes: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   },
 
@@ -48,8 +49,10 @@ export const patientService = {
    */
   async advancedSearchPatients(params: AdvancedSearchParams): Promise<PatientSearchResponse> {
     try {
-      const queryParams = new URLSearchParams();
+      // Validar parámetros de búsqueda antes de procesar
+      PatientValidator.validateAdvancedSearchParams(params);
 
+      const queryParams = new URLSearchParams();
       // Agregar parámetros de búsqueda
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
@@ -69,8 +72,7 @@ export const patientService = {
         currentPage: response.data.currentPage || params.page || 1
       };
     } catch (error) {
-      console.error("Error in advanced search:", error);
-      throw error;
+      throw new Error(`Error en búsqueda avanzada: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   },
 
@@ -81,10 +83,13 @@ export const patientService = {
    */
   async getPatientById(patientId: string): Promise<Patient> {
     try {
+      PatientValidator.validatePatientId(patientId);
+
       const response = await httpPatient.get<GetPatientResponse>(`${patientBaseUrl}/${patientId}`);
       return response.data;
     } catch (error) {
-      console.error("Error fetching patient by ID:", error);
+      // El interceptor ya maneja los errores de autenticación y formato
+      // Solo re-lanzamos el error para que sea manejado por el hook
       throw error;
     }
   },
@@ -96,6 +101,9 @@ export const patientService = {
    */
   async createPatient(patientData: CreatePatientDto): Promise<CreatePatientResponse> {
     try {
+      // Validar datos del paciente antes de crear
+      PatientValidator.validateCreatePatientData(patientData);
+
       const response = await httpPatient.post(patientBaseUrl, patientData);
 
       return {
@@ -104,8 +112,7 @@ export const patientService = {
         data: response.data.data || response.data
       };
     } catch (error) {
-      console.error("Error creating patient:", error);
-      throw error;
+      throw new Error(`Error al crear paciente: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   },
 
@@ -117,6 +124,10 @@ export const patientService = {
    */
   async updatePatient(patientId: string, patientData: Partial<CreatePatientDto>): Promise<UpdatePatientResponse> {
     try {
+      // Validar ID del paciente y datos de actualización
+      PatientValidator.validatePatientId(patientId);
+      PatientValidator.validateUpdatePatientData(patientData);
+
       const response = await httpPatient.put(`${patientBaseUrl}/${patientId}`, patientData);
 
       return {
@@ -125,8 +136,7 @@ export const patientService = {
         data: response.data.data || response.data
       };
     } catch (error) {
-      console.error("Error updating patient:", error);
-      throw error;
+      throw new Error(`Error al actualizar paciente: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   },
 
@@ -138,6 +148,10 @@ export const patientService = {
    */
   async updatePatientState(patientId: string, stateData: PatientStateUpdateDto): Promise<UpdatePatientResponse> {
     try {
+      // Validar ID del paciente y datos del estado
+      PatientValidator.validatePatientId(patientId);
+      PatientValidator.validatePatientStateUpdate(stateData);
+
       const response = await httpPatient.patch(`${patientBaseUrl}/state/${patientId}`, stateData);
 
       return {
@@ -146,12 +160,10 @@ export const patientService = {
         data: response.data.data || response.data
       };
     } catch (error) {
-      console.error("Error updating patient state:", error);
-      throw error;
+      throw new Error(`Error al actualizar estado del paciente: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   },
 
-  // ========== MÉTODOS DE CONVENIENCIA Y BÚSQUEDA ==========
 
   /**
    * Busca pacientes por término general (nombre, documento, etc.)
@@ -166,11 +178,17 @@ export const patientService = {
     limit: number = 10
   ): Promise<PatientSearchResponse> {
     try {
+      // Validar término de búsqueda
+      PatientValidator.validateSearchQuery(query);
+
+      // Validar parámetros de paginación
+      const { page: validPage, limit: validLimit } = PatientValidator.validatePaginationParams(page, limit);
+
       // Si el query es numérico, buscar por identificación
       const isNumeric = /^\d+$/.test(query.trim());
       const searchParams: AdvancedSearchParams = {
-        page,
-        limit
+        page: validPage,
+        limit: validLimit
       };
 
       if (isNumeric) {
@@ -181,13 +199,7 @@ export const patientService = {
 
       return await this.advancedSearchPatients(searchParams);
     } catch (error) {
-      console.error("Error searching patients:", error);
-      return {
-        patients: [],
-        total: 0,
-        page: 1,
-        totalPages: 1
-      };
+      throw new Error(`Error en búsqueda de pacientes: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   },
 
@@ -202,10 +214,18 @@ export const patientService = {
     page: number = 1,
     limit: number = 10
   ): Promise<PatientSearchResponse> {
+    // Validar término de diagnóstico
+    if (!diagnostic || typeof diagnostic !== 'string' || diagnostic.trim().length < 3) {
+      throw new Error("El diagnóstico debe tener al menos 3 caracteres");
+    }
+
+    // Validar parámetros de paginación
+    const { page: validPage, limit: validLimit } = PatientValidator.validatePaginationParams(page, limit);
+
     return this.advancedSearchPatients({
       diagnostic: diagnostic.trim(),
-      page,
-      limit
+      page: validPage,
+      limit: validLimit
     });
   },
 
@@ -215,10 +235,13 @@ export const patientService = {
    * @param limit - Límite de resultados
    */
   async getActivePatients(page: number = 1, limit: number = 20): Promise<PatientSearchResponse> {
+    // Validar parámetros de paginación
+    const { page: validPage, limit: validLimit } = PatientValidator.validatePaginationParams(page, limit);
+
     return this.advancedSearchPatients({
       status: "ACTIVE",
-      page,
-      limit
+      page: validPage,
+      limit: validLimit
     });
   },
 
@@ -228,11 +251,13 @@ export const patientService = {
    */
   async getRecentPatients(limit: number = 5): Promise<PatientSearchResult[]> {
     try {
-      const response = await this.getAllPatients(1, limit);
+      // Validar límite
+      const validLimit = Math.max(1, Math.min(limit, 50)); // Entre 1 y 50
+
+      const response = await this.getAllPatients(1, validLimit);
       return response.patients;
     } catch (error) {
-      console.error("Error fetching recent patients:", error);
-      return [];
+      throw new Error(`Error al obtener pacientes recientes: ${error instanceof Error ? error.message : 'Error desconocido'}`);
     }
   }
 };

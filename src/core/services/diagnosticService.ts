@@ -6,20 +6,18 @@ import type {
     UpdateDiagnosticResponse,
     UpdateDiagnosticStateResponse,
     DeleteDiagnosticResponse,
-    CreateDiagnosticDto,
     UpdateDiagnosticDto,
     DiagnosticState,
     DiagnosticSearchParams
 } from "../types/diagnostic";
+import type { CreateDiagnosticDto } from "../types/medicalHistory/entities";
 
 // Url base para diagnósticos
 const diagnosticBaseUrl = "/diagnostics";
 
 export const diagnosticService = {
     
-    /**
-     * Obtener un diagnóstico por su ID
-     */
+    //Obtener un diagnóstico por su ID
     async getDiagnosticById(diagnosticId: string): Promise<GetDiagnosticByIdResponse> {
         const response = await httpPatient.get<GetDiagnosticByIdResponse>(
             `${diagnosticBaseUrl}/${diagnosticId}`
@@ -27,9 +25,7 @@ export const diagnosticService = {
         return response.data;
     },
 
-    /**
-     * Obtener diagnósticos por el ID de un paciente
-     */
+    // Obtener diagnósticos por el ID de un paciente
     async getDiagnosticsByPatientId(
         patientId: string, 
         state?: DiagnosticState
@@ -42,9 +38,7 @@ export const diagnosticService = {
         return response.data;
     },
 
-    /**
-     * Obtener diagnósticos con filtros y paginación
-     */
+    // Obtener diagnósticos con filtros y paginación
     async getDiagnostics(params?: DiagnosticSearchParams): Promise<any> {
         const queryParams = new URLSearchParams();
         
@@ -64,9 +58,7 @@ export const diagnosticService = {
         return response.data;
     },
 
-    /**
-     * Crear un nuevo diagnóstico asociado a un paciente
-     */
+    // Crear un nuevo diagnóstico asociado a un paciente
     async createDiagnostic(
         patientId: string, 
         diagnosticData: CreateDiagnosticDto
@@ -75,12 +67,11 @@ export const diagnosticService = {
             `${diagnosticBaseUrl}/patient/${patientId}`,
             diagnosticData
         );
+        
         return response.data;
     },
 
-    /**
-     * Actualizar un diagnóstico por su ID
-     */
+    // Actualizar un diagnóstico por su ID
     async updateDiagnostic(
         diagnosticId: string, 
         diagnosticData: UpdateDiagnosticDto
@@ -92,9 +83,7 @@ export const diagnosticService = {
         return response.data;
     },
 
-    /**
-     * Actualizar el estado de un diagnóstico 
-     */
+    //Actualizar el estado de un diagnóstico 
     async updateDiagnosticState(
         diagnosticId: string, 
         newState: DiagnosticState
@@ -106,9 +95,8 @@ export const diagnosticService = {
         return response.data;
     },
 
-    /**
-     * Eliminar un diagnóstico por su ID
-     */
+    
+    // Eliminar un diagnóstico por su ID
     async deleteDiagnostic(
         diagnosticId: string
     ): Promise<DeleteDiagnosticResponse> {

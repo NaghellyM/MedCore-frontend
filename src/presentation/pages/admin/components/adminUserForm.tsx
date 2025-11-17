@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { FormField, PasswordField, DynamicSelectField } from "../../../components/ui"
+import { FormField, PasswordField, DynamicSelectField } from "../../../components/globals"
 
 interface Props {
   control: any

@@ -1,6 +1,6 @@
 
 import { Search, User, Clock, ChevronRight } from "lucide-react";
-import { usePatientSearch } from "../hooks/usePatientSearch";
+import { usePatientSearch } from "../../../../core/types/medicalHistory/usePatientSearch";
 import type { PatientSearchResult } from "../../../../core/types/patient";
 
 interface PatientSearchSectionProps {

@@ -1,19 +1,15 @@
-/**
- * RESPUESTAS DEL API - DIAGNÓSTICOS
- * ==================================
- * Tipos para las respuestas del API de diagnósticos
- */
+// Tipos para las respuestas del API de diagnósticos
 
 import type { Diagnostic, DiagnosticSummary } from './entities';
 
-// Respuesta base del API (actualizada según respuestas reales del backend)
+// Respuesta base del API 
 export interface ApiResponse<T> {
     success: boolean;
     message: string;
     data: T;
 }
 
-// Respuesta paginada (actualizada según respuestas reales del backend)
+// Respuesta paginada del API
 export interface PaginatedResponse<T> {
     success: boolean;
     message: string;

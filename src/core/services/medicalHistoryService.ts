@@ -10,35 +10,12 @@ import type {
 const medicalHistoryUrl = `/medical-history`;
 
 export const medicalHistoryService = {
-    async createMedicalHistory(patientId: string, data: any): Promise<CreateMedicalHistoryResponse> {
-        const transformedData = { ...data };
-        
-        if (data.diagnostics && typeof data.diagnostics === 'object' && !Array.isArray(data.diagnostics)) {
-            const diagnosticObject = {
-                title: data.diagnostics.primaryDiagnosis || "Diagnóstico",
-                description: data.diagnostics.diagnosticImpression || null,
-                symptoms: data.diagnostics.symptoms || null,
-                diagnosis: data.diagnostics.primaryDiagnosis || null,
-                treatment: null,
-                observations: data.diagnostics.clinicalFindings || null,
-                prescriptions: null,
-                physicalExam: data.physicalExam ? JSON.stringify(data.physicalExam) : null,
-                vitalSigns: data.physicalExam?.vitalSigns ? JSON.stringify(data.physicalExam.vitalSigns) : null,
-                consultDate: new Date().toISOString(),
-                nextAppointment: null,
-                state: 'ACTIVE',
-                customFields: data.diagnostics.secondaryDiagnosis ? {
-                    secondaryDiagnosis: data.diagnostics.secondaryDiagnosis
-                } : null,
-            };
-            
-            transformedData.diagnostics = [diagnosticObject];
-        }
-        
+    async createMedicalHistory(patientId: string, _formData?: any): Promise<CreateMedicalHistoryResponse> {
         const response = await httpPatient.post<CreateMedicalHistoryResponse>(
             `${medicalHistoryUrl}/patient/${patientId}`,
-            transformedData
+            {} 
         );
+        
         return response.data;
     },
 

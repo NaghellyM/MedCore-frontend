@@ -19,7 +19,6 @@ const pacienteItems = [
   { title: "Historiales médicos", url: "/medicalHistory/list", icon: ClipboardPlus },
   { title: "Crear historia clínica", url: "/medicalHistory/create", icon: ClipboardPlus },
   { title: "Próximas citas", url: "/queueDoctor", icon: BookUser },
-  { title: "Mis citas", url: "/admin/adminAppointments", icon: Calendar },
 ];
 
 

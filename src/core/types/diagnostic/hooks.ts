@@ -1,6 +1,5 @@
 /**
- * HOOKS - DIAGNÓSTICOS
- * =====================
+ * DIAGNÓSTICOS
  * Tipos para hooks personalizados de diagnósticos
  */
 
@@ -9,10 +8,10 @@ import type {
     DiagnosticSummary, 
     DiagnosticFilters,
     DiagnosticSearchParams,
-    CreateDiagnosticDto,
     UpdateDiagnosticDto,
     DiagnosticState
 } from './entities';
+import type { CreateDiagnosticDto } from '../medicalHistory/entities';
 
 import type { DiagnosticFormData, DiagnosticValidationErrors } from './forms';
 

@@ -104,3 +104,7 @@ export type {
 export type {
     EncounterPayload
 } from './encounters';
+
+export { useDiagnosticForm } from "../diagnostic/useDiagnosticForm";
+export { usePatientSearch } from "../medicalHistory/usePatientSearch";
+export { useDocumentUpload } from "../documents/useDocumentUpload";

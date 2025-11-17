@@ -1,7 +1,7 @@
 import React from 'react';
 import { DashboardLayout } from "../../layouts/layout";
 import { PatientSidebar } from '../patient/components/patientSidebar';
-import { ViewPatientMedicalHistoryPage } from './pages/MedicalHistoryPageView';
+import { ViewPatientMedicalHistoryPage } from './views/medicalHistoryPageView';
 
 export const MedicalHistoryPage: React.FC = () => {
     return (<DashboardLayout

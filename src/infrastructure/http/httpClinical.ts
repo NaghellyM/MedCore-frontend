@@ -1,17 +1,13 @@
 import axios from "axios";
 import { ApiUrls } from "../../environments/environments";
+import { setupAuthInterceptors } from "./authInterceptor";
 
 const httpClinical = axios.create({
     baseURL: ApiUrls.msClinical,
     timeout: 10000,
 });
 
-httpClinical.interceptors.request.use((config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+// Configurar interceptores de autenticación
+setupAuthInterceptors(httpClinical, 'Servicio Clínico');
 
 export default httpClinical;

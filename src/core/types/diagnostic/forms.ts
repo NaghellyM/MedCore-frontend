@@ -1,6 +1,5 @@
 /**
  * FORMULARIOS - DIAGNÓSTICOS
- * ===========================
  * Tipos para formularios y validación de diagnósticos
  */
 
