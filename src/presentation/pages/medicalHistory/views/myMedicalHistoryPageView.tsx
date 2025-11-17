@@ -15,6 +15,8 @@ export const ViewMyMedicalHistoryPage: React.FC = () => {
         currentPatientId,
     } = useMyMedicalHistory();
 
+
+
     return (
         <div className="w-full min-h-full flex flex-col gap-4 sm:gap-6">
             {/* Header centrado y responsive */}

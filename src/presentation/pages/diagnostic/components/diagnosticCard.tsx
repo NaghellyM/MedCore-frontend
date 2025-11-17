@@ -3,6 +3,7 @@ import { Edit, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Diagnostic } from "../../../../core/types/diagnostic";
 import { useDeleteDiagnostic } from "../../../../core/hooks/diagnostic/useDeleteDiagnostic";
+import { useAuth } from "../../../../core/context/authContext";
 
 
 interface DiagnosticCardProps {
@@ -17,6 +18,10 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
     showActions = true 
 }) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    
+    // Determinar si el usuario actual es un paciente
+    const isPatient = user?.role === 'PACIENTE' || user?.role === 'patient';
 
     const { deleteDiagnostic, isDeleting, canDelete } = useDeleteDiagnostic({
         onSuccess: onDiagnosticDeleted,
@@ -70,8 +75,8 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                             : "Eliminada"}
                     </span>
 
-                    {/* Botones de acción */}
-                    {showActions && diagnostic.state !== "DELETED" && (
+                    {/* Botones de acción - Solo para personal médico */}
+                    {showActions && !isPatient && diagnostic.state !== "DELETED" && (
                         <div className="flex items-center gap-1">
                             <button
                                 onClick={handleView}

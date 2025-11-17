@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { medicalHistoryService } from "../../services/medicalHistoryService";
 import { getCurrentUser } from "../../services/authService";
 import type {
@@ -29,59 +29,103 @@ export function usePatientMedicalHistory(
     const [history, setHistory] = useState<MedicalHistory | null>(null);
     const [pagination, setPagination] =
         useState<PatientMedicalHistoryResponse["pagination"] | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(Boolean(enabled));
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isError, setIsError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const getCurrentPatientId = (): string | null => {
+    // Memorizar el ID del paciente para evitar recálculos innecesarios
+    const currentPatientId = useMemo((): string | null => {
         if (patientId) {
             return patientId;
         }
         
         const currentUser = getCurrentUser();
+        
+        // Verificar que el usuario sea paciente y tenga un ID válido
         if (currentUser && (currentUser.role === 'PACIENTE' || currentUser.role === 'patient')) {
-            const possibleIds = [currentUser.id, currentUser.sub, currentUser.userId, currentUser.patientId];
-            const validId = possibleIds.find(id => id && typeof id === 'string');
-            return validId || null;
+            // Intentar obtener el ID desde diferentes campos posibles
+            const id = currentUser.id || currentUser.sub || currentUser.patientId || null;
+            return id;
         }
         
         return null;
-    };
+    }, [patientId]);
 
-    const currentPatientId = getCurrentPatientId();
-    const fetchHistory = async () => {        
+    const fetchHistory = useCallback(async () => {        
+        if (!currentPatientId && !patientId) {
+            setIsError(true);
+            setErrorMessage("No se pudo obtener el ID del paciente.");
+            setIsLoading(false);
+            return;
+        }
+
         try {
             setIsLoading(true);
             setIsError(false);
             setErrorMessage(null);
-            let response;
+
+            let response: PatientMedicalHistoryResponse;
+            
             if (patientId) {
+                // Si se proporciona un patientId específico, usarlo
                 response = await medicalHistoryService.getMedicalHistoryByPatientId(patientId);
-            } else if (currentPatientId) {
-                response = await medicalHistoryService.getMyMedicalHistory();
             } else {
-                return;
+                // Si no, usar el endpoint para obtener la historia del paciente logueado
+                response = await medicalHistoryService.getMyMedicalHistory();
             }
 
-            const { pagination: paginationData, ...historyData } = response;
-            setHistory(historyData);
-            setPagination(paginationData);
+            // Validar que la respuesta tenga la estructura esperada
+            if (!response) {
+                throw new Error("La respuesta del servidor está vacía");
+            }
+
+            // Verificar si la respuesta tiene estructura de paginación o es directa
+            if ('pagination' in response) {
+                // Respuesta con paginación: { ...historyData, pagination }
+                const { pagination: paginationData, ...historyData } = response;
+                setHistory(historyData as MedicalHistory);
+                setPagination(paginationData || null);
+            } else {
+                // Respuesta directa sin paginación
+                setHistory(response as MedicalHistory);
+                setPagination(null);
+            }
         } catch (error: any) {
             setIsError(true);
-            setErrorMessage(
-                error?.response?.data?.message ??
-                "Ocurrió un error al cargar la historia clínica del paciente."
-            );
+            setHistory(null);
+            setPagination(null);
+            
+            // Mejorar el manejo de errores
+            let errorMsg = "Ocurrió un error al cargar la historia clínica del paciente.";
+            
+            if (error?.response?.status === 404) {
+                errorMsg = "No se encontró historia clínica para este paciente.";
+            } else if (error?.response?.status === 403) {
+                errorMsg = "No tienes permisos para acceder a esta historia clínica.";
+            } else if (error?.response?.status === 401) {
+                errorMsg = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.";
+            } else if (error?.response?.data?.message) {
+                errorMsg = error.response.data.message;
+            } else if (error?.message) {
+                errorMsg = error.message;
+            }
+            
+            setErrorMessage(errorMsg);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [patientId, currentPatientId]);
 
     useEffect(() => {
         if (enabled && (patientId || currentPatientId)) {
             void fetchHistory();
+        } else if (enabled && !patientId && !currentPatientId) {
+            // Si está habilitado pero no hay ID, mostrar error
+            setIsError(true);
+            setErrorMessage("No se pudo obtener la información del paciente desde la sesión.");
+            setIsLoading(false);
         }
-    }, [enabled, patientId, currentPatientId]);
+    }, [enabled, fetchHistory]);
 
     return {
         history,

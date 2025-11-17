@@ -14,6 +14,7 @@ import {
 import type { MedicalHistory, DiagnosticState } from "../../../../core/types/medicalHistory/index";
 import { DiagnosticCard } from "../../diagnostic/components/diagnosticCard";
 import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic/useDiagnosticFilter";
+import { useAuth } from "../../../../core/context/authContext";
 
 interface MedicalHistoryViewProps {
     history: MedicalHistory;
@@ -26,6 +27,10 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     showStatistics = true,
     showFilters = true
 }) => {
+    const { user } = useAuth();
+    
+    // Determinar si el usuario actual es un paciente
+    const isPatient = user?.role === 'PACIENTE' || user?.role === 'patient';
     const [selectedState, setSelectedState] = useState<DiagnosticState | "all">("all");
     const [sortBy, setSortBy] = useState<"date" | "title">("date");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -161,15 +166,17 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
                             <TrendingUp className="w-5 h-5" />
-                            Resumen Estadístico
+                            {isPatient ? "Resumen" : "Resumen Estadístico"}
                         </h2>
-                        <button
-                            onClick={() => setShowStatisticsDetails(!showStatisticsDetails)}
-                            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                        >
-                            {showStatisticsDetails ? "Ocultar" : "Ver más"}
-                            {showStatisticsDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                        </button>
+                        {!isPatient && (
+                            <button
+                                onClick={() => setShowStatisticsDetails(!showStatisticsDetails)}
+                                className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                            >
+                                {showStatisticsDetails ? "Ocultar" : "Ver más"}
+                                {showStatisticsDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            </button>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -183,7 +190,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                         </div>
                     </div>
 
-                    {showStatisticsDetails && (
+                    {!isPatient && showStatisticsDetails && (
                         <div className="mt-4 pt-4 border-t border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-slate-400" />
@@ -204,8 +211,8 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                 </section>
             )}
 
-            {/* Filtros y Ordenamiento */}
-            {showFilters && localDiagnostics.length > 0 && (
+            {/* Filtros y Ordenamiento - Solo para personal médico */}
+            {showFilters && !isPatient && localDiagnostics.length > 0 && (
                 <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -338,7 +345,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                                 key={diagnostic.id} 
                                 diagnostic={diagnostic} 
                                 onDiagnosticDeleted={handleDiagnosticDeleted}
-                                showActions={true}
+                                showActions={!isPatient} // Los pacientes no ven botones de acción
                             />
                         ))}
                     </div>

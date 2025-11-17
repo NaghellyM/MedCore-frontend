@@ -4,7 +4,6 @@ import {
   Calendar,
   BookUser,
   ClipboardPlus,
-  HeartPulse,
 } from "lucide-react";
 
 const gestionClinicaItems = [
@@ -15,7 +14,6 @@ const gestionClinicaItems = [
 const pacienteItems = [
   { title: "Historiales médicos", url: "/medicalHistory/list", icon: ClipboardPlus },
   { title: "Crear historia clínica", url: "/medicalHistory/create", icon: ClipboardPlus },
-  { title: "Diagnósticos", url: "/doctorDiagnosticos", icon: HeartPulse },
 ];
 
 
