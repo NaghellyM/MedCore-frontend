@@ -5,6 +5,7 @@ import { adminRoutes } from "./privateAdmin";
 import { doctorRoutes } from "./privateDoctor";
 import { nurseRoutes } from "./privateNurse";
 import { patientRoutes } from "./privatePatient";
+import {MedicalRoutes} from "./privateMedical";
 
 const router = createBrowserRouter([
     { path: "/", children: publicRoutes },
@@ -16,6 +17,8 @@ const router = createBrowserRouter([
             doctorRoutes,
             nurseRoutes,
             patientRoutes,
+            MedicalRoutes,
+
             
             { path: "*", element: <Navigate to="/login" replace /> },
         ],

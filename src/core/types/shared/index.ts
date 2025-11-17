@@ -28,3 +28,11 @@ export type {
     ValidationError,
     ValidationResult
 } from './ui';
+
+// Tipos de roles
+export type {
+    UserRole,
+    NormalizedRole
+} from './roles';
+
+export { normalizeRole, ROLE_MAPPING } from './roles';

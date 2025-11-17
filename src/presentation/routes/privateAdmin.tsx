@@ -7,7 +7,6 @@ import { AdminRegisterUser } from "../pages/admin/pages/admiRegisterUser";
 import DoctorsList from "../pages/admin/pages/DoctorsList";
 import NursesList from "../pages/admin/pages/NurseList";
 import GeneralAppointment from "../pages/admin/pages/generalAppointment";
-import { MedicalHistoryManagementForm } from "../pages/medicalHistory/forms/medicalHistoryManagementForm";
 
 export const adminRoutes: RouteObject = {
     element: <RoleRoute allow={["admin"]} />,
@@ -21,10 +20,6 @@ export const adminRoutes: RouteObject = {
                 { path: '/admin/doctorsList', element: <DoctorsList /> },
                 { path: '/admin/nursesList', element: <NursesList /> },
                 { path: '/admin/adminAppointments', element: <GeneralAppointment /> },
-                
-                // Rutas para historias clínicas
-                { path: "medical-history/create", element: <MedicalHistoryManagementForm /> },
-                { path: "medical-history/edit", element: <MedicalHistoryManagementForm /> },
             ],
         },
     ],

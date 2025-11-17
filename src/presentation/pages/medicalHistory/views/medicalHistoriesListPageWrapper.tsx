@@ -1,15 +1,21 @@
 import React from 'react';
-import { DashboardLayout } from "../../../layouts/layout";
-import DoctorSidebar from '../../doctor/components/doctorSideBar';
 import { MedicalHistoriesListView } from './medicalHistoriesListView';
+import { SmartDashboardLayout } from '../../../layouts/SmartDashboardLayout';
 
 export const MedicalHistoriesListPageWrapper: React.FC = () => {
     return (
-        <DashboardLayout sidebar={<DoctorSidebar />}>
+        <SmartDashboardLayout 
+        sidebarStrategy="existing"
+            headerHeightClass="pt-[80px]"
+            showSearch={true}
+            contentMaxWidthClass="max-w-7xl"
+            variant="inset"
+            collapsible="icon"
+        >
             <MedicalHistoriesListView 
                 showFilters={true}
                 enableNavigation={true}
             />
-        </DashboardLayout>
+        </SmartDashboardLayout>
     );
 };

@@ -1,11 +1,18 @@
 import React from 'react';
-import { DashboardLayout } from "../../layouts/layout";
-import { PatientSidebar } from '../patient/components/patientSidebar';
 import { ViewPatientMedicalHistoryPage } from './views/medicalHistoryPageView';
+import { SmartDashboardLayout } from '../../layouts/SmartDashboardLayout';
 
 export const MedicalHistoryPage: React.FC = () => {
-    return (<DashboardLayout
-        sidebar={<PatientSidebar />}>
-        <ViewPatientMedicalHistoryPage />
-    </DashboardLayout>);
+    return (
+        <SmartDashboardLayout
+            headerHeightClass="pt-[80px]"
+            showSearch={true}
+            contentMaxWidthClass="max-w-7xl"
+            variant="inset"
+            collapsible="icon"
+            sidebarStrategy="existing"
+        >
+            <ViewPatientMedicalHistoryPage />
+        </SmartDashboardLayout>
+    );
 };
