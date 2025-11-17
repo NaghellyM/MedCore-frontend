@@ -34,7 +34,6 @@ export function useMyAppointments(
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [appointmentsLoading, setAppointmentsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
     const { user, isAuthenticated, loading: userLoading } = useCurrentUser();
     const { date, excludeCancelled = true } = options;
 

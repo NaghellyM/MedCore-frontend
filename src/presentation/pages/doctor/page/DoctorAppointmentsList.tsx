@@ -16,7 +16,7 @@ export default function DoctorAppointmentsList() {
     excludeCancelled: true,
   });
 
-  // Mostrar error si existe (excepto errores de autenticación)
+  // 
   useEffect(() => {
     if (error && error !== "Usuario no autenticado") {
       MySwal.fire({

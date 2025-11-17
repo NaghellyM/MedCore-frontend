@@ -1,14 +1,15 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../../layouts/layout";
 import DoctorSidebar from "../../doctor/components/doctorSideBar";
-import { DoctorQueueContainer } from "../containers/queueDoctorContainer";
+import { MyDoctorQueueContainer } from "../containers/myDoctorQueueContainer";
 
+/**
+ * Página de cola del doctor
+ * Muestra automáticamente la cola del doctor autenticado
+ */
 export default function DoctorQueuePage() {
     const navigate = useNavigate();
-    const { doctorId } = useParams<{ doctorId: string }>();
-    
-    const id = doctorId ?? "6915e81c04aec134a1f67095";
-    
+
     return (
         <DashboardLayout
             sidebar={<DoctorSidebar />}
@@ -19,8 +20,7 @@ export default function DoctorQueuePage() {
             collapsible="icon"
         >
             <div className="mx-auto mt-10 px-4">
-                <DoctorQueueContainer
-                    doctorId={id}
+                <MyDoctorQueueContainer
                     pollMs={10000}
                     onBack={() => navigate("/doctorPage")}
                 />

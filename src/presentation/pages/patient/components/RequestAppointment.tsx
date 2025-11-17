@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Clock, CalendarDays } from "lucide-react"
+import { Clock } from "lucide-react"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { doctorsService } from "../../../../core/services/doctorsService"
@@ -34,12 +34,6 @@ export default function RequestAppointment() {
   const selectedDoctor = doctors.find((doc) => doc.id === filters.doctorId)
   const patientId = "69090372f2a08c7fe006739a"
 
-  // Auxiliar para evitar desfase horario
-  function formatLocalDate(dateString: string) {
-    const [year, month, day] = dateString.split("-").map(Number)
-    const localDate = new Date(year, month - 1, day)
-    return localDate.toISOString().split("T")[0]
-  }
 
   // ────────────────────────────────
   // CARGAR ESPECIALIDADES
