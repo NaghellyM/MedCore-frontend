@@ -13,6 +13,8 @@ import type {
 export class PatientValidator {
     // Expresión regular para validar UUIDs
     private static readonly UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    // Expresión regular para validar IDs hexadecimales (como MongoDB ObjectIds o hashes)
+    private static readonly HEX_ID_REGEX = /^[0-9a-f]{24}$/i;
     
     // Límites de paginación
     private static readonly MIN_PAGE = 1;
@@ -72,9 +74,12 @@ export class PatientValidator {
             throw new Error("El ID del paciente no puede estar vacío");
         }
 
-        // Opcional: validar formato UUID si se requiere
-        if (!this.UUID_REGEX.test(patientId)) {
-            throw new Error(`El ID del paciente "${patientId}" debe tener formato UUID válido`);
+        // Validar formato: acepta UUID o ID hexadecimal (como MongoDB ObjectId)
+        const isValidUUID = this.UUID_REGEX.test(patientId);
+        const isValidHexId = this.HEX_ID_REGEX.test(patientId);
+        
+        if (!isValidUUID && !isValidHexId) {
+            throw new Error(`El ID del paciente "${patientId}" debe tener formato UUID o ID hexadecimal válido`);
         }
     }
 
