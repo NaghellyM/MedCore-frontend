@@ -24,7 +24,8 @@ export class DiagnosticFormValidator {
     /**
      * Schema de validación principal para formularios de diagnóstico
      */
-    static readonly validationSchema = yup.object({
+    static get validationSchema() {
+        return yup.object({
         title: yup
             .string()
             .required("El título del diagnóstico es obligatorio")
@@ -91,10 +92,14 @@ export class DiagnosticFormValidator {
             })
             .test("not-future", "La fecha de consulta no puede ser futura", function(value) {
                 if (!value) return true;
-                const consultDate = new Date(value + 'T00:00:00');
+                
+                // Comparación simple: cualquier fecha anterior o igual a hoy es válida
                 const today = new Date();
-                today.setHours(23, 59, 59, 999); // Final del día actual
-                return consultDate <= today;
+                const todayStr = today.getFullYear() + '-' + 
+                                String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                                String(today.getDate()).padStart(2, '0');
+                
+                return value <= todayStr;
             }),
         
         nextAppointment: yup
@@ -112,17 +117,22 @@ export class DiagnosticFormValidator {
             })
             .test("not-past", "La fecha de próxima cita no puede ser anterior a hoy", function(value) {
                 if (!value) return true;
-                const appointmentDate = new Date(value + 'T00:00:00');
+                
+                // Comparación simple: fecha debe ser hoy o posterior
                 const today = new Date();
-                today.setHours(0, 0, 0, 0); // Inicio del día actual
-                return appointmentDate >= today;
+                const todayStr = today.getFullYear() + '-' + 
+                                String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                                String(today.getDate()).padStart(2, '0');
+                
+                return value >= todayStr;
             }),
 
         customFields: yup
             .object()
             .nullable()
             .default({})
-    });
+        });
+    }
 
     /**
      * Valida los datos del formulario de diagnóstico
@@ -272,6 +282,14 @@ export class DiagnosticFormValidator {
             throw new Error("Fecha de consulta inválida");
         }
 
+        // Validar que la fecha de consulta no sea futura
+        const today = new Date();
+        const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        
+        if (consult > todayDateOnly) {
+            throw new Error("La fecha de consulta no puede ser futura");
+        }
+
         if (nextAppointment) {
             const nextAppt = new Date(nextAppointment + 'T00:00:00');
             
@@ -279,8 +297,14 @@ export class DiagnosticFormValidator {
                 throw new Error("Fecha de próxima cita inválida");
             }
 
-            if (nextAppt <= consult) {
-                throw new Error("La próxima cita debe ser posterior a la fecha de consulta");
+            // Validar que la próxima cita no sea anterior a hoy
+            if (nextAppt < todayDateOnly) {
+                throw new Error("La próxima cita no puede ser anterior a hoy");
+            }
+
+            // Validar que la próxima cita sea posterior o igual a la fecha de consulta
+            if (nextAppt < consult) {
+                throw new Error("La próxima cita debe ser posterior o igual a la fecha de consulta");
             }
         }
     }

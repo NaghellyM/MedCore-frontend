@@ -228,11 +228,8 @@ export function     useDocumentUpload(options: UseDocumentUploadOptions = {}): U
             .filter(({ doc }) => !doc.uploaded && !doc.uploading);
 
         if (pendingUploads.length === 0) {
-            console.log("No hay documentos pendientes para subir");
             return;
         }
-
-        console.log(`Subiendo ${pendingUploads.length} documentos con diagnosticId: ${diagnosticId}`);
         setIsUploading(true);
 
         try {
@@ -262,7 +259,6 @@ export function     useDocumentUpload(options: UseDocumentUploadOptions = {}): U
                     ));
 
                     onUploadSuccess?.(response.data?.documentId);
-                    console.log(`✅ Documento ${doc.file.name} subido exitosamente`);
 
                 } catch (error) {
                     console.error(`❌ Error al subir ${doc.file.name}:`, error);
@@ -293,7 +289,6 @@ export function     useDocumentUpload(options: UseDocumentUploadOptions = {}): U
             });
 
             await Promise.all(uploadPromises);
-            console.log("✅ Todos los documentos subidos exitosamente");
 
         } catch (error) {
             console.error("❌ Error al subir algunos documentos:", error);

@@ -90,8 +90,10 @@ export function useDiagnosticOperations(
         formData: Partial<DiagnosticFormData>
     ): Promise<Diagnostic> => {
         try {
-            // Validar ID requerido
-            DiagnosticFormValidator.validateRequiredIds(undefined, undefined, diagnosticId);
+            // Validar ID requerido (solo diagnosticId para actualización)
+            if (!diagnosticId || diagnosticId.trim().length === 0) {
+                throw new Error("El ID del diagnóstico es requerido para esta operación");
+            }
 
             // Validar y transformar datos
             const updateDto: UpdateDiagnosticDto = await DiagnosticFormValidator.validateUpdateData(formData);
@@ -119,8 +121,10 @@ export function useDiagnosticOperations(
     // Cargar un diagnóstico existente
     const loadDiagnostic = useCallback(async (diagnosticId: string): Promise<DiagnosticFormData> => {
         try {
-            // Validar ID requerido
-            DiagnosticFormValidator.validateRequiredIds(undefined, undefined, diagnosticId);
+            // Validar ID requerido (solo diagnosticId para carga)
+            if (!diagnosticId || diagnosticId.trim().length === 0) {
+                throw new Error("El ID del diagnóstico es requerido para esta operación");
+            }
 
             const response = await diagnosticService.getDiagnosticById(diagnosticId);
             const diagnostic = response.data;
@@ -153,8 +157,10 @@ export function useDiagnosticOperations(
     // Eliminar un diagnóstico
     const deleteDiagnostic = useCallback(async (diagnosticId: string): Promise<void> => {
         try {
-            // Validar ID requerido
-            DiagnosticFormValidator.validateRequiredIds(undefined, undefined, diagnosticId);
+            // Validar ID requerido (solo diagnosticId para eliminación)
+            if (!diagnosticId || diagnosticId.trim().length === 0) {
+                throw new Error("El ID del diagnóstico es requerido para esta operación");
+            }
 
             await diagnosticService.deleteDiagnostic(diagnosticId);
         } catch (error) {

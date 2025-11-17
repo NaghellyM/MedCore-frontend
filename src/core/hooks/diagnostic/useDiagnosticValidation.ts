@@ -54,7 +54,9 @@ export function useDiagnosticValidation(
     } = useForm<DiagnosticFormData>({
         defaultValues: defaultData,
         resolver: yupResolver(DiagnosticFormValidator.validationSchema),
-        mode
+        mode,
+        shouldFocusError: false,
+        criteriaMode: "firstError"
     });
 
     // Validar un campo específico

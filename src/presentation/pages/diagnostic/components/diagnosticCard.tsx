@@ -1,11 +1,41 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { Edit, Eye, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { Diagnostic } from "../../../../core/types/diagnostic";
+import { useDeleteDiagnostic } from "../../../../core/hooks/diagnostic/useDeleteDiagnostic";
+
 
 interface DiagnosticCardProps {
     diagnostic: Diagnostic;
+    onDiagnosticDeleted?: (diagnosticId: string) => void;
+    showActions?: boolean;
 }
 
-export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({ diagnostic }) => {
+export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({ 
+    diagnostic, 
+    onDiagnosticDeleted,
+    showActions = true 
+}) => {
+    const navigate = useNavigate();
+
+    const { deleteDiagnostic, isDeleting, canDelete } = useDeleteDiagnostic({
+        onSuccess: onDiagnosticDeleted,
+        showConfirmation: true
+    });
+
+    const handleDelete = useCallback(async () => {
+        await deleteDiagnostic(diagnostic.id);
+    }, [deleteDiagnostic, diagnostic.id]);
+
+    const handleEdit = useCallback(() => {
+        // Navegar a la página de edición del diagnóstico
+        navigate(`/medicalHistory/${diagnostic.medicalHistoryId}/diagnosis/${diagnostic.id}/edit`);
+    }, [navigate, diagnostic.medicalHistoryId, diagnostic.id]);
+
+    const handleView = useCallback(() => {
+        // Navegar a la página de lista de diagnósticos de esta historia médica
+        navigate(`/medicalHistory/${diagnostic.medicalHistoryId}/diagnosis`);
+    }, [navigate, diagnostic.medicalHistoryId]);
     const consultDate = new Date(diagnostic.consultDate).toLocaleDateString();
     const nextAppointment = diagnostic.nextAppointment
         ? new Date(diagnostic.nextAppointment).toLocaleDateString()
@@ -14,7 +44,7 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({ diagnostic }) =>
     return (
         <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm flex flex-col gap-2">
             <header className="flex items-start justify-between gap-2">
-                <div>
+                <div className="flex-1">
                     <h3 className="text-lg font-semibold text-slate-800">
                         {diagnostic.title}
                     </h3>
@@ -22,21 +52,56 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({ diagnostic }) =>
                         Consulta del {consultDate}
                     </p>
                 </div>
-                <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium ${
-                        diagnostic.state === "ACTIVE"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : diagnostic.state === "INACTIVE"
-                            ? "bg-slate-100 text-slate-500"
-                            : "bg-red-50 text-red-700"
-                        }`}
-                >
-                    {diagnostic.state === "ACTIVE" 
-                        ? "Activa" 
-                        : diagnostic.state === "INACTIVE" 
-                        ? "Inactiva" 
-                        : "Eliminada"}
-                </span>
+                
+                <div className="flex items-center gap-2">
+                    <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${
+                            diagnostic.state === "ACTIVE"
+                                ? "bg-emerald-50 text-emerald-700"
+                                : diagnostic.state === "INACTIVE"
+                                ? "bg-slate-100 text-slate-500"
+                                : "bg-red-50 text-red-700"
+                            }`}
+                    >
+                        {diagnostic.state === "ACTIVE" 
+                            ? "Activa" 
+                            : diagnostic.state === "INACTIVE" 
+                            ? "Inactiva" 
+                            : "Eliminada"}
+                    </span>
+
+                    {/* Botones de acción */}
+                    {showActions && diagnostic.state !== "DELETED" && (
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={handleView}
+                                className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                title="Ver detalles"
+                            >
+                                <Eye className="w-4 h-4" />
+                            </button>
+                            
+                            <button
+                                onClick={handleEdit}
+                                className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                title="Editar diagnóstico"
+                            >
+                                <Edit className="w-4 h-4" />
+                            </button>
+                            
+                            {canDelete && (
+                                <button
+                                    onClick={handleDelete}
+                                    disabled={isDeleting}
+                                    className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    title="Eliminar diagnóstico"
+                                >
+                                    <Trash2 className={`w-4 h-4 ${isDeleting ? 'animate-pulse' : ''}`} />
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
             </header>
 
             {diagnostic.diagnosis && (

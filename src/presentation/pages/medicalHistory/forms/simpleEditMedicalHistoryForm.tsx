@@ -8,6 +8,12 @@ import { useState, useEffect, useRef } from "react";
 import { AlertCircle, Loader2, ArrowLeft, Save, Edit3, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// Componentes de diagnóstico
+import { DeleteDiagnosticButton, DiagnosticStatusIndicator } from "../../../components/diagnostic";
+
+// Hooks de diagnóstico
+import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic";
+
 // Servicios
 import { medicalHistoryService } from "../../../../core/services/medicalHistoryService";
 import { diagnosticService } from "../../../../core/services/diagnosticService";
@@ -42,6 +48,14 @@ export function SimpleEditMedicalHistoryForm({
     const [isSaving, setIsSaving] = useState(false);
     const [editingDiagnostic, setEditingDiagnostic] = useState<Diagnostic | null>(null);
     const [editForm, setEditForm] = useState<UpdateDiagnosticDto>({});
+
+    // Estados para mostrar diagnósticos eliminados (solo admin)
+    const [showDeletedDiagnostics, setShowDeletedDiagnostics] = useState(false);
+
+    // Hook para filtrar diagnósticos según el rol del usuario
+    const { filterDiagnostics, canViewDeleted } = useDiagnosticFilter({
+        showDeleted: showDeletedDiagnostics
+    });
 
     // Hooks
     const navigate = useNavigate();
@@ -148,6 +162,25 @@ export function SimpleEditMedicalHistoryForm({
             ...prev,
             [field]: value
         }));
+    };
+
+    const handleDiagnosticDeleted = (deletedId: string) => {
+        if (canViewDeleted) {
+            // Si es admin, marcar como eliminado en lugar de remover
+            setDiagnostics(prev => prev.map(d => 
+                d.id === deletedId 
+                    ? { ...d, state: 'DELETED' as const }
+                    : d
+            ));
+        } else {
+            // Si es médico, remover de la lista
+            setDiagnostics(prev => prev.filter(d => d.id !== deletedId));
+        }
+        
+        // Si estaba editando el diagnóstico eliminado, cancelar la edición
+        if (editingDiagnostic?.id === deletedId) {
+            cancelEditing();
+        }
     };
 
     // Estados de carga
@@ -286,9 +319,25 @@ export function SimpleEditMedicalHistoryForm({
             {/* Diagnósticos */}
             <div className="bg-white rounded-lg border p-6">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">
-                        Diagnósticos Asociados ({diagnostics.length})
-                    </h2>
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-lg font-semibold">
+                            Diagnósticos Asociados ({diagnostics.length})
+                        </h2>
+                        
+                        {/* Toggle para mostrar eliminados (solo admin) */}
+                        {canViewDeleted && (
+                            <label className="flex items-center gap-2 text-sm text-gray-600">
+                                <input
+                                    type="checkbox"
+                                    checked={showDeletedDiagnostics}
+                                    onChange={(e) => setShowDeletedDiagnostics(e.target.checked)}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span>Mostrar eliminados</span>
+                            </label>
+                        )}
+                    </div>
+                    
                     {isEditing && (
                         <div className="flex items-center space-x-2">
                             <button
@@ -317,26 +366,33 @@ export function SimpleEditMedicalHistoryForm({
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {diagnostics.map((diagnostic, index) => (
+                        {filterDiagnostics(diagnostics).map((diagnostic, index) => (
                             <div key={diagnostic.id} className="border rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="font-medium text-lg">Diagnóstico #{index + 1}</h3>
+                                    <div className="flex items-center gap-3">
+                                        <h3 className="font-medium text-lg">Diagnóstico #{index + 1}</h3>
+                                        <DiagnosticStatusIndicator 
+                                            state={diagnostic.state} 
+                                            size="sm"
+                                        />
+                                    </div>
                                     <div className="flex items-center space-x-2">
-                                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                            diagnostic.state === 'ACTIVE' 
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-100 text-gray-800'
-                                        }`}>
-                                            {diagnostic.state}
-                                        </span>
                                         {!isEditing && (
-                                            <button
-                                                onClick={() => startEditingDiagnostic(diagnostic)}
-                                                className="flex items-center space-x-1 px-2 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm"
-                                            >
-                                                <Edit3 className="h-4 w-4" />
-                                                <span>Editar</span>
-                                            </button>
+                                            <>
+                                                <button
+                                                    onClick={() => startEditingDiagnostic(diagnostic)}
+                                                    className="flex items-center space-x-1 px-2 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm"
+                                                >
+                                                    <Edit3 className="h-4 w-4" />
+                                                    <span>Editar</span>
+                                                </button>
+                                                <DeleteDiagnosticButton
+                                                    diagnosticId={diagnostic.id}
+                                                    onDeleted={handleDiagnosticDeleted}
+                                                    variant="icon"
+                                                    size="sm"
+                                                />
+                                            </>
                                         )}
                                     </div>
                                 </div>

@@ -84,7 +84,7 @@ export function useDiagnosticForm(
         validateForSave
     } = useDiagnosticValidation({
         initialData: formData,
-        mode: "onChange"
+        mode: "onSubmit"
     });
 
     const {

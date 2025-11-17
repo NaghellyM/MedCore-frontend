@@ -86,10 +86,8 @@ async updateDoctor(appointmentId: string, doctorId: string) {
       { doctorId }
     );
 
-    console.log("✅ Doctor actualizado en la cita:", response.data);
     return response.data;
   } catch (error) {
-    console.error("❌ Error al actualizar doctor:", error);
     throw error;
   }
 }

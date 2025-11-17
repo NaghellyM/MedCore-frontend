@@ -29,7 +29,7 @@ export function DiagnosticForm({
     
     
     const finalPatientId = patientId || params.patientId;
-    const finalMedicalHistoryId = medicalHistoryId || params.medicalHisANtoryId;
+    const finalMedicalHistoryId = medicalHistoryId || params.medicalHistoryId;
     const finalDiagnosticId = diagnosticId || params.diagnosticId;
 
     const {
@@ -46,16 +46,16 @@ export function DiagnosticForm({
         diagnosticId: finalDiagnosticId,
         initialData: initialData ? {
             title: initialData.title,
-            description: initialData.description || undefined,
-            symptoms: initialData.symptoms || undefined,
-            diagnosis: initialData.diagnosis || undefined,
-            treatment: initialData.treatment || undefined,
-            observations: initialData.observations || undefined,
-            consultDate: initialData.createdAt || new Date().toISOString(),
-            prescriptions: undefined,
-            physicalExam: undefined,
-            vitalSigns: undefined,
-            nextAppointment: undefined
+            description: initialData.description || "",
+            symptoms: initialData.symptoms || "",
+            diagnosis: initialData.diagnosis || "",
+            treatment: initialData.treatment || "",
+            observations: initialData.observations || "",
+            prescriptions: initialData.prescriptions || "",
+            physicalExam: initialData.physicalExam || "",
+            vitalSigns: initialData.vitalSigns || "",
+            consultDate: initialData.consultDate ? initialData.consultDate.split('T')[0] : new Date().toISOString().split('T')[0],
+            nextAppointment: initialData.nextAppointment ? initialData.nextAppointment.split('T')[0] : ""
         } : undefined,
         onSaveSuccess: (diagnostic) => {
             success(mode === "create" ? "Diagnóstico creado exitosamente" : "Diagnóstico actualizado exitosamente");

@@ -4,7 +4,7 @@
  * Separado del hook principal para mejor mantenibilidad
  */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { DiagnosticFormData, DiagnosticFormState } from "../../types/medicalHistory";
 import { DiagnosticFormValidator } from "../../validators/diagnosticFormValidator";
 
@@ -56,20 +56,20 @@ export function useDiagnosticFormState(
     });
 
     // Función para actualizar datos del formulario
-    const updateFormData = (newData: Partial<DiagnosticFormData>) => {
-        setFormData(prev => {
-            const updatedData = { ...prev, ...newData };
-            return updatedData;
-        });
+    const updateFormData = useCallback((newData: Partial<DiagnosticFormData>) => {
+        setFormData(prev => ({ ...prev, ...newData }));
         
         // Marcar como modificado si no estaba ya
-        if (!formState.isDirty) {
-            setFormState(prev => ({ ...prev, isDirty: true }));
-        }
-    };
+        setFormState(prev => {
+            if (!prev.isDirty) {
+                return { ...prev, isDirty: true };
+            }
+            return prev;
+        });
+    }, []);
 
     // Función para resetear el formulario
-    const resetFormData = () => {
+    const resetFormData = useCallback(() => {
         const newDefaultData = DiagnosticFormValidator.getDefaultFormData(options.initialData);
         setFormData(newDefaultData);
         setFormState(prev => ({
@@ -78,20 +78,20 @@ export function useDiagnosticFormState(
             errors: {},
             mode: "create"
         }));
-    };
+    }, [options.initialData]);
 
     // Funciones de conveniencia para actualizar estado
-    const setIsLoading = (loading: boolean) => {
+    const setIsLoading = useCallback((loading: boolean) => {
         setFormState(prev => ({ ...prev, isLoading: loading }));
-    };
+    }, []);
 
-    const setIsSaving = (saving: boolean) => {
+    const setIsSaving = useCallback((saving: boolean) => {
         setFormState(prev => ({ ...prev, isSaving: saving }));
-    };
+    }, []);
 
-    const setIsDirty = (dirty: boolean) => {
+    const setIsDirty = useCallback((dirty: boolean) => {
         setFormState(prev => ({ ...prev, isDirty: dirty }));
-    };
+    }, []);
 
     return {
         formData,

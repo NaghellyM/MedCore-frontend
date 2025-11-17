@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { 
     FileText, 
     Calendar, 
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { MedicalHistory, DiagnosticState } from "../../../../core/types/medicalHistory/index";
 import { DiagnosticCard } from "../../diagnostic/components/diagnosticCard";
+import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic/useDiagnosticFilter";
 
 interface MedicalHistoryViewProps {
     history: MedicalHistory;
@@ -29,31 +30,61 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     const [sortBy, setSortBy] = useState<"date" | "title">("date");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [showStatisticsDetails, setShowStatisticsDetails] = useState(false);
+    const [localDiagnostics, setLocalDiagnostics] = useState(history.diagnostics);
+    const [showDeleted, setShowDeleted] = useState(false);
 
-    // Filtrar y ordenar diagnósticos
-    const filteredDiagnostics = history.diagnostics
-        .filter((diagnostic: any) => selectedState === "all" || diagnostic.state === selectedState)
-        .sort((a: any, b: any) => {
-            if (sortBy === "date") {
-                const dateA = new Date(a.consultDate).getTime();
-                const dateB = new Date(b.consultDate).getTime();
-                return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-            } else {
-                return sortOrder === "desc" 
-                    ? b.title.localeCompare(a.title)
-                    : a.title.localeCompare(b.title);
-            }
-        });
+    // Hook para filtrado por rol
+    const { canViewDeleted } = useDiagnosticFilter({ showDeleted });
 
-    // Estadísticas
-    const stats = {
-        total: history.diagnostics.length,
-        active: history.diagnostics.filter((d: any) => d.state === "ACTIVE").length,
-        inactive: history.diagnostics.filter((d: any) => d.state === "INACTIVE").length,
-        deleted: history.diagnostics.filter((d: any) => d.state === "DELETED").length,
-        withDocuments: history.diagnostics.filter((d: any) => d.documents && d.documents.length > 0).length,
-        withNextAppointment: history.diagnostics.filter((d: any) => d.nextAppointment).length
-    };
+    // Sincronizar localDiagnostics con history.diagnostics cuando cambie
+    useEffect(() => {
+        setLocalDiagnostics(history.diagnostics);
+    }, [history.diagnostics]);
+
+    const handleDiagnosticDeleted = useCallback((deletedId: string) => {
+        if (canViewDeleted) {
+            // Si es admin, marcar como eliminado
+            setLocalDiagnostics(prev => prev.map(d => 
+                d.id === deletedId 
+                    ? { ...d, state: 'DELETED' as const }
+                    : d
+            ));
+        } else {
+            // Si es médico, remover de la lista
+            setLocalDiagnostics(prev => prev.filter(d => d.id !== deletedId));
+        }
+    }, [canViewDeleted]);
+
+    // Filtrar y ordenar diagnósticos (memoizado para evitar recálculos)
+    const filteredDiagnostics = useMemo(() => {
+        const diagnosticsToShow = canViewDeleted && showDeleted 
+            ? localDiagnostics 
+            : localDiagnostics.filter((d: any) => d.state !== "DELETED");
+
+        return diagnosticsToShow
+            .filter((diagnostic: any) => selectedState === "all" || diagnostic.state === selectedState)
+            .sort((a: any, b: any) => {
+                if (sortBy === "date") {
+                    const dateA = new Date(a.consultDate).getTime();
+                    const dateB = new Date(b.consultDate).getTime();
+                    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+                } else {
+                    return sortOrder === "desc" 
+                        ? b.title.localeCompare(a.title)
+                        : a.title.localeCompare(b.title);
+                }
+            });
+    }, [localDiagnostics, canViewDeleted, showDeleted, selectedState, sortBy, sortOrder]);
+
+    // Estadísticas (memoizadas para evitar recálculos)
+    const stats = useMemo(() => ({
+        total: localDiagnostics.length,
+        active: localDiagnostics.filter((d: any) => d.state === "ACTIVE").length,
+        inactive: localDiagnostics.filter((d: any) => d.state === "INACTIVE").length,
+        deleted: localDiagnostics.filter((d: any) => d.state === "DELETED").length,
+        withDocuments: localDiagnostics.filter((d: any) => d.documents && d.documents.length > 0).length,
+        withNextAppointment: localDiagnostics.filter((d: any) => d.nextAppointment).length
+    }), [localDiagnostics]);
 
     const getStateColor = (state: DiagnosticState) => {
         switch (state) {
@@ -141,18 +172,10 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="text-center p-3 bg-blue-50 rounded-lg">
-                            <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
+                            <p className="text-2xl font-bold text-blue-600">{stats.active}</p>
                             <p className="text-sm text-blue-700">Total Diagnósticos</p>
-                        </div>
-                        <div className="text-center p-3 bg-emerald-50 rounded-lg">
-                            <p className="text-2xl font-bold text-emerald-600">{stats.active}</p>
-                            <p className="text-sm text-emerald-700">Activos</p>
-                        </div>
-                        <div className="text-center p-3 bg-slate-50 rounded-lg">
-                            <p className="text-2xl font-bold text-slate-600">{stats.inactive}</p>
-                            <p className="text-sm text-slate-700">Inactivos</p>
                         </div>
                         <div className="text-center p-3 bg-amber-50 rounded-lg">
                             <p className="text-2xl font-bold text-amber-600">{stats.withDocuments}</p>
@@ -182,7 +205,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
             )}
 
             {/* Filtros y Ordenamiento */}
-            {showFilters && history.diagnostics.length > 0 && (
+            {showFilters && localDiagnostics.length > 0 && (
                 <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -190,7 +213,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                             <span className="text-sm font-medium text-slate-700">Filtrar por estado:</span>
                         </div>
                         
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                             <button
                                 onClick={() => setSelectedState("all")}
                                 className={`px-3 py-1 text-xs rounded-full border transition-colors ${
@@ -201,7 +224,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                             >
                                 Todos ({stats.total})
                             </button>
-                            {(["ACTIVE", "INACTIVE", "DELETED"] as DiagnosticState[]).map(state => (
+                            {(["ACTIVE", "INACTIVE"] as DiagnosticState[]).map(state => (
                                 <button
                                     key={state}
                                     onClick={() => setSelectedState(state)}
@@ -214,7 +237,36 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                                     {getStateLabel(state)} ({stats[state.toLowerCase() as keyof typeof stats]})
                                 </button>
                             ))}
+                            
+                            {/* Solo mostrar el filtro de eliminados si el usuario puede verlos */}
+                            {canViewDeleted && (
+                                <button
+                                    onClick={() => setSelectedState("DELETED")}
+                                    className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+                                        selectedState === "DELETED"
+                                            ? "bg-red-50 text-red-700 border-red-200"
+                                            : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
+                                    }`}
+                                >
+                                    Eliminados ({stats.deleted})
+                                </button>
+                            )}
                         </div>
+
+                        {/* Toggle para mostrar/ocultar eliminados (solo admin) */}
+                        {canViewDeleted && stats.deleted > 0 && (
+                            <div className="flex items-center gap-2 ml-4">
+                                <label className="flex items-center gap-2 text-sm text-slate-600">
+                                    <input
+                                        type="checkbox"
+                                        checked={showDeleted}
+                                        onChange={(e) => setShowDeleted(e.target.checked)}
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                    />
+                                    <span>Incluir eliminados en vista general</span>
+                                </label>
+                            </div>
+                        )}
 
                         <div className="flex items-center gap-2 ml-auto">
                             <span className="text-sm text-slate-600">Ordenar por:</span>
@@ -244,7 +296,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                         Diagnósticos
                         {selectedState !== "all" && (
                             <span className="ml-2 text-sm font-normal text-slate-500">
-                                ({filteredDiagnostics.length} de {history.diagnostics.length})
+                                ({filteredDiagnostics.length} de {localDiagnostics.length})
                             </span>
                         )}
                     </h2>
@@ -255,7 +307,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                             <span>
                                 Última consulta: {
                                     new Date(
-                                        Math.max(...history.diagnostics.map((d: any) => new Date(d.consultDate).getTime()))
+                                        Math.max(...localDiagnostics.map((d: any) => new Date(d.consultDate).getTime()))
                                     ).toLocaleDateString()
                                 }
                             </span>
@@ -282,7 +334,12 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                 ) : (
                     <div className="grid gap-4 md:grid-cols-2">
                         {filteredDiagnostics.map((diagnostic: any) => (
-                            <DiagnosticCard key={diagnostic.id} diagnostic={diagnostic} />
+                            <DiagnosticCard 
+                                key={diagnostic.id} 
+                                diagnostic={diagnostic} 
+                                onDiagnosticDeleted={handleDiagnosticDeleted}
+                                showActions={true}
+                            />
                         ))}
                     </div>
                 )}

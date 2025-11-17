@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { diagnosticService } from "../../services/diagnosticService";
+import { medicalHistoryService } from "../../services/medicalHistoryService";
 import { DiagnosticDtoValidator } from "../../validators/diagnosticDtoValidator";
 import type {
     DiagnosticSummary,
@@ -25,7 +26,26 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
             setLoading(true);
             setError(null);
 
-            const response = await diagnosticService.getDiagnostics(params);
+            let response;
+
+            if (params?.medicalHistoryId) {
+                // Si se proporciona medicalHistoryId, obtener primero la información del historial médico
+                // para conseguir el patientId y luego obtener los diagnósticos por paciente
+                const medicalHistoryResponse = await medicalHistoryService.getMedicalHistoryById(params.medicalHistoryId);
+                const patientId = medicalHistoryResponse.data.patientId;
+                
+                // Obtener diagnósticos por patientId y filtrar por medicalHistoryId en el frontend
+                response = await diagnosticService.getDiagnosticsByPatientId(patientId, params.state);
+                
+                // Filtrar los diagnósticos que pertenecen a esta historia médica específica
+                if (response.data && Array.isArray(response.data)) {
+                    response.data = response.data.filter((diagnostic: any) => 
+                        diagnostic.medicalHistoryId === params.medicalHistoryId
+                    );
+                }
+            } else {
+                response = await diagnosticService.getDiagnostics(params);
+            }
 
             if (response.data && Array.isArray(response.data)) {
                 setDiagnostics(response.data);

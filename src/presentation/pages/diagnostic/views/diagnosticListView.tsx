@@ -2,8 +2,8 @@ import React from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Plus, Eye, Edit2, Trash2, Calendar, FileText } from "lucide-react";
 import { useToast } from "../../../../core/hooks/notifications/useToast";
-import Swal from "sweetalert2";
 import { useDiagnostics } from "../../../../core/hooks/diagnostic/useDiagnostics";
+import { useDeleteDiagnostic } from "../../../../core/hooks/diagnostic/useDeleteDiagnostic";
 import type { DiagnosticSummary } from "../../../../core/types/diagnostic";
 
 
@@ -13,41 +13,53 @@ export function DiagnosticListView() {
         medicalHistoryId: string;
     }>();
     const navigate = useNavigate();
-    const { success, error: showError } = useToast();
+    const { error: showError } = useToast();
 
-    const { diagnostics, loading, error, fetchDiagnostics, deleteDiagnostic } = useDiagnostics();
+    const { diagnostics, loading, error, fetchDiagnostics } = useDiagnostics();
+    const { deleteDiagnostic } = useDeleteDiagnostic({
+        onSuccess: () => {
+            // Solo recargar la lista, el hook ya muestra la notificación de éxito
+            if (medicalHistoryId) {
+                fetchDiagnostics({ 
+                    medicalHistoryId,
+                    state: "ACTIVE"
+                });
+            }
+        },
+        onError: (error) => {
+            // Solo mostrar error si no es una cancelación del usuario
+            if (!error.includes("cancelada")) {
+                showError("Error al eliminar el diagnóstico", error);
+            }
+        },
+        showConfirmation: true
+    });
 
-    // Cargar diagnósticos al montar el componente
+    // Cargar diagnósticos al montar el componente y cuando se vuelve de edición
     React.useEffect(() => {
         if (medicalHistoryId) {
-            fetchDiagnostics({ medicalHistoryId });
+            // Usar el endpoint de diagnósticos generales con filtro por medicalHistoryId
+            fetchDiagnostics({ 
+                medicalHistoryId,
+                state: "ACTIVE" // Solo diagnósticos activos por defecto
+            });
         }
     }, [medicalHistoryId, fetchDiagnostics]);
 
-    const handleDelete = async (diagnostic: DiagnosticSummary) => {
-        const result = await Swal.fire({
-            title: '¿Eliminar diagnóstico?',
-            text: `Se eliminará permanentemente el diagnóstico "${diagnostic.title}"`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        });
-
-        if (result.isConfirmed) {
-            try {
-                await deleteDiagnostic(diagnostic.id);
-                success("Diagnóstico eliminado exitosamente");
-                // Recargar la lista
-                if (medicalHistoryId) {
-                    fetchDiagnostics({ medicalHistoryId });
-                }
-            } catch (error) {
-                showError("Error al eliminar el diagnóstico", "No se pudo completar la operación");
+    // Refrescar cuando se vuelve a la página (por ejemplo, después de editar)
+    React.useEffect(() => {
+        const handleFocus = () => {
+            if (medicalHistoryId) {
+                fetchDiagnostics({ medicalHistoryId, state: "ACTIVE" });
             }
-        }
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [medicalHistoryId, fetchDiagnostics]);
+
+    const handleDelete = async (diagnostic: DiagnosticSummary) => {
+        await deleteDiagnostic(diagnostic.id);
     };
 
     const formatDate = (dateString: string) => {
