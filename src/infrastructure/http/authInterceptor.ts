@@ -25,41 +25,41 @@ export const setupAuthInterceptors = (httpClient: AxiosInstance, serviceName: st
         (response) => response,
         (error: AxiosError) => {
             const status = error.response?.status;
-            
+
             if (status === 401) {
                 // Token inválido o expirado
                 console.warn(`Token expirado en ${serviceName}, cerrando sesión...`);
-                
+
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
-                
+
                 // Redirigir al login si no estamos ya ahí  
                 if (!window.location.pathname.includes('/login')) {
                     window.location.href = '/login';
                 }
-                
+
                 return Promise.reject(new Error('Sesión expirada. Por favor, inicia sesión nuevamente.'));
             }
-            
+
             if (status === 403) {
                 return Promise.reject(new Error('No tienes permisos para realizar esta acción.'));
             }
-            
+
             if (status === 404) {
                 return Promise.reject(new Error('Recurso no encontrado.'));
             }
-            
+
             if (status === 500) {
                 return Promise.reject(new Error('Error interno del servidor. Intenta nuevamente.'));
             }
-            
+
             // Para otros errores, usar el mensaje del servidor si está disponible
             const errorData = error.response?.data as any;
-            const errorMessage = errorData?.message || 
-                               errorData?.error || 
-                               error.message || 
-                               `Error de conexión con ${serviceName}`;
-                               
+            const errorMessage = errorData?.message ||
+                errorData?.error ||
+                error.message ||
+                `Error de conexión con ${serviceName}`;
+
             console.error(`Error HTTP ${status} en ${serviceName}:`, errorMessage);
             return Promise.reject(new Error(errorMessage));
         }

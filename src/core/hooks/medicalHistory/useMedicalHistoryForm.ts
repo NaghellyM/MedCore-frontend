@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import type {
     MedicalHistoryFormData,
     MedicalHistoryFormState,
@@ -71,7 +71,7 @@ export function useMedicalHistoryForm(
         resetFormData,
         setIsLoading,
         setIsSaving,
-        setIsDirty,
+        // setIsDirty,  // Comentado temporalmente
         setCurrentSection,
         setErrors
     } = useMedicalHistoryFormState({
@@ -87,7 +87,7 @@ export function useMedicalHistoryForm(
         watch,
         formErrors,
         reset,
-        isDirty,
+        // isDirty,  // Comentado temporalmente
         validateSection: validateSectionBase,
         validateForm: validateFormBase,
         validateForSave
@@ -117,10 +117,14 @@ export function useMedicalHistoryForm(
         onNavigationError: onSaveError
     });
 
-        // Sincronizar isDirty entre hooks
-    useEffect(() => {
-        setIsDirty(isDirty);
-    }, [isDirty]);
+        // Comentar temporalmente para evitar bucles
+    // const previousIsDirtyRef = useRef(isDirty);
+    // useEffect(() => {
+    //     if (previousIsDirtyRef.current !== isDirty) {
+    //         previousIsDirtyRef.current = isDirty;
+    //         setIsDirty(isDirty);
+    //     }
+    // }, [isDirty, setIsDirty]);
 
     // Función para actualizar los datos del formulario (combina ambos estados)
     const updateFormData = useCallback((newData: Partial<MedicalHistoryFormData>) => {
@@ -239,6 +243,13 @@ export function useMedicalHistoryForm(
             // El error ya se maneja en loadHistoryOperation
         }
     }, [loadHistoryOperation, updateFormDataState, reset, setIsLoading, setFormState]);
+
+    // Comentar temporalmente para evitar bucles
+    // useEffect(() => {
+    //     if (mode === "edit" && historyId && !formState.isLoading && !formData.patientInfo?.id) {
+    //         loadHistory(historyId);
+    //     }
+    // }, [mode, historyId, formState.isLoading, formData.patientInfo?.id, loadHistory]);
 
     // Resetear formulario
     const resetForm = useCallback(() => {

@@ -4,7 +4,7 @@
  * Separado del hook principal para mejor mantenibilidad
  */
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { 
     MedicalHistoryFormData, 
     MedicalHistoryFormState, 
@@ -58,17 +58,34 @@ export function useMedicalHistoryFormState(
     });
 
     // Función para actualizar datos del formulario
-    const updateFormData = (newData: Partial<MedicalHistoryFormData>) => {
+    const updateFormData = useCallback((newData: Partial<MedicalHistoryFormData>) => {
         setFormData(prev => {
+            // Verificar si realmente hay cambios
+            const hasChanges = Object.keys(newData).some(key => {
+                const newValue = newData[key as keyof MedicalHistoryFormData];
+                const currentValue = prev[key as keyof MedicalHistoryFormData];
+                
+                // Comparación simple para objetos básicos
+                try {
+                    return JSON.stringify(newValue) !== JSON.stringify(currentValue);
+                } catch {
+                    // Si hay problemas con JSON.stringify, asumir que hay cambios
+                    return true;
+                }
+            });
+            
+            if (!hasChanges) return prev;
+            
             const updatedData = { ...prev, ...newData };
             return updatedData;
         });
         
-        // Marcar como modificado si no estaba ya
-        if (!formState.isDirty) {
-            setFormState(prev => ({ ...prev, isDirty: true }));
-        }
-    };
+        // Marcar como modificado si no estaba ya (con callback para evitar loops)
+        setFormState(prev => {
+            if (prev.isDirty) return prev; // Ya está marcado como sucio
+            return { ...prev, isDirty: true };
+        });
+    }, []);
 
     // Función para resetear el formulario
     const resetFormData = () => {
@@ -86,25 +103,50 @@ export function useMedicalHistoryFormState(
     };
 
     // Funciones de conveniencia para actualizar estado
-    const setIsLoading = (loading: boolean) => {
-        setFormState(prev => ({ ...prev, isLoading: loading }));
-    };
+    const setIsLoading = useCallback((loading: boolean) => {
+        setFormState(prev => {
+            if (prev.isLoading === loading) return prev;
+            return { ...prev, isLoading: loading };
+        });
+    }, []);
 
-    const setIsSaving = (saving: boolean) => {
-        setFormState(prev => ({ ...prev, isSaving: saving }));
-    };
+    const setIsSaving = useCallback((saving: boolean) => {
+        setFormState(prev => {
+            if (prev.isSaving === saving) return prev;
+            return { ...prev, isSaving: saving };
+        });
+    }, []);
 
-    const setIsDirty = (dirty: boolean) => {
-        setFormState(prev => ({ ...prev, isDirty: dirty }));
-    };
+    const setIsDirty = useCallback((dirty: boolean) => {
+        setFormState(prev => {
+            if (prev.isDirty === dirty) return prev; // Evitar actualizaciones innecesarias
+            return { ...prev, isDirty: dirty };
+        });
+    }, []);
 
-    const setCurrentSection = (section: MedicalHistorySection) => {
-        setFormState(prev => ({ ...prev, currentSection: section }));
-    };
+    const setCurrentSection = useCallback((section: MedicalHistorySection) => {
+        setFormState(prev => {
+            if (prev.currentSection === section) return prev;
+            return { ...prev, currentSection: section };
+        });
+    }, []);
 
-    const setErrors = (errors: Record<string, string>) => {
-        setFormState(prev => ({ ...prev, errors }));
-    };
+    const setErrors = useCallback((errors: Record<string, string>) => {
+        setFormState(prev => {
+            // Verificar si los errores son diferentes
+            const currentErrorKeys = Object.keys(prev.errors);
+            const newErrorKeys = Object.keys(errors);
+            
+            if (currentErrorKeys.length !== newErrorKeys.length) {
+                return { ...prev, errors };
+            }
+            
+            const hasChanges = newErrorKeys.some(key => prev.errors[key] !== errors[key]);
+            if (!hasChanges) return prev;
+            
+            return { ...prev, errors };
+        });
+    }, []);
 
     return {
         formData,

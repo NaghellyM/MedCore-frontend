@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { FileText, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 import { useToast } from "../../../../core/hooks/notifications/useToast";
@@ -26,24 +26,14 @@ export function MedicalHistoryManagementForm() {
     const historyId = searchParams.get("historyId") || undefined;
     const patientId = searchParams.get("patientId") || undefined;
 
-    // Efecto para cargar datos iniciales en modo edición
-    useEffect(() => {
-        if (mode === "edit" && historyId) {
-            loadExistingHistory(historyId);
-        } else if (patientId) {
-            loadPatientData(patientId);
-        }
-    }, [mode, historyId, patientId]);
-
     // Función para cargar historia clínica existente
-    const loadExistingHistory = async (id: string) => {
+    const loadExistingHistory = useCallback(async (_id: string) => {
         try {
             // const historyData = await medicalHistoryService.getMedicalHistoryById(id);
             // setInitialData(historyData);
             // setSelectedPatient(historyData.patientInfo);
             // setCurrentStep("form");
             // TODO: Implementar carga de historia existente
-            console.log("Loading history ID:", id);
         } catch (error) {
             setSaveStatus({
                 type: "error",
@@ -51,10 +41,10 @@ export function MedicalHistoryManagementForm() {
             });
             showError("Error al cargar la historia clínica");
         }
-    };
+    }, [showError]);
 
     // Función para cargar datos del paciente
-    const loadPatientData = async (id: string) => {
+    const loadPatientData = useCallback(async (_id: string) => {
         try {
             // Aquí cargarías los datos del paciente
             // const patientData = await patientService.getPatientById(id);
@@ -63,7 +53,6 @@ export function MedicalHistoryManagementForm() {
             //     setCurrentStep("form");
             // }
             // TODO: Implementar carga de datos del paciente
-            console.log("Loading patient ID:", id);
         } catch (error) {
             setSaveStatus({
                 type: "error", 
@@ -71,7 +60,16 @@ export function MedicalHistoryManagementForm() {
             });
             showError("Error al cargar los datos del paciente");
         }
-    };
+    }, [showError]);
+
+    // Efecto para cargar datos iniciales en modo edición
+    useEffect(() => {
+        if (historyId && mode === "edit") {
+            loadExistingHistory(historyId);
+        } else if (patientId) {
+            loadPatientData(patientId);
+        }
+    }, [mode, historyId, patientId, loadExistingHistory, loadPatientData]);
 
     // Manejar selección de paciente
     const handlePatientSelect = (patient: PatientSearchResult) => {

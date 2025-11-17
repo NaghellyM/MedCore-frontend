@@ -7,7 +7,6 @@ const httpPatient = axios.create({
     timeout: 10000,
 });
 
-// Configurar interceptores de autenticación
 setupAuthInterceptors(httpPatient, 'Servicio de Pacientes');
 
 export default httpPatient;

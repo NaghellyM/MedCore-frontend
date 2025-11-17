@@ -76,7 +76,7 @@ export const diagnosticService = {
         diagnosticId: string, 
         diagnosticData: UpdateDiagnosticDto
     ): Promise<UpdateDiagnosticResponse> {
-        const response = await httpPatient.put<UpdateDiagnosticResponse>(
+        const response = await httpPatient.patch<UpdateDiagnosticResponse>(
             `${diagnosticBaseUrl}/${diagnosticId}`,
             diagnosticData
         );

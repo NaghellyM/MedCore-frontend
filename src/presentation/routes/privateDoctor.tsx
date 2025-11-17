@@ -12,6 +12,7 @@ import {
     MedicalHistoriesListPageWrapper,
     PatientMedicalSummaryPageWrapper,
     MedicalHistoryDetailPageWrapper,
+    EditMedicalHistoryPage,
 } from "../pages/medicalHistory/pages";
 import UploadDiagnosticDocument from "../pages/doctor/page/uploadDocument";
 
@@ -27,41 +28,17 @@ export const doctorRoutes: RouteObject = {
                 { path: "documentsUpload", element: <UploadDiagnosticDocument /> },
 
                 // Rutas para historias clínicas
-                {
-                    path: "medicalHistory/create",
-                    element: <MedicalHistoryManagementForm />,
-                },
-                {
-                    path: "medicalHistory/edit",
-                    element: <MedicalHistoryManagementForm />,
-                },
-                {
-                    path: "medicalHistory/list",
-                    element: <MedicalHistoriesListPageWrapper />,
-                },
-                {
-                    path: "medicalHistory/patient/:patientId",
-                    element: <MedicalHistoryDetailPageWrapper />,
-                },
-                {
-                    path: "patient/:patientId/summary",
-                    element: <PatientMedicalSummaryPageWrapper />,
-                },
+                {path: "medicalHistory/create",  element: <MedicalHistoryManagementForm />},
+                {path: "medicalHistory/edit", element: <MedicalHistoryManagementForm />},
+                {path: "medicalHistory/:historyId/edit", element: <EditMedicalHistoryPage />},
+                {path: "medicalHistory/list", element: <MedicalHistoriesListPageWrapper />},
+                {path: "medicalHistory/patient/:patientId", element: <MedicalHistoryDetailPageWrapper />},
+                {path: "patient/:patientId/summary", element: <PatientMedicalSummaryPageWrapper />},
 
                 // Rutas para diagnósticos
-                {
-                    path: "medicalHistory/:medicalHistoryId/diagnosis",
-                    element: <DiagnosticListView />,
-                },
-                {
-                    path: "medicalHistory/:medicalHistoryId/diagnosis/new",
-                    element: <CreateDiagnosticView />,
-                },
-                {
-                    path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit",
-                    element: <EditDiagnosticView />,
-                },
-                
+                {path: "medicalHistory/:medicalHistoryId/diagnosis",element: <DiagnosticListView />},
+                {path: "medicalHistory/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticView />},
+                {path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticView />},
             ],
         },
     ],

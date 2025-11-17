@@ -16,6 +16,11 @@ export { ViewMyMedicalHistoryPage } from "../views/myMedicalHistoryPageView";
 // Forms
 export { MedicalHistoryManagementForm } from "../forms/medicalHistoryManagementForm";
 export { MedicalHistoryForm } from "../forms/medicalHistoryForm";
+export { EditMedicalHistoryForm } from "../forms/editMedicalHistoryForm";
+export { SimpleEditMedicalHistoryForm } from "../forms/simpleEditMedicalHistoryForm";
+
+// Pages
+export { EditMedicalHistoryPage } from "../editMedicalHistoryPage";
 
 // Components
 export { PatientSearchSection } from "../components/patientSearchSection";

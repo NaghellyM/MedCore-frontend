@@ -25,8 +25,8 @@ export function DiagnosticsWithDocumentsSection({ data, onUpdate, isReadOnly = f
     } = useDocumentUpload({
         patientId: data.patientInfo?.id,
         diagnosticId: `temp-diagnostic-${Date.now()}`, // Temporal hasta tener ID real
-        onUploadSuccess: (documentId) => {
-            console.log("Documento subido exitosamente:", documentId);
+        onUploadSuccess: (_documentId) => {
+            // Document uploaded successfully
         },
         onUploadError: (error) => {
             console.error("Error al subir documento:", error);
