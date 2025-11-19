@@ -13,10 +13,10 @@ export const queueService = {
     return response.data
   },
 
-  // Obtener posicion en la cola 
-  async getQueuePosition(queueId: string) {
+  // Obtener posicion en la cola  de un paciente por su ID
+  async getQueuePosition(pacienteId: string) {
     const response = await httpClinical.get(
-      `${queueUrl}/ticket/${queueId}/position`
+      `${queueUrl}/patient/${pacienteId}/status`
     )
     return response.data
   },

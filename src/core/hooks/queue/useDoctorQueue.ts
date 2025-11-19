@@ -3,11 +3,11 @@ import { queueService } from "../../services/queueService";
 import { useCurrentUser } from "../auth";
 import type { QueueItemDTO, QueuePatientStatus } from "../../types/queue";
 
-interface UseMyDoctorQueueOptions {
+interface UseDoctorQueueOptions {
     pollMs?: number;
 }
 
-interface UseMyDoctorQueueReturn {
+interface UseDoctorQueueReturn {
     loading: boolean;
     error: string | null;
     items: QueueItemDTO[];
@@ -24,12 +24,12 @@ interface UseMyDoctorQueueReturn {
 }
 
 /**
- * Hook para obtener la cola de pacientes del doctor autenticado
- * Responsabilidad única: Gestionar el estado y obtención de la cola del doctor logueado
+ * Hook para obtener la cola de pacientes del doctor 
+ * Gestiona el estado y obtención de la cola del doctor 
  */
 export function useMyDoctorQueue(
-    options: UseMyDoctorQueueOptions = {}
-): UseMyDoctorQueueReturn {
+    options: UseDoctorQueueOptions = {}
+): UseDoctorQueueReturn {
     const { pollMs = 15000 } = options;
     const [items, setItems] = useState<QueueItemDTO[]>([]);
     const [queueLoading, setQueueLoading] = useState(false);

@@ -3,7 +3,7 @@ import { Separator } from "@radix-ui/themes";
 import { cn } from "../../../../core/utils/cn";
 import { Button } from "../../../components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Users, ChevronLeft, Hash } from "lucide-react";
+import { Clock, Users, ChevronLeft, UserRoundCheck } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
 
 export type QueuePatientProps = {
@@ -13,6 +13,16 @@ export type QueuePatientProps = {
     onBack?: () => void;
     title?: string;
     subtitle?: string;
+    doctor?: {
+        name: string;
+        specialty: string;
+        departament: string;
+    };
+    appointment?: {
+        id: string;
+        scheduledAt: string;
+        status: string;
+    };
     lastUpdatedISO?: string;
     className?: string;
 };
@@ -35,6 +45,7 @@ export function QueuePatient({
     onBack,
     title = "Pronto serás atendido",
     subtitle = "Por favor, espera en la sala de espera.",
+    doctor,
     lastUpdatedISO,
     className,
 }: QueuePatientProps) {
@@ -82,7 +93,7 @@ export function QueuePatient({
                                 className="inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-[#A4CCD9]/30"
                                 aria-hidden
                             >
-                                <Hash className="h-5 w-5 text-slate-700" />
+                                <UserRoundCheck className="h-5 w-5 text-slate-700" />
                             </span>
                             <div className="min-w-0">
                                 <p className="text-sm text-slate-600">Tu turno</p>
@@ -95,14 +106,11 @@ export function QueuePatient({
                                         transition={{ type: "spring", stiffness: 400, damping: 28 }}
                                         className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900"
                                     >
-                                        #{ticketNumber}
+                                        N° {ticketNumber}
                                     </motion.p>
                                 </AnimatePresence>
                             </div>
                         </div>
-                        <span className="hidden md:inline-flex rounded-full border px-3 py-1 text-xs font-medium text-slate-700 bg-[#8DBCC7]/20">
-                            Turno activo
-                        </span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -136,6 +144,17 @@ export function QueuePatient({
                                 className="h-full bg-[#8DBCC7]"
                             />
                         </div>
+
+
+                        <div className="rounded-2xl border border-[#8DBCC7] p-4">
+                            <p className="text-sm text-slate-700 font-medium">El doctor </p>
+                            <p className="text-sm text-slate-900">{doctor?.name}</p>
+                            <p className="text-sm text-slate-600"> pronto te atenderá </p>
+                        </div>
+
+                        <div>
+                        </div>
+
                     </div>
                 </div>
             </CardContent>

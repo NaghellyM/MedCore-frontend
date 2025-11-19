@@ -21,7 +21,7 @@ export default function DoctorQueuePage() {
         >
             <div className="mx-auto mt-10 px-4">
                 <MyDoctorQueueContainer
-                    pollMs={10000}
+                    pollMs={60000}
                     onBack={() => navigate("/doctorPage")}
                 />
             </div>

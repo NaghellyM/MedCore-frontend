@@ -7,6 +7,17 @@ export interface QueuePositionDTO {
     queueNumber: number;
     position: number;
     estimatedWaitTimeMinutes: number;
+    doctor: {
+        name: string;
+        specialty: string;
+        departament: string;
+    };
+    appointment: {
+        id: string;
+        scheduledAt: string;
+        status: string;
+    };
+    
 }
 
 export interface QueuePositionResponse {

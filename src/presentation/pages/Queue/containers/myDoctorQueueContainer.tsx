@@ -1,4 +1,4 @@
-import { useMyDoctorQueue } from "../../../../core/hooks/queue/useMyDoctorQueue";
+import { useMyDoctorQueue } from "../../../../core/hooks/queue/useDoctorQueue";
 import { DoctorQueue } from "../components/queueDoctor";
 import { useAsyncOperation } from "../../../../core/hooks/queue/useAsyncOperation";
 import { StateWrapper } from "../../../components/globals/StateComponents";

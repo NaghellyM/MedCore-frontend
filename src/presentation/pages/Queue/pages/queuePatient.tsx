@@ -3,18 +3,10 @@ import { PatientSidebar } from "../../patient/components/patientSidebar";
 import { QueuePatientContainer } from "../containers/queuePatientContainer";
 import { useNavigate, useParams } from "react-router-dom";
 
+// Página de la cola para pacientes usando el layout de dashboard
 export function QueuePatientPage() {
     const navigate = useNavigate();
-    const { ticketId } = useParams<{ ticketId: string }>();
-    
-    // Si no hay ticketId, redirigir a la página de error o mostrar mensaje
-    if (!ticketId) {
-        console.error("⚠️ No se proporcionó ticketId en la URL");
-        // TODO: Redirigir a página de error o mostrar mensaje apropiado
-        return <div>Error: ID de ticket no encontrado</div>;
-    }
-    
-    const id = ticketId;
+    const { appointmentId } = useParams<{ appointmentId?: string }>();
 
     return (
         <DashboardLayout
@@ -27,10 +19,11 @@ export function QueuePatientPage() {
         >
             <div className="w-full max-w-md mx-auto mt-10">
                 <QueuePatientContainer
-                    ticketId={id}
                     onBack={() => navigate("/patientPage")}
-                    pollMs={10000}
+                    pollMs={60000}
                     enableLocalCountdown
+                    showJoinQueueOption={true}
+                    defaultAppointmentId={appointmentId}
                 />
             </div>
         </DashboardLayout>
