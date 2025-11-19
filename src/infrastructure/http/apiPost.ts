@@ -11,7 +11,6 @@ export async function apiPost<T>(url: string, data: any): Promise<T> {
         const response = await http.post<T>(url, data);
         return response.data;
     } catch (error: any) {
-        console.error("Error en la solicitud HTTP:", error.response?.data || error.message);
-        throw error.response?.data || { message: "Error en la solicitud" };
+        throw error;
     }
 }

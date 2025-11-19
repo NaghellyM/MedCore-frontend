@@ -6,6 +6,22 @@ import { UploadCloud, Download, ArrowLeftCircle, CheckCircle, XCircle } from "lu
 import { useNavigate } from "react-router-dom"
 import { uploadUsersCsv } from "../../../../core/services/userImportService"
 
+// --- Interfaz para las filas del CSV ---
+interface CsvRow {
+  email?: string
+  fullname?: string
+  id?: string
+  role?: string
+  current_password?: string
+  status?: string
+  date_of_birth?: string
+  specialization?: string
+  department?: string
+  license_number?: string
+  phone?: string
+  [key: string]: any // Permite columnas adicionales
+}
+
 // --- Esquema de validación ---
 const userCsvSchema = Yup.object().shape({
   email: Yup.string().email("Correo inválido").required("El email es obligatorio"),
@@ -21,7 +37,7 @@ const userCsvSchema = Yup.object().shape({
 // --- Función para parsear y validar el CSV ---
 async function parseAndValidateCsv(file: File) {
   return new Promise((resolve, reject) => {
-    Papa.parse(file, {
+    Papa.parse<CsvRow>(file, {
       header: true,
       skipEmptyLines: true,
       complete: async (results) => {
@@ -63,15 +79,12 @@ async function parseAndValidateCsv(file: File) {
 
 export function AdminRegisterCSV() {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [loading, setLoading] = useState(false)
   const [importResult, setImportResult] = useState<any>(null)
   const navigate = useNavigate()
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
-
-    setLoading(true)
     Swal.fire({
       title: "Validando archivo...",
       text: "Por favor espera un momento mientras se revisa el CSV.",
@@ -87,7 +100,7 @@ export function AdminRegisterCSV() {
         icon: "success",
         title: "Archivo válido",
         html: `<p class="text-gray-600">Se validaron correctamente <b>${result.data.length}</b> usuarios.</p>
-               <p class="mt-2 text-sm text-gray-500">¿Deseas enviarlo al servidor?</p>`,
+              <p class="mt-2 text-sm text-gray-500">¿Deseas enviarlo al servidor?</p>`,
         showCancelButton: true,
         confirmButtonText: "Sí, enviar",
         cancelButtonText: "Cancelar",
@@ -138,7 +151,7 @@ export function AdminRegisterCSV() {
         background: "#fef2f2",
       })
     } finally {
-      setLoading(false)
+      // Cleanup if needed
     }
   }
 

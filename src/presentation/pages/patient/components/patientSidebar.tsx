@@ -1,36 +1,31 @@
 import { SidebarBase } from "../../../components/globals/sidebar/sidebarBase";
 import { SidebarGroupComponent } from "../../../components/globals/sidebar/SidebarGroup";
-import { CalendarCheck, FileHeart, FileVideoCamera, Microscope, PillBottle, Settings, User } from "lucide-react";
+import { CalendarCheck, FileHeart, History, Microscope, Settings, User } from "lucide-react";
 
 
 const items = [
     {
         title: "Mis citas",
-        url: "#",
+        url: "/PatientAppointments",
         icon: CalendarCheck,
     },
     {
-        title: "Telemedicina",
-        url: "#",
-        icon: FileVideoCamera,
+        title: "Turno de espera",
+        url: "/queuePatient",
+        icon: History,
     },
 ];
 
 const infoItems = [
     {
-        title: "Historial clínico",
-        url: "#",
+        title: "Mi historial clínico",
+        url: "/my-medical-history",
         icon: FileHeart,
     },
     {
         title: "Resultados de laboratorio",
-        url: "#",
+        url: "/patientPage",
         icon: Microscope,
-    },
-    {
-        title: "Medicamentos",
-        url: "#",
-        icon: PillBottle,
     },
 ];
 

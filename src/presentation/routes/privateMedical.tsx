@@ -1,31 +1,22 @@
-import { type RouteObject } from "react-router-dom";
+import {
+    MedicalHistoriesListPageWrapper,
+    PatientMedicalSummaryPageWrapper,
+    MedicalHistoryDetailPageWrapper,
+    EditMedicalHistoryPage,
+} from "../pages/medicalHistory/pages";
+import { MedicalHistoryManagementForm } from "../pages/medicalHistory/forms/medicalHistoryManagementForm";
 import { RoleRoute } from "./guards";
-import RootLayout from "../layouts/RootLayout";
+import type { RouteObject } from "react-router-dom";
 
-import MedicalHistory from "../pages/medicalHistory/pages/previewMedicalHistory";
-import { PreviewMedicalHistory } from "../pages/medicalHistory/pages/detailMedicalHistoryPage";
-import CreateMedicalHistory from "../pages/medicalHistory/pages/createMedicalHistoryPage";
-import EncounterDetailPage from "../pages/encounter/pages/encounterDetailPage";
-import EditEncounterPage from "../pages/encounter/pages/editEncounterPage";
-import CreateEncounterPage from "../pages/encounter/pages/createEncounterPage";
-import EncounterPreviewPage from "../pages/encounter/pages/encounterPreviewPage";
-
-export const medicalRoutes: RouteObject = {
-    element: <RoleRoute allow={["admin", "doctor"]} />,
-
+export const MedicalRoutes: RouteObject = {
+    element: <RoleRoute allow={["doctor", "admin"]} />,
     children: [
-        {
-            element: <RootLayout />,
-            children: [
-                { path: "encounter", element: <EncounterPreviewPage /> },
-                { path: "encounter/new", element: <CreateEncounterPage /> },
-                { path: "encounter/edit/:id", element: <EditEncounterPage /> },
-                { path: "encounter/:id", element: <EncounterDetailPage /> },
-        
-                { path: "medicalHistory", element: <MedicalHistory /> },
-                { path: "medicalHistory/view", element: <PreviewMedicalHistory /> },
-                { path: "medicalHistory/new", element: <CreateMedicalHistory /> },
-            ],
-        },
+        // Rutas para historias clínicas
+        { path: "medicalHistory/create", element: <MedicalHistoryManagementForm /> },
+        { path: "medicalHistory/edit", element: <MedicalHistoryManagementForm /> },
+        { path: "medicalHistory/:historyId/edit", element: <EditMedicalHistoryPage /> },
+        { path: "medicalHistory/list", element: <MedicalHistoriesListPageWrapper /> },
+        { path: "medicalHistory/patient/:patientId", element: <MedicalHistoryDetailPageWrapper /> },
+        { path: "patient/:patientId/summary", element: <PatientMedicalSummaryPageWrapper /> },
     ],
 };

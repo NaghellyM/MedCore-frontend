@@ -2,10 +2,9 @@ import { ApiUrls } from "../../environments/environments";
 import {apiPost} from "../../infrastructure/http/apiPost";
 import type { LoginResponse } from "../services/verifyEmailService";
 
-export const handleApiError = (error: any): string => {
-    console.error("Error en la API:", error.response?.data || error.message);
-    return error.response?.data?.message || "Error en la solicitud";
-};
+export function handleApiError(error: any): string {
+    return error?.response?.data?.message || error?.message || "Error desconocido";
+}
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
     try {

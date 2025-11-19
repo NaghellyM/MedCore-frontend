@@ -1,7 +1,8 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import FormButton from '../../../components/globals/button';
 import { verifyEmail } from '../../../../core/services/verifyEmailService';
-import { useRedirectByRole } from '../../../hooks/useRedirectByRole';
+import { useRedirectByRole } from '../../../../core/hooks/auth';
 
 interface VerificationFormProps {
     email: string;
@@ -11,20 +12,35 @@ interface VerificationFormProps {
 
 const VerificationForm: React.FC<VerificationFormProps> = ({ email, code, setCode }) => {
     const redirectByRole = useRedirectByRole();
-    
+
     const onVerify = async () => {
         try {
             const res = await verifyEmail(email, code);
             if (res && res.accessToken && res.refreshToken) {
                 localStorage.setItem("accessToken", res.accessToken);
                 localStorage.setItem("refreshToken", res.refreshToken);
+                await Swal.fire({
+                    icon: 'success',
+                    title: '¡Verificación exitosa!',
+                    text: 'Tu cuenta ha sido verificada correctamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 redirectByRole(res.accessToken);
             } else {
-                alert("Respuesta inválida del servidor");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de verificación',
+                    text: 'Codigo inválido o expirado. Por favor, intenta de nuevo.'
+                });
             }
         } catch (err: any) {
             const errorMessage = err?.message || err?.toString() || "Error al verificar el código";
-            alert(errorMessage);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de verificación',
+                text: errorMessage
+            });
         }
     };
 
@@ -38,7 +54,7 @@ const VerificationForm: React.FC<VerificationFormProps> = ({ email, code, setCod
                 className="mt-1 p-2 w-full border rounded-md"
                 placeholder="Ingresa el código enviado a tu correo"
             />
-            <FormButton label="Verificar código" onClick={onVerify} type='button'/>
+            <FormButton label="Verificar código" onClick={onVerify} type='button' />
         </div>
     );
 };

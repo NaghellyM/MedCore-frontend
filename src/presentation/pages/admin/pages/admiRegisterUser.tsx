@@ -1,116 +1,69 @@
-import Swal from "sweetalert2"
-import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
 import { motion } from "framer-motion"
 import { UserForm } from "../components/adminUserForm"
-import { registerUser } from "../../../../core/services/patientService"
-import { doctorsService } from "../../../../core/services/doctorsService"
-import type { RegisterUserDto } from "../../../../core/models/user"
-import { validationSchema } from "../../../../core/validators/validationSchema"
-import { UserPlus, ArrowLeft } from "lucide-react"
+import { useUserRegistrationForm, useUserRegistrationData } from "../../../../core/hooks/admin"
+import { UserPlus, ArrowLeft, AlertCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function AdminRegisterUser() {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [specialties, setSpecialties] = useState<{ id: string; name: string }[]>([])
-  const [departments, setDepartments] = useState<string[]>([])
 
   const {
     control,
     handleSubmit,
     watch,
-    reset,
-    setError,
-    formState: { errors },
-  } = useForm<RegisterUserDto>({
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      email: "",
-      current_password: "",
-      identificacion: "",
-      date_of_birth: "",
-      role: "PACIENTE",
-      fullname: "",
-    },
-  })
+    errors,
+    loading,
+    onSubmit,
+  } = useUserRegistrationForm()
+
+  const {
+    specialties,
+    departments,
+    loading: dataLoading,
+    error: dataError,
+  } = useUserRegistrationData()
 
   const selectedRole = watch("role")
 
-  useEffect(() => {
-    const loadSpecialties = async () => {
-      try {
-        const response = await doctorsService.getSpecialties()
-        if (Array.isArray(response)) {
-          const mapped = response.map((esp: any) => ({
-            id: esp.id,
-            name: esp.nombre,
-          }))
-          setSpecialties(mapped)
-        }
-      } catch (error) {
-        console.error("❌ Error al cargar especialidades:", error)
-      }
-    }
+  if (dataLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando datos del formulario...</p>
+        </motion.div>
+      </div>
+    )
+  }
 
-    const loadDepartments = async () => {
-      try {
-        const list = ["Urgencias", "Pediatría", "UCI", "Oncología", "Farmacia"]
-        setDepartments(list)
-      } catch (error) {
-        console.error("❌ Error al cargar departamentos:", error)
-      }
-    }
-
-    loadSpecialties()
-    loadDepartments()
-  }, [])
-
-  const onSubmit = async (data: RegisterUserDto) => {
-    console.log("📤 Enviando datos al backend:", data)
-    setLoading(true)
-    try {
-      const res = await registerUser(data)
-      console.log("✅ Respuesta del backend:", res)
-      Swal.fire({
-        icon: "success",
-        title: "Usuario registrado con éxito",
-        showConfirmButton: false,
-        timer: 2000,
-      })
-      reset()
-    } catch (error: any) {
-      console.error("❌ Error al registrar usuario:", error)
-      if (error.response?.data?.errors) {
-        const backendErrors = error.response.data.errors
-        for (const [field, message] of Object.entries(backendErrors)) {
-          setError(field as keyof RegisterUserDto, {
-            type: "server",
-            message: message as string,
-          })
-        }
-      } else if (error.response?.data?.message) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: error.response.data.message,
-        })
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Ocurrió un error inesperado. Intenta nuevamente.",
-        })
-      }
-    } finally {
-      setLoading(false)
-    }
+  if (dataError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-red-50 border border-red-200 p-6 rounded-2xl shadow-lg max-w-md text-center"
+        >
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-red-800 mb-2">Error al cargar datos</h2>
+          <p className="text-red-600 mb-4">{dataError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Reintentar
+          </button>
+        </motion.div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
-      {/* 🔙 Botón con fondo azul */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -150,7 +103,6 @@ export function AdminRegisterUser() {
           </p>
         </motion.div>
 
-        {/* 🔧 Formulario */}
         <UserForm
           control={control}
           onSubmit={handleSubmit(onSubmit)}

@@ -1,134 +1,181 @@
-import { useEffect, useState } from "react"
-import { NurseCard } from "../../nurse/components/nurseCard"
-import { nursesService } from "../../../../core/services/nursesService"
-import { Search, ArrowLeftCircle } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react";
+import NurseCard from "../../nurse/components/nurseCard";
+import { nursesService } from "../../../../core/services/nursesService";
+import { Search, ArrowLeftCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { useToast } from "../../../../core/hooks/notifications";
 
 interface NurseApi {
-  id: string
-  fullname: string
-  identificacion: string
-  role: string
-  status: string
-}
-
-interface NurseCardData {
-  id: string
-  fullname: string
-  identificacion: string
-  role: string
-  status: string
+  id: string;
+  fullname: string;
+  identificacion: string;
+  role?: string;
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN";
+  email?: string;
+  phone?: string;
+  license_number?: string;
 }
 
 export default function NursesList() {
-  const [nurses, setNurses] = useState<NurseCardData[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [statusFilter, setStatusFilter] = useState<"active" | "inactive" | "pending" | "">("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 20 // 🔹 ahora máximo 20 por página
-  const [totalPages, setTotalPages] = useState(1)
-  const [totalItems, setTotalItems] = useState(0)
+  const [nurses, setNurses] = useState<NurseApi[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"active" | "inactive" | "pending" | "">("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const navigate = useNavigate();
+  const { success, error: showError } = useToast();
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
-
-  const navigate = useNavigate()
+  // 🔹 Normalizar status
+  const normalizeStatus = (status?: string): "ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN" => {
+    const normalized = (status || "UNKNOWN").toUpperCase();
+    const validStatuses: ("ACTIVE" | "INACTIVE" | "PENDING" | "UNKNOWN")[] = ["ACTIVE", "INACTIVE", "PENDING", "UNKNOWN"];
+    return validStatuses.includes(normalized as any) ? normalized as any : "UNKNOWN";
+  };
 
   // 🔹 Debounce para búsqueda
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearch(searchTerm)
-      setCurrentPage(1)
-      if (searchTerm.trim()) setStatusFilter("")
-    }, 500)
-    return () => clearTimeout(handler)
-  }, [searchTerm])
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1);
+      if (searchTerm.trim()) setStatusFilter("");
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
 
   // 🔹 Obtener enfermeros
   const fetchNurses = async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
+      let response: any;
 
-      let response: any
       if (debouncedSearch.trim()) {
-        response = await nursesService.searchByNameOrId(debouncedSearch)
+        response = await nursesService.searchByNameOrId(debouncedSearch);
       } else if (statusFilter) {
-        response = await nursesService.filterByStatus(statusFilter)
+        response = await nursesService.filterByStatus(statusFilter);
       } else {
-        response = await nursesService.getAll(currentPage)
+        response = await nursesService.getAll(currentPage);
       }
 
-      console.log("🩺 Respuesta del backend (nurses):", response)
-
-      let users: any[] = []
-      let total = 0
+      let users: any[] = [];
+      let total = 0;
 
       if (Array.isArray(response)) {
-        users = response
-        total = users.length
+        users = response;
+        total = users.length;
       } else if (response && typeof response === "object") {
-        // Backend con paginación: { data: [...], total: 50 }
         if (Array.isArray(response.data)) {
-          users = response.data
-          total = response.total || response.data.length
+          users = response.data;
+          total = response.total || response.data.length;
         } else {
-          const nestedArray = Object.values(response).find(Array.isArray)
-          if (nestedArray) users = nestedArray
-          total = users.length
+          const nestedArray = Object.values(response).find(Array.isArray);
+          if (nestedArray) users = nestedArray;
+          total = users.length;
         }
       }
 
-      setTotalItems(total)
-      setTotalPages(Math.ceil(total / itemsPerPage))
+      setTotalPages(Math.ceil(total / itemsPerPage));
 
-      const mappedNurses: NurseCardData[] = users.map((n: NurseApi) => ({
+      const mappedNurses: NurseApi[] = users.map((n: any) => ({
         id: n.id,
         fullname: n.fullname,
         identificacion: n.identificacion || "N/A",
-        role: n.role || "ENFERMERA",
-        status: n.status?.toUpperCase() || "INACTIVE",
-      }))
+        role: n.role || undefined,
+        status: normalizeStatus(n.status),
+        email: n.email || undefined,
+        phone: n.phone || undefined,
+        license_number: n.license_number || undefined,
+      }));
 
-      setNurses(mappedNurses)
+      setNurses(mappedNurses);
     } catch (err: any) {
-      console.error("Error al obtener enfermeros:", err)
       if (err.response?.status === 404) {
-        setNurses([])
-        setError(null)
+        setNurses([]);
+        setError(null);
       } else {
-        setError("Hubo un problema al cargar los enfermeros.")
+        setError("Hubo un problema al cargar los enfermeros.");
+        showError("Error al cargar enfermeros", "No se pudieron obtener los datos de los enfermeros.");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchNurses()
-  }, [statusFilter, currentPage, debouncedSearch])
+    fetchNurses();
+  }, [statusFilter, currentPage, debouncedSearch]);
+
+  // 🔹 Editar enfermero desde el mismo card
+  const handleEditNurse = async (updatedNurse: NurseApi) => {
+    try {
+      // Solo enviamos propiedades que tengan valor y excluimos 'identificacion'
+      const payload: Partial<NurseApi> = {};
+      Object.entries(updatedNurse).forEach(([key, value]) => {
+        if (value !== null && value !== "" && key !== "identificacion") {
+          (payload as any)[key] = value;
+        }
+      });
+
+      await nursesService.updateNurse(updatedNurse.id, payload);
+      setNurses((prev) =>
+        prev.map((n) => (n.id === updatedNurse.id ? updatedNurse : n))
+      );
+
+      // Use toast for successful CRUD operations (non-blocking feedback)
+      success("Enfermero actualizado", "Los datos se actualizaron correctamente");
+    } catch (error) {
+      // Use toast for CRUD errors (quick feedback)
+      showError("Error al actualizar", "No se pudo actualizar el enfermero");
+    }
+  };
+
+  // 🔹 Eliminar enfermero con confirmación
+  const handleDeleteNurse = async (id: string) => {
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará permanentemente al enfermero.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await nursesService.deleteNurse(id);
+        setNurses((prev) => prev.filter((n) => n.id !== id));
+
+        // Use toast for successful deletion feedback (non-blocking)
+        success("Enfermero eliminado", "El enfermero fue eliminado correctamente");
+      } catch (error) {
+        // Use toast for deletion errors (quick feedback)
+        showError("Error al eliminar", "No se pudo eliminar el enfermero. Inténtalo nuevamente");
+      }
+    }
+  };
 
   // 🔹 Filtros
   const handleStatusChange = (status: "active" | "inactive" | "pending" | "") => {
-    setStatusFilter(status)
-    setSearchTerm("")
-    setCurrentPage(1)
-  }
+    setStatusFilter(status);
+    setSearchTerm("");
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return
-    setCurrentPage(newPage)
-  }
+    if (newPage < 1 || newPage > totalPages) return;
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className="p-6 space-y-6">
-      {/* Título y botón */}
+      {/* 🔹 Título y botón */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold text-gray-800">
-          👩‍⚕️ Listado de Enfermeros
-        </h1>
-
+        <h1 className="text-3xl font-bold text-gray-800">👩‍⚕️ Listado de Enfermeros</h1>
         <button
           onClick={() => navigate("/adminpage")}
           className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full shadow-md hover:from-blue-600 hover:to-blue-700 transition-all duration-300 hover:scale-105 focus:ring-4 focus:ring-blue-300"
@@ -138,53 +185,30 @@ export default function NursesList() {
         </button>
       </div>
 
-      {/* Filtros y búsqueda */}
+      {/* 🔹 Filtros y búsqueda */}
       <div className="flex flex-wrap gap-3 mb-6 items-center">
-        <button
-          onClick={() => handleStatusChange("")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === ""
-              ? "bg-blue-600 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-        >
-          Todos
-        </button>
+        {[{ label: "Todos", value: "" },
+        { label: "Activos", value: "active" },
+        { label: "Inactivos", value: "inactive" },
+        { label: "Pendientes", value: "pending" }].map((btn) => (
+          <button
+            key={btn.value}
+            onClick={() => handleStatusChange(btn.value as any)}
+            className={`px-4 py-2 rounded-full font-medium shadow transition ${statusFilter === btn.value
+                ? btn.value === "active"
+                  ? "bg-green-600 text-white shadow-md scale-105"
+                  : btn.value === "inactive"
+                    ? "bg-red-600 text-white shadow-md scale-105"
+                    : btn.value === "pending"
+                      ? "bg-yellow-500 text-white shadow-md scale-105"
+                      : "bg-blue-600 text-white shadow-md scale-105"
+                : "bg-gray-200 hover:bg-gray-300"
+              }`}
+          >
+            {btn.label}
+          </button>
+        ))}
 
-        <button
-          onClick={() => handleStatusChange("active")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === "active"
-              ? "bg-green-600 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-        >
-          Activos
-        </button>
-
-        <button
-          onClick={() => handleStatusChange("inactive")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === "inactive"
-              ? "bg-red-600 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-        >
-          Inactivos
-        </button>
-
-        <button
-          onClick={() => handleStatusChange("pending")}
-          className={`px-4 py-2 rounded-full font-medium shadow transition ${
-            statusFilter === "pending"
-              ? "bg-yellow-500 text-white shadow-md scale-105"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-        >
-          Pendientes
-        </button>
-
-        {/* Búsqueda */}
         <div className="flex items-center border border-gray-300 rounded-full px-4 py-2 bg-white shadow-sm focus-within:ring-2 focus-within:ring-blue-300 w-full sm:w-80 ml-auto transition">
           <Search className="text-gray-400 mr-2" size={18} />
           <input
@@ -197,7 +221,7 @@ export default function NursesList() {
         </div>
       </div>
 
-      {/* Contenido principal */}
+      {/* 🔹 Contenido principal */}
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="flex flex-col items-center">
@@ -221,19 +245,19 @@ export default function NursesList() {
         </div>
       ) : (
         <>
+          {/* 🔹 Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {nurses.map((nurse) => (
               <NurseCard
                 key={nurse.id}
-                fullname={nurse.fullname}
-                identificacion={nurse.identificacion}
-                rol={nurse.role}
-                status={nurse.status}
+                nurse={nurse}
+                onEdit={handleEditNurse}
+                onDelete={handleDeleteNurse}
               />
             ))}
           </div>
 
-          {/* Paginación */}
+          {/* 🔹 Paginación */}
           <div className="flex items-center justify-center mt-8 gap-4">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
@@ -256,5 +280,5 @@ export default function NursesList() {
         </>
       )}
     </div>
-  )
+  );
 }

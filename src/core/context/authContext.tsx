@@ -1,16 +1,8 @@
 import type React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { initializeAuth, getCurrentUser, logout, login } from "../services/authService";
-
-interface AuthContextType {
-    isAuthenticated: boolean;
-    user: any;
-    loading: boolean;
-    error: string | null;
-    loginUser: (credentials: any) => Promise<any>;
-    logoutUser: () => void;
-    refreshUser: () => Promise<any>
-}
+import type { AuthContextType } from "../types/auth";
+import { toast } from "sonner";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -25,7 +17,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
 
     useEffect(() => {
-        // Inicializar el estado de autenticación al cargar la aplicación
         const initAuth = () => {
             try {
                 initializeAuth();
@@ -52,26 +43,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const loginUser = async (credentials: any) => {
         try {
             const response = await login(credentials.email, credentials.password);
-            console.log("Login service response:", response);
 
             const currentUser = getCurrentUser();
-            console.log("Current user after login:", currentUser);
-
             setAuthState({
                 isAuthenticated: true,
                 user: currentUser,
                 loading: false,
                 error: null,
             });
+            
+            // Show success toast for login (non-blocking feedback)
+            toast.success("¡Bienvenido!", {
+                description: `Hola ${currentUser?.fullname}`,
+                duration: 3000,
+            });
+            
             return response;
-        } catch (error) {
-            console.error("Login error:", error);
+        } catch (error: any) {
             setAuthState({
                 isAuthenticated: false,
                 user: null,
                 loading: false,
                 error: "Login failed",
             });
+            // Don't show the error message here to avoid duplicates
+            // Let the calling component handle the error display
             throw error;
         }
     };
@@ -83,21 +79,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             loading: false,
             error: null,
         });
-        // Navigation will be handled by the component that calls logoutUser
+        
+        // Show success toast for logout (non-blocking feedback)
+        toast.success("Sesión cerrada", {
+            description: "Has cerrado sesión exitosamente",
+            duration: 3000,
+        });
+        
         window.location.href = "/";
     };
     const refreshUser = async () => {
         try {
-            const currentUser = getCurrentUser(); // re-lee del storage/token
+            const currentUser = getCurrentUser(); 
             setAuthState((prev: any) => ({
                 ...prev,
                 isAuthenticated: !!currentUser,
                 user: currentUser,
-                // mantenemos loading y error tal cual estaban
             }));
             return currentUser;
         } catch (error) {
-            // no alteramos otras funciones; solo normalizamos estado si algo falla
             setAuthState((prev: any) => ({
                 ...prev,
                 isAuthenticated: false,

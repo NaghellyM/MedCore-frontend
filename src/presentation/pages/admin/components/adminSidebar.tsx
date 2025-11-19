@@ -17,6 +17,10 @@ const securityItems = [
     { title: "Gestión de sesiones", url: "#", icon: ClockFading },
 ];
 
+const doctorItems = [
+    { title: "Gestión de citas", url: "/admin/adminAppointments", icon: UsersRound },
+];
+
 const operationItems = [
     { title: "Monitoreo", url: "#", icon: Activity },
     { title: "Inventario", url: "#", icon: Boxes },
@@ -30,6 +34,7 @@ export function AdminSidebar() {
             <SidebarGroupComponent label="GESTIÓN DE USUARIOS" items={items} />
             <SidebarGroupComponent label="SEGURIDAD" items={securityItems} />
             <SidebarGroupComponent label="OPERACIONES" items={operationItems} />
+            <SidebarGroupComponent label="GESTIÓN DE DOCTORES" items={doctorItems} />
         </SidebarBase>
     );
 }

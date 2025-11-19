@@ -1,27 +1,27 @@
-
 import { SidebarBase } from "../../../components/globals/sidebar/sidebarBase";
 import { SidebarGroupComponent } from "../../../components/globals/sidebar/SidebarGroup";
 import {
   Calendar,
-  User,
-  Video,
-  Activity,
-  ArrowRight,
+  BookUser,
+  ClipboardPlus,
 } from "lucide-react";
 
-// Grupo principal (conserva nombres e íconos)
 const gestionClinicaItems = [
-  { title: "Agenda", url: "/encounter", icon: Calendar },
-  { title: "Pacientes", url: "/medicalHistory", icon: User },
-  { title: "Telemedicina", url: "#", icon: Video },
-  { title: "Medicamentos", url: "#", icon: Activity },
-  { title: "Derivaciones", url: "#", icon: ArrowRight },
+  { title: "Agenda", url: "/doctorAppointmentsList", icon: Calendar },
+  { title: "Próximas citas", url: "/queueDoctor", icon: BookUser },
 ];
+
+const pacienteItems = [
+  { title: "Historiales médicos", url: "/medicalHistory/list", icon: ClipboardPlus },
+  { title: "Crear historia clínica", url: "/medicalHistory/create", icon: ClipboardPlus },
+];
+
 
 export default function DoctorSidebar() {
   return (
     <SidebarBase label="Doctor Sidebar">
-      <SidebarGroupComponent label="GESTIÓN CLÍNICA" items={gestionClinicaItems} />
+      <SidebarGroupComponent label="PERFIL MÉDICO" items={gestionClinicaItems} />
+      <SidebarGroupComponent label="PACIENTES" items={pacienteItems} />
     </SidebarBase>
   );
 }

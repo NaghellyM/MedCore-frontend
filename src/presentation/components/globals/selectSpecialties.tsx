@@ -17,7 +17,7 @@ export function SelectSpecialty({ name, control, error }: SelectSpecialtyProps) 
         const data = await response.json()
         setSpecialties(data)
       } catch (err) {
-        console.error("Error fetching specialties:", err)
+        // Error handled silently - specialties will remain empty
       }
     }
 

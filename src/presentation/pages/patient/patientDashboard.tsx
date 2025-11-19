@@ -10,7 +10,7 @@ export function PatientDashboard() {
             headerHeightClass="pt-[80px]"
             contentMaxWidthClass="max-w-7xl"
             variant="inset"          
-            collapsible="offcanvas"  
+            collapsible="icon"  
             mainClassName="pb-10 "
             sidebarClassName=""
             sidebarContentClassName=""

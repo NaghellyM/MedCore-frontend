@@ -1,11 +1,12 @@
-import http from "../../infrastructure/http/http"
+import http from "../../infrastructure/http/httpSecurity"
 import { ApiUrls } from "../../environments/environments";
 
 export const nursesService = {
-  async getAll(page = 1) {
+  async getAll(_page = 1) {
     const response = await http.get(
       `${ApiUrls.msSecurity}/users/by-role-status?role=enfermera`
     )
+
     return response.data
   },
 
@@ -15,6 +16,27 @@ export const nursesService = {
     )
     return response.data
   },
+
+  async deleteNurse(id: string): Promise<void> {
+  try {
+    const response = await http.delete(`${ApiUrls.msSecurity}/users/${id}`)
+    return response.data
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      return
+    }
+  }
+},
+
+  // En doctorsService.ts
+async updateNurse(id: string, data: any): Promise<any> {
+  try {
+    const response = await http.put(`${ApiUrls.msSecurity}/users/nurses/${id}`, data)
+    return response.data
+  } catch (error) {
+    throw error
+  }
+},
 
   async filterByStatus(status: "active" | "inactive" | "pending") {
     const response = await http.get(

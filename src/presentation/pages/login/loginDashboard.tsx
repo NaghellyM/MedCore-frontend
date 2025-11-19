@@ -1,14 +1,12 @@
-// src/features/auth/pages/Form.tsx
 import Swal from 'sweetalert2';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff } from "lucide-react";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-
-import { loginSchema } from '../../../core/validators/validationLogin';
+import { loginSchema } from '../../../core/validators/userLoginValidator';
 import { useAuth } from '../../../core/context/authContext';
-import type { IFormInput } from '../../../core/types/types';
+import type { IFormInput } from "../../../core/types/auth";
 
 import FormInput from '../../components/globals/input';
 import FormButton from '../../components/globals/button';
@@ -54,11 +52,10 @@ const Form: React.FC = () => {
   const onSubmit = async (data: IFormInput) => {
     try {
       const res: any = await loginUser({ email: data.email, password: data.password });
-      console.log("Login response:", res);
 
-      // Señal del backend: requiere verificación de correo
+
       if (res?.message && String(res.message).toLowerCase().includes("email")) {
-        // redirige a la vista de verificación con el email
+
         navigate(`/verify?email=${encodeURIComponent(data.email)}`, {
           replace: true,
           state: { email: data.email },
@@ -68,20 +65,31 @@ const Form: React.FC = () => {
 
       const redirect = params.get('redirect');
       if (redirect && redirect !== '/login') {
-        console.log("Redirecting to:", redirect);
+
         navigate(redirect, { replace: true });
         return;
       }
 
-      // Obtener el rol del usuario desde localStorage (ya guardado por authService)
+
       const user = JSON.parse(localStorage.getItem("user") || "{}");
       const role: Role = mapRoleToEnglish(user?.role || '');
-      console.log("User role:", role, "from:", user?.role);
       goToRoleHome(role);
 
     } catch (err: any) {
-      const errorMessage = err?.message || String(err) || "Error al iniciar sesión";
-      Swal.fire({ icon: 'warning', title: '', text: errorMessage });
+      let errorMessage = err?.response?.data?.message || err?.message || String(err) || "Error al iniciar sesión";
+
+      if (errorMessage.toLowerCase().includes('credenciales inválidas') ||
+        errorMessage.toLowerCase().includes('credenciales invalidas') ||
+        errorMessage.toLowerCase().includes('invalid credentials') ||
+        errorMessage.toLowerCase().includes('credenciales incorrectas')) {
+        errorMessage = "Usuario o contraseña incorrecta";
+      }
+
+      Swal.fire({
+        icon: 'error',
+        title: 'No se pudo iniciar sesión',
+        text: errorMessage
+      });
     }
   };
 

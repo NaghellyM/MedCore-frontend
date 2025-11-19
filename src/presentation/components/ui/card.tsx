@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "../../../core/utils/decodeToken";
+import { cn } from "../../../core/utils/cn";
 
 const Card = React.forwardRef<
   HTMLDivElement,

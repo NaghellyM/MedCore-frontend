@@ -4,22 +4,24 @@ import {
     SidebarTrigger,
 } from "../components/ui/sidebar";
 import UserHeader from "../components/globals/header";
-import { useIsCompact } from "../hooks/useBreakpoint";
-import { cn } from "../../core/utils/decodeToken";
+import { cn } from "../../core/utils/cn";
+import { useBreakpoint, useIsMobileSidebar } from "../../core/hooks/ui";
+import { ResponsiveStyleUtils } from "../../core/utils/responsiveStyles";
 
 export function DashboardLayout({
     sidebar,
     children,
     showSearch = true,
-    headerHeightClass = "pt-[80px]",
+    headerHeightClass = "pt-[80px]", 
     contentMaxWidthClass = "max-w-7xl",
     sidebarContentClassName = "",
     variant = "inset",
+    collapsible = "icon",
 }: {
     sidebar: React.ReactNode;
     children: React.ReactNode;
     showSearch?: boolean;
-    headerHeightClass?: string;
+    headerHeightClass?: string; 
     contentMaxWidthClass?: string;
     mainClassName?: string;
     sidebarClassName?: string;
@@ -27,37 +29,49 @@ export function DashboardLayout({
     variant?: "sidebar" | "floating" | "inset";
     collapsible?: "offcanvas" | "icon" | "none";
 }) {
-    const isCompact = useIsCompact();
+    const breakpoint = useBreakpoint();
+    const isMobileSidebar = useIsMobileSidebar();
+    
+    // Obtener configuración del sidebar y estilos responsive
+    const sidebarConfig = ResponsiveStyleUtils.getSidebarConfig(breakpoint, collapsible, variant);
+    const responsivePadding = ResponsiveStyleUtils.getResponsivePadding(breakpoint);
 
     return (
-        <SidebarProvider defaultOpen={!isCompact}>
-            <div className="sticky top-0 z-50">
-                <div className="relative">
-                    <UserHeader showSearch={showSearch} />
-                </div>
+        <SidebarProvider defaultOpen={sidebarConfig.defaultOpen}>
+            {/* Header fijo en la parte superior */}
+            <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
+                <UserHeader showSearch={showSearch} />
             </div>
 
-            <div className={cn(headerHeightClass, "md:px-2")} style={{ ['--header-h' as any]: '80px' }}>
-                <Sidebar
-                    side="left"
-                    variant={variant}
-                    collapsible="icon"
-                    className="
-                    print:hidden
-                    "
-                >
+            {/* Sidebar */}
+            <Sidebar
+                side="left"
+                variant={sidebarConfig.variant}
+                collapsible={sidebarConfig.collapsible}
+                className="print:hidden"
+            >
+                <SidebarContent className={cn("", sidebarContentClassName)}>
+                    {sidebar}
+                </SidebarContent>
+            </Sidebar>
 
-                    <SidebarContent className={cn("", sidebarContentClassName)}>
-                        {sidebar}
-                    </SidebarContent>
-                </Sidebar>
-                <SidebarInset >
-                    <SidebarTrigger className="flex justify-start pt-10 m-4 md:hidden" />
-                    <div className={cn("mx-auto w-full px-4", contentMaxWidthClass)}>
-                        {children}
+            {/* Contenido principal que ocupa todo el espacio disponible */}
+            <SidebarInset className="min-h-screen w-full bg-white flex-1">
+                <div className={cn(headerHeightClass || "pt-[80px]", "min-h-screen w-full bg-white")}> 
+                    <SidebarTrigger className={cn(
+                        "flex justify-start p-4",
+                        isMobileSidebar ? "block" : "hidden"
+                    )} />
+                    <div className={cn(
+                        "w-full h-full bg-white",
+                        responsivePadding
+                    )}>
+                        <div className={cn("w-full mx-auto bg-white", contentMaxWidthClass)}>
+                            {children}
+                        </div>
                     </div>
-                </SidebarInset>
-            </div>
+                </div>
+            </SidebarInset>
         </SidebarProvider>
     );
 }

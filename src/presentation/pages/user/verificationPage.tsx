@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import FormButton from '../../components/globals/button';
 import { verifyEmail } from '../../../core/services/verifyEmailService';
-import { useRedirectByRole } from '../../hooks/useRedirectByRole';
+import { useRedirectByRole } from '../../../core/hooks/auth';
 import { House } from 'lucide-react';
 
-type Role = 'admin' | 'doctor' | 'nurse' | 'patient';
 const VerificationPage: React.FC = () => {
     const [params] = useSearchParams();
     const location = useLocation() as { state?: { email?: string } };
@@ -15,32 +15,24 @@ const VerificationPage: React.FC = () => {
         () => params.get('email') || location.state?.email || '',
         [params, location.state]
     );
-    const mapRoleToEnglish = (role: string): Role => {
-        const roleMap: Record<string, Role> = {
-            'ADMINISTRADOR': 'admin',
-            'ADMIN': 'admin',
-            'MEDICO': 'doctor',
-            'DOCTOR': 'doctor',
-            'DOCTORA': 'doctor',
-            'ENFERMERO': 'nurse',
-            'ENFERMERA': 'nurse',
-            'NURSE': 'nurse',
-            'PACIENTE': 'patient',
-            'PATIENT': 'patient',
-        };
-        return roleMap[role?.toUpperCase?.()] || 'patient';
-    };
-
     const [code, setCode] = useState('');
 
     const onVerify = async () => {
         try {
             if (!email) {
-                alert('Falta el correo electrónico para verificar.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Falta el correo electrónico para verificar.'
+                });
                 return;
             }
             if (!code.trim()) {
-                alert('Ingresa el código de verificación.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ingresa el código de verificación.'
+                });
                 return;
             }
 
@@ -48,38 +40,28 @@ const VerificationPage: React.FC = () => {
             if (res?.accessToken && res?.refreshToken) {
                 localStorage.setItem('accessToken', res.accessToken);
                 localStorage.setItem('refreshToken', res.refreshToken);
+                await Swal.fire({
+                    icon: 'success',
+                    title: '¡Verificación exitosa!',
+                    text: 'Tu cuenta ha sido verificada correctamente',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 redirectByRole(res.accessToken);
             } else {
-                alert('Respuesta inválida del servidor');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de verificación',
+                    text: 'Respuesta inválida del servidor'
+                });
             }
         } catch (err: any) {
             const errorMessage = err?.message || String(err) || 'Error al verificar el código';
-            alert(errorMessage);
-        }
-    };
-    const goToRoleHome = (role: Role | undefined) => {
-        const dest =
-            role === 'admin' ? '/adminPage' :
-                role === 'doctor' ? '/doctorPage' :
-                    role === 'nurse' ? '/nursePage' :
-                        '/patientPage';
-        navigate(dest, { replace: true });
-    };
-
-    const onSkipVerify = () => {
-        try {
-            // 1) intenta con user en localStorage (guardado por authService)
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
-            const role: Role = mapRoleToEnglish(user?.role || '');
-
-            // 2) si hay rol, ve al home; si no, vuelve a login
-            if (role) {
-                goToRoleHome(role);
-            } else {
-                navigate('/login', { replace: true });
-            }
-        } catch {
-            navigate('/login', { replace: true });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de verificación',
+                text: errorMessage
+            });
         }
     };
 

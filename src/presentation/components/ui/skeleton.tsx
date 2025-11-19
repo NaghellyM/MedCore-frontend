@@ -1,4 +1,4 @@
-import { cn } from "../../../core/utils/decodeToken";
+import { cn } from "../../../core/utils/cn";
 
 function Skeleton({
   className,
