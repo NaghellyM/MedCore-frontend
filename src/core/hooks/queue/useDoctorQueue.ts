@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { queueService } from "../../services/queueService";
 import { useCurrentUser } from "../auth";
 import type { QueueItemDTO, QueuePatientStatus } from "../../types/queue";
+import type { QueuePause } from "../../types/queue/queue";
 
 interface UseDoctorQueueOptions {
     pollMs?: number;
@@ -19,6 +20,9 @@ interface UseDoctorQueueReturn {
     refetch: () => Promise<void>;
     callNext: () => Promise<QueueItemDTO>;
     callingNext: boolean;
+    pauseAttention: () => Promise<QueuePause>;
+    pausing: boolean;
+    isPaused: boolean;
     completeAttention: (queueItemId: string) => Promise<any>;
     completing: boolean;
 }
@@ -37,6 +41,8 @@ export function useMyDoctorQueue(
     const [lastUpdatedISO, setLastUpdatedISO] = useState<string | undefined>(undefined);
     const [callingNext, setCallingNext] = useState(false);
     const [completing, setCompleting] = useState(false);
+    const [pausing, setPausing] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     const { user, isAuthenticated, loading: userLoading } = useCurrentUser();
     const pollRef = useRef<number | undefined>(undefined);
 
@@ -59,6 +65,7 @@ export function useMyDoctorQueue(
             const res = await queueService.getCurrentQueueByDoctorId(user.id);
             const sorted = [...res.queue].sort((a, b) => a.queueNumber - b.queueNumber);
             setItems(sorted);
+            setIsPaused(res.isPaused ?? false);
             setLastUpdatedISO(new Date().toISOString());
         } catch (err: any) {
             console.error("Error fetching doctor queue:", err);
@@ -72,7 +79,7 @@ export function useMyDoctorQueue(
     // Efecto para cargar la cola cuando cambian las dependencias
     useEffect(() => {
         let mounted = true;
-        
+
         if (!userLoading && isAuthenticated && user?.id && (user?.role === "MEDICO" || user?.role === "MÉDICO")) {
             fetchQueue();
             // Configurar polling
@@ -92,10 +99,10 @@ export function useMyDoctorQueue(
     // Cálculos derivados
     const totalsByStatus = useMemo(() => {
         const acc: Record<QueuePatientStatus, number> = {
-            WAITING: 0, 
-            IN_PROGRESS: 0, 
-            COMPLETED: 0, 
-            CANCELLED: 0, 
+            WAITING: 0,
+            IN_PROGRESS: 0,
+            COMPLETED: 0,
+            CANCELLED: 0,
             CALLED: 0,
         };
         for (const item of items) {
@@ -105,17 +112,52 @@ export function useMyDoctorQueue(
     }, [items]);
 
     const total = items.length;
-    
-    const waitingList = useMemo(() => 
-        items.filter(i => i.status === "WAITING"), 
+
+    const waitingList = useMemo(() =>
+        items.filter(i => i.status === "WAITING"),
         [items]
     );
-    
+
     const nextUp = waitingList[0] ?? null;
 
     const currentPatient = useMemo(() => {
         return items.find(i => i.status === "CALLED" || i.status === "IN_PROGRESS") ?? null;
     }, [items]);
+
+
+    //Accion para  pausar la atención
+    const pauseAttention = useCallback(async () => {
+        if (!user?.id) {
+            throw new Error("Usuario no autenticado");
+        }
+
+        try {
+            setPausing(true);
+            const res = await queueService.pauseDoctorAttention(user.id);
+            const pause = res.pause;
+
+            // Actualizar el estado de pausa basado en la respuesta
+            if (res?.isPaused !== undefined) {
+                setIsPaused(res.isPaused);
+            } else if (pause?.isPaused !== undefined) {
+                setIsPaused(pause.isPaused);
+            } else {
+                // Toggle local si el backend no devuelve el estado
+                setIsPaused(prev => !prev);
+            }
+
+            // Actualizar el estado local
+            setTimeout(() => {
+                fetchQueue();
+            }, 500);
+            return pause;
+        } catch (err: any) {
+            console.error("Error no se puso en pausa la atencion del doctor:", err);
+            throw new Error(err?.message ?? "No se pudo pausar la atención del doctor.");
+        } finally {
+            setPausing(false);
+        }
+        }, [user?.id, fetchQueue]);
 
     // Acción para llamar al siguiente paciente
     const callNext = useCallback(async () => {
@@ -140,12 +182,11 @@ export function useMyDoctorQueue(
             });
 
             setLastUpdatedISO(new Date().toISOString());
-            
             // Refrescar la cola después de un breve delay
             setTimeout(() => {
                 fetchQueue();
             }, 500);
-            
+
             return called;
         } catch (err: any) {
             console.error("Error calling next patient:", err);
@@ -171,7 +212,7 @@ export function useMyDoctorQueue(
             });
 
             setLastUpdatedISO(new Date().toISOString());
-            
+
             // Refrescar la cola después de un breve delay
             setTimeout(() => {
                 fetchQueue();
@@ -199,6 +240,9 @@ export function useMyDoctorQueue(
         callNext,
         callingNext,
         completeAttention,
+        pauseAttention,
+        pausing,
+        isPaused,
         completing,
     };
 }

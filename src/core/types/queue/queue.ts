@@ -36,9 +36,19 @@ export interface QueueItemDTO {
     updatedAt: string;
 }
 
+export interface QueuePause{
+    id: string;
+    doctorId: string;
+    isPaused: boolean;
+    queueSize: number;
+    currentPatient: string;
+    waitingPatients: string[];
+}
+
 export interface DoctorCurrentQueueResponse {
     message: string;
     queue: QueueItemDTO[];
+    isPaused?: boolean;
 }
 
 export interface CallNextPatientResponse {

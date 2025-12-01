@@ -44,6 +44,11 @@ export interface DoctorQueueDisplayProps {
     isCompletingAttention?: boolean;
     onCompleteAttention?: (appointmentId: string) => void;
     
+    // Estado de pausa de atención
+    canPauseAttention?: boolean;
+    isPausingAttention?: boolean;
+    onPauseAttention?: () => void;
+
     // Navegación
     onBack?: () => void;
     onRefresh?: () => void;

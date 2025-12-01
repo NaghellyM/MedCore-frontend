@@ -14,6 +14,8 @@ export function useDoctorCurrentQueue(doctorId: string, options?: UseDoctorCurre
     const [lastUpdatedISO, setLastUpdatedISO] = useState<string | undefined>(undefined);
     const [callingNext, setCallingNext] = useState(false);
     const [completing, setCompleting] = useState(false);
+    const [pausing, setPausing] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     const pollRef = useRef<number | undefined>(undefined);
 
     const fetchQueue = useCallback(async () => {
@@ -22,6 +24,7 @@ export function useDoctorCurrentQueue(doctorId: string, options?: UseDoctorCurre
             const res = await queueService.getCurrentQueueByDoctorId(doctorId);
             const sorted = [...res.queue].sort((a, b) => a.queueNumber - b.queueNumber);
             setItems(sorted);
+            setIsPaused(res.isPaused ?? false);
             setLastUpdatedISO(new Date().toISOString());
             setLoading(false);
         } catch (e: any) {
@@ -83,6 +86,24 @@ export function useDoctorCurrentQueue(doctorId: string, options?: UseDoctorCurre
         }
     }, [doctorId, fetchQueue]);
 
+    const pauseAttention = useCallback(async () => {
+        try {
+            setPausing(true);
+            const res = await queueService.pauseDoctorAttention(doctorId);
+            // Actualizar el estado de pausa basado en la respuesta
+            if (res?.isPaused !== undefined) {
+                setIsPaused(res.isPaused);
+            } else {
+                // Toggle local si el backend no devuelve el estado
+                setIsPaused(prev => !prev);
+            }
+            await fetchQueue();
+        } catch (e: any) {
+            throw new Error(e?.message || "No se pudo pausar/reanudar la atención.");
+        } finally {
+            setPausing(false);
+        }
+    }, [doctorId, fetchQueue]);
     
     const completeAttention = useCallback(async (queueItemId: string) => {
         try {
@@ -128,6 +149,9 @@ export function useDoctorCurrentQueue(doctorId: string, options?: UseDoctorCurre
         refetch: fetchQueue,
         callNext,
         callingNext,
+        pauseAttention,
+        pausing,
+        isPaused,
         completeAttention,
         completing,
     };

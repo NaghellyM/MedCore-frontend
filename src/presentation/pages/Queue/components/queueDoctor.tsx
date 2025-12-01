@@ -3,7 +3,7 @@ import { Separator } from "@radix-ui/themes";
 import { Badge } from "../../../components/ui/badge";
 import { cn } from "../../../../core/utils/cn";
 import { Button } from "../../../components/ui/button";
-import { ChevronLeft, SkipForward, Users, Clock } from "lucide-react";
+import { ChevronLeft, SkipForward, Users, Clock, Play, Pause } from "lucide-react";
 import { CurrentPatientCard } from "./currentPatientCard";
 import { PatientNameDisplay } from "../../../components/globals/PatientNameDisplay";
 import { humanizeAgo, queueStatusToLabel, queueStatusToVariant } from "../../../../core/utils/format";
@@ -12,7 +12,7 @@ import type { QueuePatient, QueueItemDTO } from "../../../../core/types/queue";
 
 const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }) => {
     const { displayState, displayText } = usePatientDisplay(item.patientId);
-    
+
     return (
         <li className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
@@ -20,8 +20,8 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
                     N°{item.queueNumber}
                 </span>
                 <div className="min-w-0">
-                    <PatientNameDisplay 
-                        displayState={displayState} 
+                    <PatientNameDisplay
+                        displayState={displayState}
                         displayText={displayText}
                         className="text-sm font-medium"
                     />
@@ -41,7 +41,7 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
 
 const NextUpPatientDisplay = ({ patientId }: { patientId: string }) => {
     const { displayState, displayText } = usePatientDisplay(patientId);
-    
+
     return (
         <span className="text-xs text-slate-600">
             {displayState === 'success' ? displayText : `Paciente ${patientId.slice(-4)}`}
@@ -60,6 +60,10 @@ export type DoctorQueueProps = {
     onCallNext?: () => void;
     callingNext?: boolean;
     canCallNext?: boolean;
+    canPauseAttention?: boolean;
+    onPauseAttention?: () => void;
+    pausing?: boolean;
+    isPaused?: boolean;
     nextUp?: { queueNumber: number, patientId: string } | null;
     currentPatient?: QueuePatient | null;
     onCompleteAttention?: (appointmentId: string) => void;
@@ -76,6 +80,10 @@ export function DoctorQueue({
     onCallNext,
     callingNext,
     canCallNext,
+    canPauseAttention,
+    onPauseAttention,
+    pausing,
+    isPaused,
     nextUp,
     currentPatient,
     onCompleteAttention,
@@ -152,6 +160,67 @@ export function DoctorQueue({
                         </div>
                     )}
 
+                    {/* Botón de Pausar/Reanudar atención */}
+                    <div className={cn(
+                        "mt-4 p-4 rounded-lg border",
+                        isPaused 
+                            ? "bg-yellow-50 border-yellow-300" 
+                            : "bg-slate-50 border-slate-200"
+                    )}>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                {isPaused ? (
+                                    <>
+                                        <Pause className="h-4 w-4 text-yellow-600" />
+                                        <span className="text-sm font-medium text-yellow-800">
+                                            Atención pausada
+                                        </span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Play className="h-4 w-4 text-slate-600" />
+                                        <span className="text-sm text-slate-600">
+                                            Atención activa
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                            <Button
+                                onClick={onPauseAttention}
+                                disabled={!canPauseAttention || pausing}
+                                variant={isPaused ? "default" : "outline"}
+                                size="sm"
+                                className={cn(
+                                    isPaused 
+                                        ? "bg-green-600 hover:bg-green-700 text-white" 
+                                        : "border-yellow-400 text-yellow-700 hover:bg-yellow-50"
+                                )}
+                            >
+                                {pausing ? (
+                                    <>
+                                        <Clock className="h-4 w-4 mr-2 animate-spin" />
+                                        {isPaused ? "Reanudando..." : "Pausando..."}
+                                    </>
+                                ) : isPaused ? (
+                                    <>
+                                        <Play className="h-4 w-4 mr-2" />
+                                        Reanudar atención
+                                    </>
+                                ) : (
+                                    <>
+                                        <Pause className="h-4 w-4 mr-2" />
+                                        Pausar atención
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                        {isPaused && (
+                            <p className="text-xs text-yellow-700 mt-2">
+                                ⚠️ No se llamarán nuevos pacientes mientras la atención esté pausada
+                            </p>
+                        )}
+                    </div>
+
                     {!nextUp && totalsByStatus["WAITING"] === 0 && !currentPatient && (
                         <div className="mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
                             <p className="text-sm text-slate-600 text-center">
@@ -195,7 +264,7 @@ export function DoctorQueue({
     );
 }
 
-function StatusPill({ label,    value }: { label: string; value: number }) {
+function StatusPill({ label, value }: { label: string; value: number }) {
     return (
         <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-slate-700 bg-[#8DBCC7]/20">
             {label}: <strong className="font-medium">{value}</strong>
