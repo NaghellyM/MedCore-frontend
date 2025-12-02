@@ -16,16 +16,16 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
     return (
         <li className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border bg-white">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-card text-foreground">
                     N°{item.queueNumber}
                 </span>
                 <div className="min-w-0">
                     <PatientNameDisplay
                         displayState={displayState}
                         displayText={displayText}
-                        className="text-sm font-medium"
+                        className="text-sm font-medium text-foreground"
                     />
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-muted-foreground">
                         Creado: {new Date(item.createdAt).toLocaleString()}
                     </p>
                 </div>
@@ -33,7 +33,7 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
 
             <div className="flex items-center gap-2">
                 <Badge variant={queueStatusToVariant(item.status)}>{queueStatusToLabel(item.status)}</Badge>
-                <span className="text-xs text-slate-500">#{index + 1}</span>
+                <span className="text-xs text-muted-foreground">#{index + 1}</span>
             </div>
         </li>
     );
@@ -43,7 +43,7 @@ const NextUpPatientDisplay = ({ patientId }: { patientId: string }) => {
     const { displayState, displayText } = usePatientDisplay(patientId);
 
     return (
-        <span className="text-xs text-slate-600">
+        <span className="text-xs text-muted-foreground">
             {displayState === 'success' ? displayText : `Paciente ${patientId.slice(-4)}`}
         </span>
     );
@@ -103,7 +103,7 @@ export function DoctorQueue({
             )}
 
             {/* Tarjeta principal de la cola */}
-            <Card className="border-0 shadow-lg">
+            <Card className="border border-border shadow-lg bg-card">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -113,12 +113,12 @@ export function DoctorQueue({
                                     size="icon"
                                     onClick={onBack}
                                     aria-label="Volver"
-                                    className="rounded-2xl hover:bg-[#C4E1E6]/40"
+                                    className="rounded-2xl hover:bg-muted"
                                 >
                                     <ChevronLeft className="h-5 w-5" />
                                 </Button>
                             )}
-                            <CardTitle className="text-slate-900">{title}</CardTitle>
+                            <CardTitle className="text-foreground">{title}</CardTitle>
                         </div>
                         <div className="flex items-center gap-2">
                             <StatusPill label="En espera" value={totalsByStatus["WAITING"] ?? 0} />
@@ -127,12 +127,12 @@ export function DoctorQueue({
 
                     {/* Sección para llamar al siguiente paciente */}
                     {nextUp && !currentPatient && (
-                        <div className="mt-4 p-4 rounded-lg bg-[#EBFFD8]/50 border border-[#8DBCC7]/30">
+                        <div className="mt-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2">
-                                        <Users className="h-4 w-4 text-slate-600" />
-                                        <span className="text-sm font-medium text-slate-900">
+                                        <Users className="h-4 w-4 text-muted-foreground" />
+                                        <span className="text-sm font-medium text-foreground">
                                             Siguiente: #{nextUp.queueNumber}
                                         </span>
                                     </div>
@@ -141,7 +141,7 @@ export function DoctorQueue({
                                 <Button
                                     onClick={onCallNext}
                                     disabled={!canCallNext || callingNext}
-                                    className="bg-[#8DBCC7] hover:bg-[#A4CCD9] text-slate-900 disabled:opacity-50"
+                                    className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
                                     size="sm"
                                 >
                                     {callingNext ? (
@@ -164,22 +164,22 @@ export function DoctorQueue({
                     <div className={cn(
                         "mt-4 p-4 rounded-lg border",
                         isPaused 
-                            ? "bg-yellow-50 border-yellow-300" 
-                            : "bg-slate-50 border-slate-200"
+                            ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300 dark:border-yellow-700" 
+                            : "bg-muted border-border"
                     )}>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 {isPaused ? (
                                     <>
-                                        <Pause className="h-4 w-4 text-yellow-600" />
-                                        <span className="text-sm font-medium text-yellow-800">
+                                        <Pause className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                                        <span className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
                                             Atención pausada
                                         </span>
                                     </>
                                 ) : (
                                     <>
-                                        <Play className="h-4 w-4 text-slate-600" />
-                                        <span className="text-sm text-slate-600">
+                                        <Play className="h-4 w-4 text-muted-foreground" />
+                                        <span className="text-sm text-muted-foreground">
                                             Atención activa
                                         </span>
                                     </>
@@ -215,36 +215,36 @@ export function DoctorQueue({
                             </Button>
                         </div>
                         {isPaused && (
-                            <p className="text-xs text-yellow-700 mt-2">
+                            <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-2">
                                 ⚠️ No se llamarán nuevos pacientes mientras la atención esté pausada
                             </p>
                         )}
                     </div>
 
                     {!nextUp && totalsByStatus["WAITING"] === 0 && !currentPatient && (
-                        <div className="mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
-                            <p className="text-sm text-slate-600 text-center">
+                        <div className="mt-4 p-4 rounded-lg bg-muted border border-border">
+                            <p className="text-sm text-muted-foreground text-center">
                                 No hay pacientes en espera
                             </p>
                         </div>
                     )}
 
                     {currentPatient && nextUp && (
-                        <div className="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200">
-                            <p className="text-xs text-amber-800 text-center">
+                        <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700">
+                            <p className="text-xs text-amber-800 dark:text-amber-300 text-center">
                                 ⚠️ Completa la atención del paciente actual antes de llamar al siguiente
                             </p>
                         </div>
                     )}
 
-                    {updatedText && <p className="text-xs text-slate-500 mt-2">{updatedText}</p>}
+                    {updatedText && <p className="text-xs text-muted-foreground mt-2">{updatedText}</p>}
                 </CardHeader>
 
                 <CardContent className="p-0">
                     <Separator className="opacity-50" />
-                    <ul className="divide-y">
+                    <ul className="divide-y divide-border">
                         {items.length === 0 && (
-                            <li className="p-4 text-sm text-slate-600">No hay pacientes en espera.</li>
+                            <li className="p-4 text-sm text-muted-foreground">No hay pacientes en espera.</li>
                         )}
 
                         {items.map((it, idx) => (
@@ -256,7 +256,7 @@ export function DoctorQueue({
                 <CardFooter className="flex-col gap-3">
                     <Separator className="w-full opacity-50" />
                     {updatedText && (
-                        <p className="text-xs text-slate-500">{updatedText}</p>
+                        <p className="text-xs text-muted-foreground">{updatedText}</p>
                     )}
                 </CardFooter>
             </Card>
@@ -266,7 +266,7 @@ export function DoctorQueue({
 
 function StatusPill({ label, value }: { label: string; value: number }) {
     return (
-        <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-slate-700 bg-[#8DBCC7]/20">
+        <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-foreground bg-muted">
             {label}: <strong className="font-medium">{value}</strong>
         </span>
     );

@@ -85,7 +85,7 @@
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 10% 95%;
     --sidebar-accent-foreground: 220 20% 15%;
-    --sidebar-border: 220 10% 90%;
+    --sidebar-border: 0 0% 100%;
     --sidebar-ring: 227 40% 56%;
 
     /* Colores de gráficos */

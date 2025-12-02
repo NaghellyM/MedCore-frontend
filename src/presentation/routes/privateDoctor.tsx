@@ -3,7 +3,7 @@ import { RoleRoute } from "./guards";
 import RootLayout from "../layouts/rootLayout";
 import { DoctorDashboard } from "../pages/doctor/doctorDashboard";
 import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
-import DoctorAppointmentsList from "../pages/doctor/page/DoctorAppointmentsList";
+import DoctorAppointmentsList from "../pages/doctor/page/doctorAppointmentsList";
 import { CreateDiagnosticView } from "../pages/diagnostic/views/createDiagnosticView";
 import { EditDiagnosticView } from "../pages/diagnostic/views/editDiagnosticView";
 import { DiagnosticListView } from "../pages/diagnostic/views/diagnosticListView";

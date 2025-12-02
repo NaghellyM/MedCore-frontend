@@ -14,13 +14,13 @@ function getHomeRouteByRole(): string {
             return "/adminPage";
         case "MEDICO":
         case "DOCTOR":
-            return "/doctor/dashboard";
+            return "/doctorPage";
         case "ENFERMERA":
         case "NURSE":
-            return "/nurse/dashboard";
+            return "/nursePage";
         case "PACIENTE":
         case "PATIENT":
-            return "/patient/dashboard";
+            return "/patientPage";
         default:
             return "/";
     }
