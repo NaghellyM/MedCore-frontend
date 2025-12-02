@@ -4,10 +4,10 @@
  * Exportaciones centralizadas
  */
 
-export { ConsultationPanel } from './ConsultationPanel';
-export { ConsultationSteps } from './ConsultationSteps';
-export { PatientInfoCard } from './PatientInfoCard';
-export { MedicalHistorySelector } from './MedicalHistorySelector';
-export { DiagnosticsList } from './DiagnosticsList';
-export { PrescriptionsList } from './PrescriptionsList';
-export { MedicalOrdersList } from './MedicalOrdersList';
+export { ConsultationPanel } from './consultationPanel';
+export { ConsultationSteps } from './consultationSteps';
+export { PatientInfoCard } from './patientInfoCard';
+export { MedicalHistorySelector } from './medicalHistorySelector';
+export { DiagnosticsList } from './diagnosticsList';
+export { PrescriptionsList } from './prescriptionsList';
+export { MedicalOrdersList } from './medicalOrdersList';

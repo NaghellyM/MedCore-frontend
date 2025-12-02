@@ -17,12 +17,12 @@ import {
 } from 'lucide-react';
 import { useConsultation } from '../../../../core/hooks/consultation';
 import { useToast } from '../../../../core/hooks/notifications';
-import { ConsultationSteps } from './ConsultationSteps';
-import { PatientInfoCard } from './PatientInfoCard';
-import { MedicalHistorySelector } from './MedicalHistorySelector';
-import { DiagnosticsList } from './DiagnosticsList';
-import { PrescriptionsList } from './PrescriptionsList';
-import { MedicalOrdersList } from './MedicalOrdersList';
+import { ConsultationSteps } from './consultationSteps';
+import { PatientInfoCard } from './patientInfoCard';
+import { MedicalHistorySelector } from './medicalHistorySelector';
+import { DiagnosticsList } from './diagnosticsList';
+import { PrescriptionsList } from './prescriptionsList';
+import { MedicalOrdersList } from './medicalOrdersList';
 import type { QueuePatient } from '../../../../core/types/queue';
 
 interface ConsultationPanelProps {

@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DashboardLayout } from '../../../layouts/dashboardLayout';
 import DoctorSidebar from '../../doctor/components/doctorSideBar';
-import { ConsultationPanel } from '../components/ConsultationPanel';
+import { ConsultationPanel } from '../components/consultationPanel';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Stethoscope, ArrowLeft, AlertTriangle } from 'lucide-react';

@@ -13,7 +13,7 @@ import {
     FileText,
     AlertCircle
 } from 'lucide-react';
-import { AddDiagnosticModal } from './AddDiagnosticModal';
+import { AddDiagnosticModal } from './addDiagnosticModal';
 import type { Diagnostic } from '../../../../core/types/medicalHistory';
 
 interface DiagnosticsListProps {
