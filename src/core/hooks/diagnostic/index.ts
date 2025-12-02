@@ -10,3 +10,4 @@ export { useDiagnosticsByPatient } from './useDiagnosticsByPatient';
 export { useDiagnosticForm } from './useDiagnosticForm';
 export { useDeleteDiagnostic } from './useDeleteDiagnostic';
 export { useDiagnosticFilter } from './useDiagnosticFilter';
+export { usePredefinedDiagnostics } from './usePredefinedDiagnostics';

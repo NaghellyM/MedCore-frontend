@@ -8,6 +8,7 @@ import { CreateDiagnosticView } from "../pages/diagnostic/views/createDiagnostic
 import { EditDiagnosticView } from "../pages/diagnostic/views/editDiagnosticView";
 import { DiagnosticListView } from "../pages/diagnostic/views/diagnosticListView";
 import UploadDiagnosticDocument from "../pages/doctor/page/uploadDocument";
+import { ConsultationPage } from "../pages/consultation";
 
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
@@ -18,8 +19,8 @@ export const doctorRoutes: RouteObject = {
                 { path: "doctorPage", element: <DoctorDashboard /> },
                 { path: "queueDoctor", element: <QueueDoctorPage /> },
                 { path: "doctorAppointmentsList", element: <DoctorAppointmentsList /> },
-                { path: "documentsUpload", element: <UploadDiagnosticDocument /> }, 
-                // Rutas para diagnósticos
+                { path: "documentsUpload", element: <UploadDiagnosticDocument /> },
+                { path: "consultation", element: <ConsultationPage /> },
                 {path: "medicalHistory/:medicalHistoryId/diagnosis",element: <DiagnosticListView />},
                 {path: "medicalHistory/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticView />},
                 {path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticView />},

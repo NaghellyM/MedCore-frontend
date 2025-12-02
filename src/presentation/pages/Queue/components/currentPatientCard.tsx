@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "../../../../core/utils/cn";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
@@ -9,7 +10,7 @@ import { formatDateTime, getQueueStatusLabel } from "../../../../core/utils/form
 import { usePatientActions } from "../../../../core/hooks/queue/usePatientActions";
 import { useRealTimeDuration } from "../../../../core/hooks/queue/useRealTimeDuration";
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Clock, CheckCircle, User, Calendar, HeartPlus, Loader2 } from "lucide-react";
+import { Clock, CheckCircle, User, Calendar, HeartPlus, Loader2, Stethoscope } from "lucide-react";
 
 export const CurrentPatientCard = memo(function CurrentPatientCard({
     patient,
@@ -17,12 +18,22 @@ export const CurrentPatientCard = memo(function CurrentPatientCard({
     completing = false,
     className,
 }: CurrentPatientCardProps) {
+    const navigate = useNavigate();
     const realTimeDuration = useRealTimeDuration(patient?.updatedAt || null);
     const { displayState, displayText } = usePatientDisplay(patient?.patientId || null);
     const { handleComplete, canComplete } = usePatientActions({
         onComplete,
         patientId: patient?.id || ''
     });
+
+    // Handler para iniciar consulta
+    const handleStartConsultation = () => {
+        if (patient) {
+            navigate('/consultation', { 
+                state: { patient } 
+            });
+        }
+    };
 
     if (!patient) {
         return (
@@ -112,12 +123,25 @@ export const CurrentPatientCard = memo(function CurrentPatientCard({
                     </div>
                 </div>
 
-                {/* Botón de completar */}
-                <div className="pt-2">
+                {/* Botones de acción */}
+                <div className="pt-2 space-y-3">
+                    {/* Botón de iniciar consulta */}
+                    <Button
+                        onClick={handleStartConsultation}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200"
+                        size="lg"
+                        aria-label="Iniciar consulta médica"
+                    >
+                        <Stethoscope className="h-5 w-5 mr-2" />
+                        Iniciar Consulta
+                    </Button>
+
+                    {/* Botón de completar atención (rápido) */}
                     <Button
                         onClick={handleComplete}
                         disabled={completing || !canComplete}
-                        className="w-full bg-[#647FBC] hover:bg-[#8DBCC7] text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                        variant="outline"
+                        className="w-full border-[#647FBC] text-[#647FBC] hover:bg-[#647FBC] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         size="lg"
                         aria-label={completing ? "Completando atención del paciente" : "Marcar paciente como atendido"}
                     >
@@ -129,16 +153,17 @@ export const CurrentPatientCard = memo(function CurrentPatientCard({
                         ) : (
                             <>
                                 <CheckCircle className="h-5 w-5 mr-2" />
-                                Paciente Atendido
+                                Marcar como Atendido (Rápido)
                             </>
                         )}
                     </Button>
                 </div>
 
                 {/* Nota informativa */}
-                <div className="p-3 bg-[#FAFDD6]/50 border border-[#e6c4c4] rounded-lg">
-                    <p className="text-xs text-slate-600 text-center">
-                        Por favor, completa la atención de este paciente antes de llamar al siguiente.
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-xs text-blue-800 text-center">
+                        💡 Usa <strong>"Iniciar Consulta"</strong> para acceder a la historia clínica, 
+                        diagnósticos y prescripciones del paciente.
                     </p>
                 </div>
             </CardContent>

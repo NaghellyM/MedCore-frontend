@@ -12,7 +12,7 @@ import {
     Mail
 } from "lucide-react";
 import type { MedicalHistory, DiagnosticState } from "../../../../core/types/medicalHistory/index";
-import { DiagnosticCard } from "../../diagnostic/components/diagnosticCard";
+import { DiagnosticCard } from "../../diagnostic/components/DiagnosticCard";
 import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic/useDiagnosticFilter";
 import { useAuth } from "../../../../core/context/authContext";
 

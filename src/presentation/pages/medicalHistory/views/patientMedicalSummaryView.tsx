@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { usePatientMedicalHistory } from "../../../../core/hooks/medicalHistory/useMedicalHistory";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
-import { DiagnosticCard } from "../../diagnostic/components/diagnosticCard";
+import { DiagnosticCard } from "../../diagnostic/components/DiagnosticCard";
 
 interface PatientMedicalSummaryViewProps {
     patientId: string;

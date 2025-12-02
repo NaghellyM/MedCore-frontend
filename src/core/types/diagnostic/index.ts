@@ -17,6 +17,19 @@ export type {
     DiagnosticSearchParams
 } from './entities';
 
+// Diagnósticos predefinidos
+export type {
+    PredefinedDiagnostic,
+    PredefinedDiagnosticFilters,
+    GetPredefinedDiagnosticsResponse,
+    UsePredefinedDiagnosticsState,
+    UsePredefinedDiagnosticsActions,
+    UsePredefinedDiagnosticsReturn,
+    DiagnosticSeverity
+} from './predefined';
+
+export { DIAGNOSTIC_SEVERITIES } from './predefined';
+
 // Respuestas del API
 export type {
     ApiResponse as DiagnosticApiResponse,

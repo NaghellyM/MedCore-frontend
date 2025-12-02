@@ -83,3 +83,9 @@ export * from './diagnostic';
 
 // Dominio de prescripciones
 export * from './prescription';
+
+// Dominio de órdenes médicas (laboratory y radiology)
+export * from './medicalOrders';
+
+// Dominio de consulta médica
+export * from './consultation';
