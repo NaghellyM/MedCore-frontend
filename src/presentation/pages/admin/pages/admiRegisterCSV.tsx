@@ -2,10 +2,10 @@ import { useRef, useState } from "react"
 import Papa from "papaparse"
 import * as Yup from "yup"
 import Swal from "sweetalert2"
-import { UploadCloud, Download, ArrowLeftCircle, CheckCircle, XCircle, ClipboardPlus } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { UploadCloud, Download, CheckCircle, XCircle, ClipboardPlus } from "lucide-react"
 import { uploadUsersCsv } from "../../../../core/services/userImportService"
-import UserHeader from "../../../components/globals/header"
+import { DashboardLayout } from "../../../layouts/dashboardLayout"
+import { AdminSidebar } from "../components/adminSidebar"
 
 // --- Interfaz para las filas del CSV ---
 interface CsvRow {
@@ -81,7 +81,6 @@ async function parseAndValidateCsv(file: File) {
 export function AdminRegisterCSV() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [importResult, setImportResult] = useState<any>(null)
-  const navigate = useNavigate()
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -180,23 +179,9 @@ export function AdminRegisterCSV() {
   }
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
-      {/* Header con ThemeToggle */}
-      <UserHeader showSearch={false} showThemeToggle={true} />
-
-      <div className="pt-[100px] p-6 flex flex-col items-center">
+    <DashboardLayout sidebar={<AdminSidebar />} showSearch={false}>
+      <div className="p-6 flex flex-col items-center">
         <div className="w-full max-w-4xl bg-card rounded-3xl shadow-xl p-8 transition-all duration-300 border border-border">
-          {/* Botón Volver - dentro de la tarjeta */}
-          <div className="mb-6">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-300"
-            >
-              <ArrowLeftCircle className="w-5 h-5" />
-              <span className="text-sm font-medium">Regresar</span>
-            </button>
-          </div>
-
           {/* Encabezado */}
           <div className="text-center mb-6">
             <div className="mx-auto w-24 h-24 mb-3 flex items-center justify-center">
@@ -283,6 +268,6 @@ export function AdminRegisterCSV() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }

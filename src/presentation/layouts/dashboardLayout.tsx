@@ -39,8 +39,8 @@ export function DashboardLayout({
     return (
         <SidebarProvider defaultOpen={sidebarConfig.defaultOpen}>
             {/* Header fijo en la parte superior */}
-            <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b">
-                <UserHeader showSearch={showSearch} />
+            <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border transition-colors duration-300">
+                <UserHeader showSearch={showSearch} showThemeToggle={true} />
             </div>
 
             {/* Sidebar */}
@@ -56,17 +56,17 @@ export function DashboardLayout({
             </Sidebar>
 
             {/* Contenido principal que ocupa todo el espacio disponible */}
-            <SidebarInset className="min-h-screen w-full bg-white flex-1">
-                <div className={cn(headerHeightClass || "pt-[80px]", "min-h-screen w-full bg-white")}> 
+            <SidebarInset className="min-h-screen w-full bg-background flex-1 transition-colors duration-300">
+                <div className={cn(headerHeightClass || "pt-[80px]", "min-h-screen w-full bg-background transition-colors duration-300")}> 
                     <SidebarTrigger className={cn(
                         "flex justify-start p-4",
                         isMobileSidebar ? "block" : "hidden"
                     )} />
                     <div className={cn(
-                        "w-full h-full bg-white",
+                        "w-full h-full bg-background transition-colors duration-300",
                         responsivePadding
                     )}>
-                        <div className={cn("w-full mx-auto bg-white", contentMaxWidthClass)}>
+                        <div className={cn("w-full mx-auto", contentMaxWidthClass)}>
                             {children}
                         </div>
                     </div>

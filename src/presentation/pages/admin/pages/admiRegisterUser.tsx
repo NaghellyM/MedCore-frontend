@@ -1,12 +1,11 @@
 import { motion } from "framer-motion"
 import { UserForm } from "../components/adminUserForm"
 import { useUserRegistrationForm, useUserRegistrationData } from "../../../../core/hooks/admin"
-import { UserPlus, ArrowLeft, AlertCircle } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { UserPlus, AlertCircle } from "lucide-react"
+import { DashboardLayout } from "../../../layouts/dashboardLayout"
+import { AdminSidebar } from "../components/adminSidebar"
 
 export function AdminRegisterUser() {
-  const navigate = useNavigate()
-
   const {
     control,
     handleSubmit,
@@ -27,92 +26,88 @@ export function AdminRegisterUser() {
 
   if (dataLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center"
-        >
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando datos del formulario...</p>
-        </motion.div>
-      </div>
+      <DashboardLayout sidebar={<AdminSidebar />} showSearch={false}>
+        <div className="min-h-[calc(100vh-100px)] flex flex-col items-center justify-center p-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Cargando datos del formulario...</p>
+          </motion.div>
+        </div>
+      </DashboardLayout>
     )
   }
 
   if (dataError) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-red-50 border border-red-200 p-6 rounded-2xl shadow-lg max-w-md text-center"
-        >
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-red-800 mb-2">Error al cargar datos</h2>
-          <p className="text-red-600 mb-4">{dataError}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+      <DashboardLayout sidebar={<AdminSidebar />} showSearch={false}>
+        <div className="min-h-[calc(100vh-100px)] flex flex-col items-center justify-center p-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-destructive-light border border-destructive/30 p-6 rounded-2xl shadow-lg max-w-md text-center"
           >
-            Reintentar
-          </button>
-        </motion.div>
-      </div>
+            <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-destructive mb-2">Error al cargar datos</h2>
+            <p className="text-destructive/80 mb-4">{dataError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-destructive text-destructive-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+            >
+              Reintentar
+            </button>
+          </motion.div>
+        </div>
+      </DashboardLayout>
     )
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white p-6">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => navigate("/adminpage")}
-        className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition-all duration-300 mb-8"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        <span>Volver al panel de administración</span>
-      </motion.button>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white border border-gray-200 p-8 rounded-2xl shadow-xl w-full max-w-md"
-      >
+    <DashboardLayout sidebar={<AdminSidebar />} showSearch={false}>
+      <div className="min-h-[calc(100vh-100px)] flex flex-col items-center justify-center p-6">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-col items-center mb-6"
+          initial={{ opacity: 0, scale: 0.95, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-card border border-border p-8 rounded-2xl shadow-xl w-full max-w-md transition-colors duration-300"
         >
           <motion.div
-            initial={{ rotate: -20, scale: 0 }}
-            animate={{ rotate: 0, scale: 1 }}
-            transition={{ duration: 0.6, type: "spring" }}
-            className="bg-blue-100 p-3 rounded-full mb-3"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col items-center mb-6"
           >
-            <UserPlus className="text-blue-600 w-8 h-8" />
+            <motion.div
+              initial={{ rotate: -20, scale: 0 }}
+              animate={{ rotate: 0, scale: 1 }}
+              transition={{ duration: 0.6, type: "spring" }}
+              className="bg-primary/10 p-3 rounded-full mb-3"
+            >
+              <UserPlus className="text-primary w-8 h-8" />
+            </motion.div>
+
+            <h2 className="text-3xl font-semibold text-foreground text-center">
+              Registrar Usuario
+            </h2>
+            <p className="text-muted-foreground text-sm mt-1 text-center">
+              Completa los datos para agregar un nuevo usuario
+            </p>
           </motion.div>
 
-          <h2 className="text-3xl font-semibold text-gray-800 text-center">
-            Registrar Usuario
-          </h2>
-          <p className="text-gray-500 text-sm mt-1 text-center">
-            Completa los datos para agregar un nuevo usuario
-          </p>
+          <UserForm
+            control={control}
+            onSubmit={handleSubmit(onSubmit)}
+            errors={errors}
+            loading={loading}
+            specialties={specialties}
+            selectedRole={selectedRole}
+            departments={departments}
+          />
         </motion.div>
-
-        <UserForm
-          control={control}
-          onSubmit={handleSubmit(onSubmit)}
-          errors={errors}
-          loading={loading}
-          specialties={specialties}
-          selectedRole={selectedRole}
-          departments={departments}
-        />
-      </motion.div>
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }

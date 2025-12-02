@@ -89,10 +89,10 @@ export function UserForm({
         {(field) => (
           <select
             {...field}
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full p-2 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
           >
             {roleOptions.map((role) => (
-              <option key={role.value} value={role.value}>
+              <option key={role.value} value={role.value} className="bg-card text-foreground">
                 {role.name}
               </option>
             ))}
@@ -125,10 +125,10 @@ export function UserForm({
         whileTap={{ scale: 0.95 }}
         disabled={loading}
         type="submit"
-        className={`w-full py-2 mt-4 text-white rounded-lg ${
+        className={`w-full py-2 mt-4 text-primary-foreground rounded-lg transition-all duration-300 ${
           loading
-            ? "bg-blue-300 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 transition-all"
+            ? "bg-primary/50 cursor-not-allowed"
+            : "bg-primary hover:bg-primary-hover"
         }`}
       >
         {loading ? "Registrando..." : "Registrar"}

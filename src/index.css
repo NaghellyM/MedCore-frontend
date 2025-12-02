@@ -78,14 +78,14 @@
     --info-foreground: 0 0% 100%;
     --info-light: 199 89% 95%;
 
-    /* Tokens del sidebar */
-    --sidebar-background: 191 35% 67%;
-    --sidebar-foreground: 0 0% 100%;
+    /* Tokens del sidebar - Coherente con el fondo en tema claro */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 15%;
     --sidebar-primary: 227 40% 56%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 191 40% 75%;
+    --sidebar-accent: 220 10% 95%;
     --sidebar-accent-foreground: 220 20% 15%;
-    --sidebar-border: 191 20% 80%;
+    --sidebar-border: 220 10% 90%;
     --sidebar-ring: 227 40% 56%;
 
     /* Colores de gráficos */
@@ -243,14 +243,14 @@
     --info-foreground: 200 20% 98%;
     --info-light: 200 50% 18%;
 
-    /* Sidebar - Tono ligeramente diferente para separación visual */
-    --sidebar-background: 220 28% 14%;
+    /* Sidebar - Coherente con el fondo en tema oscuro */
+    --sidebar-background: 220 25% 14%;
     --sidebar-foreground: 210 20% 98%;
     --sidebar-primary: 210 60% 60%;
     --sidebar-primary-foreground: 210 20% 98%;
-    --sidebar-accent: 220 20% 22%;
+    --sidebar-accent: 220 20% 20%;
     --sidebar-accent-foreground: 210 20% 95%;
-    --sidebar-border: 220 20% 25%;
+    --sidebar-border: 220 20% 22%;
     --sidebar-ring: 210 60% 60%;
 
     /* Colores de gráficos - Paleta distinguible y agradable */
