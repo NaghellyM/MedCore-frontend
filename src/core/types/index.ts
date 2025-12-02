@@ -80,3 +80,6 @@ export * from './user';
 
 // Dominio de diagnósticos
 export * from './diagnostic';
+
+// Dominio de prescripciones
+export * from './prescription';

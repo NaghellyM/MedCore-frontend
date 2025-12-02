@@ -38,7 +38,7 @@ const LoginDashboard: React.FC = () => {
       role === 'admin' ? '/adminPage' :
         role === 'doctor' ? '/doctorPage' :
           role === 'nurse' ? '/nursePage' :
-            '/patientPage';
+            '/patient-dashboard';
     navigate(dest, { replace: true });
   };
 

@@ -21,6 +21,7 @@ export { SimpleEditMedicalHistoryForm } from "../forms/simpleEditMedicalHistoryF
 
 // Pages
 export { EditMedicalHistoryPage } from "../editMedicalHistoryPage";
+export { CreateMedicalHistoryPage } from "./createMedicalHistoryPage";
 
 // Components
 export { PatientSearchSection } from "../components/patientSearchSection";
