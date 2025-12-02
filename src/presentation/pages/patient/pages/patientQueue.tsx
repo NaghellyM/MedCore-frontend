@@ -1,25 +1,23 @@
+import { useParams } from "react-router-dom";
+import { QueuePatientContainer } from "../../Queue/containers/queuePatientContainer";
 import { DashboardLayout } from "../../../layouts/dashboardLayout";
-import { PatientSidebar } from "../../patient/components/patientSidebar";
-import { QueuePatientContainer } from "../containers/queuePatientContainer";
-import { useNavigate, useParams } from "react-router-dom";
+import { PatientSidebar } from "../components/patientSidebar";
 
-// Página de la cola para pacientes usando el layout de dashboard
-export function QueuePatientPage() {
-    const navigate = useNavigate();
+export function PatientQueue() {
     const { appointmentId } = useParams<{ appointmentId?: string }>();
 
     return (
         <DashboardLayout
             sidebar={<PatientSidebar />}
-            showSearch
+            showSearch={false}
             headerHeightClass="pt-[80px]"
             contentMaxWidthClass="max-w-7xl"
             variant="inset"
             collapsible="icon"
         >
-            <div className="w-full max-w-md mx-auto mt-10">
+            <div className="w-full flex flex-col items-center justify-center min-h-[70vh]">
                 <QueuePatientContainer
-                    onBack={() => navigate("/patientPage")}
+                    onBack={() => window.history.back()}
                     pollMs={60000}
                     enableLocalCountdown
                     showJoinQueueOption={true}

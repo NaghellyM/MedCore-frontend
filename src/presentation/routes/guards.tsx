@@ -63,7 +63,7 @@ export function RoleRoute({ allow }: { allow: Role[] }) {
             return <Navigate to="/nursePage" replace />;
         }
         if (role === "patient") {
-            return <Navigate to="/patientPage" replace />;
+            return <Navigate to="/patient-dashboard" replace />;
         }
         return (
             <Navigate

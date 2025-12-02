@@ -15,7 +15,7 @@ export const useRedirectByRole = () => {
                 break;
             case "PACIENTE":
             case "PATIENT":
-                navigate("/patientPage");
+                navigate("/patient-dashboard");
                 break;
             case "MEDICO":
             case "DOCTOR":

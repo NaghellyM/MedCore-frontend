@@ -1,4 +1,4 @@
-import { LayoutGrid } from "lucide-react";
+import { House } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarMenuButton, SidebarTrigger } from "../../ui/sidebar";
 import { Link } from "react-router-dom";
 import { getCurrentUser } from "../../../../core/services/authService";
@@ -20,7 +20,7 @@ function getHomeRouteByRole(): string {
             return "/nursePage";
         case "PACIENTE":
         case "PATIENT":
-            return "/patientPage";
+            return "/patient-dashboard";
         default:
             return "/";
     }
@@ -36,7 +36,7 @@ export function SidebarBase({ children, }: any) {
                     <SidebarTrigger className="pt-10 pb-4 px-2 flex justify-start" />
                     <SidebarMenuButton className="font-sans" asChild >
                         <Link to={homeRoute} className="gap-2 hover:bg-sidebar-accent rounded-md">
-                            <LayoutGrid className="mr-2 h-4 w-4" />
+                            <House className="mr-2 h-4 w-4" />
                             <span>Inicio</span>
                         </Link>
                     </SidebarMenuButton>

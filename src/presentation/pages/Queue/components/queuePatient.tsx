@@ -1,10 +1,7 @@
 import * as React from "react";
-import { Separator } from "@radix-ui/themes";
 import { cn } from "../../../../core/utils/cn";
-import { Button } from "../../../components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Users, ChevronLeft, UserRoundCheck } from "lucide-react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Clock, Users, UserRoundCheck, Stethoscope, CalendarClock, CheckCircle2 } from "lucide-react";
 
 export type QueuePatientProps = {
     ticketNumber: string | number;
@@ -42,156 +39,235 @@ export function QueuePatient({
     ticketNumber,
     aheadCount,
     etaMinutes,
-    onBack,
-    title = "Pronto serás atendido",
-    subtitle = "Por favor, espera en la sala de espera.",
+    title = "Tu turno en la cola",
+    subtitle = "Mantente cerca, pronto serás llamado.",
     doctor,
     lastUpdatedISO,
     className,
 }: QueuePatientProps) {
     const updatedAgo = humanizeAgo(lastUpdatedISO);
+    const isNextUp = aheadCount === 0;
+    const progressPercent = Math.min(100, Math.max(5, (100 * 1) / (aheadCount + 1)));
 
     return (
-        <Card
+        <div
             className={cn(
-                "w-full max-w-md overflow-hidden border-0 shadow-lg",
-                "bg-[radial-gradient(1200px_400px_at_100%_-10%,#EBFFD8_0%,transparent_60%),#F8FAFC]",
+                "w-full max-w-lg overflow-hidden rounded-3xl",
+                "bg-card border border-border shadow-2xl",
+                "transition-all duration-300",
                 className
             )}
             aria-live="polite"
         >
-            <CardHeader className="relative">
-                <div className="absolute left-4 top-4">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onBack}
-                        aria-label="Volver"
-                        className="rounded-2xl hover:bg-[#C4E1E6]/40"
-                    >
-                        <ChevronLeft className="h-5 w-5" />
-                    </Button>
+            {/* Header con gradiente usando colores del sistema */}
+            <div className={cn(
+                "relative px-6 py-8 text-center",
+                isNextUp 
+                    ? "bg-gradient-to-br from-success/90 to-success" 
+                    : "bg-gradient-to-br from-primary/90 to-primary"
+            )}>
+                {/* Decoración de fondo */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-4 left-4 w-20 h-20 rounded-full bg-white/20" />
+                    <div className="absolute bottom-4 right-4 w-32 h-32 rounded-full bg-white/10" />
                 </div>
-                <CardTitle className="text-xl md:text-2xl tracking-tight text-slate-900">
-                    {title}
-                </CardTitle>
-                <CardDescription className="text-slate-600">
-                    {subtitle}
-                </CardDescription>
-            </CardHeader>
 
-            <CardContent className="pt-0">
-                <div className="grid gap-5">
-                    <div
-                        className={
-                            "flex items-center justify-between rounded-2xl border p-4 md:p-5 " +
-                            "bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50"
-                        }
-                    >
-                        <div className="flex items-center gap-3">
-                            <span
-                                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-[#A4CCD9]/30"
-                                aria-hidden
-                            >
-                                <UserRoundCheck className="h-5 w-5 text-slate-700" />
-                            </span>
-                            <div className="min-w-0">
-                                <p className="text-sm text-slate-600">Tu turno</p>
-                                <AnimatePresence mode="popLayout" initial={false}>
-                                    <motion.p
-                                        key={String(ticketNumber)}
-                                        initial={{ y: 12, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: -12, opacity: 0 }}
-                                        transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                                        className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900"
-                                    >
-                                        N° {ticketNumber}
-                                    </motion.p>
-                                </AnimatePresence>
+                <div className="relative z-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm mb-4">
+                        {isNextUp ? (
+                            <CheckCircle2 className="w-8 h-8 text-white" />
+                        ) : (
+                            <CalendarClock className="w-8 h-8 text-white" />
+                        )}
+                    </div>
+                    
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        {isNextUp ? "¡Es tu turno!" : title}
+                    </h2>
+                    <p className="text-white/80 text-sm md:text-base">
+                        {isNextUp ? "El doctor te está esperando" : subtitle}
+                    </p>
+                </div>
+            </div>
+
+            {/* Contenido principal */}
+            <div className="p-6 space-y-6">
+                {/* Número de turno destacado */}
+                <div className="relative">
+                    <div className={cn(
+                        "flex items-center justify-center gap-4 p-6 rounded-2xl border-2",
+                        isNextUp 
+                            ? "bg-success-light border-success/30"
+                            : "bg-primary/5 dark:bg-primary/10 border-primary/30"
+                    )}>
+                        <div className={cn(
+                            "flex items-center justify-center w-14 h-14 rounded-xl",
+                            isNextUp 
+                                ? "bg-success/20" 
+                                : "bg-primary/20"
+                        )}>
+                            <UserRoundCheck className={cn(
+                                "w-7 h-7",
+                                isNextUp ? "text-success" : "text-primary"
+                            )} />
+                        </div>
+                        <div className="text-left">
+                            <p className="text-sm text-muted-foreground font-medium">Tu número de turno</p>
+                            <AnimatePresence mode="popLayout" initial={false}>
+                                <motion.p
+                                    key={String(ticketNumber)}
+                                    initial={{ y: 12, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    exit={{ y: -12, opacity: 0 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                                    className={cn(
+                                        "text-4xl md:text-5xl font-bold tracking-tight",
+                                        isNextUp ? "text-success" : "text-primary"
+                                    )}
+                                >
+                                    #{ticketNumber}
+                                </motion.p>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Métricas */}
+                <div className="grid grid-cols-2 gap-4">
+                    <MetricCard
+                        icon={<Users className="w-5 h-5" />}
+                        label="Pacientes antes"
+                        value={aheadCount}
+                        suffix={aheadCount === 1 ? "persona" : "personas"}
+                        highlight={aheadCount === 0}
+                        highlightType="success"
+                    />
+                    <MetricCard
+                        icon={<Clock className="w-5 h-5" />}
+                        label="Tiempo estimado"
+                        value={etaMinutes}
+                        suffix={etaMinutes === 1 ? "minuto" : "minutos"}
+                        highlight={etaMinutes <= 5}
+                        highlightType="warning"
+                    />
+                </div>
+
+                {/* Barra de progreso */}
+                <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-medium">Progreso en la cola</span>
+                        <span className={cn(
+                            "font-semibold",
+                            isNextUp ? "text-success" : "text-foreground"
+                        )}>
+                            {isNextUp ? "¡Estás al frente!" : `${Math.round(progressPercent)}%`}
+                        </span>
+                    </div>
+                    <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progressPercent}%` }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className={cn(
+                                "h-full rounded-full",
+                                isNextUp 
+                                    ? "bg-gradient-to-r from-success to-success/80" 
+                                    : "bg-gradient-to-r from-primary to-secondary"
+                            )}
+                        />
+                    </div>
+                </div>
+
+                {/* Info del doctor */}
+                {doctor && (
+                    <div className="p-4 rounded-2xl bg-muted/50 border border-border">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent">
+                                <Stethoscope className="w-6 h-6 text-accent-foreground" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm text-muted-foreground">Tu doctor</p>
+                                <p className="font-semibold text-foreground truncate">
+                                    Dr. {doctor.name}
+                                </p>
+                                {doctor.specialty && (
+                                    <p className="text-xs text-muted-foreground">{doctor.specialty}</p>
+                                )}
                             </div>
                         </div>
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <MetricTile
-                            icon={<Users className="h-5 w-5" />}
-                            label="Pacientes antes que tú"
-                            value={aheadCount === 1 ? "1 paciente" : `${aheadCount} pacientes`}
-                        />
-
-                        <MetricTile
-                            icon={<Clock className="h-5 w-5" />}
-                            label="Tiempo estimado de espera"
-                            value={
-                                etaMinutes <= 1
-                                    ? "1 minuto"
-                                    : `${etaMinutes.toLocaleString()} minutos`
-                            }
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs text-slate-600">
-                            <span>Progreso</span>
-                            <span>{aheadCount === 0 ? "¡Estás al turno!" : `Faltan ${aheadCount}`}</span>
-                        </div>
-                        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${Math.min(100, Math.max(0, (100 * 1) / (aheadCount + 1)))}%` }}
-                                transition={{ duration: 0.6 }}
-                                className="h-full bg-[#8DBCC7]"
-                            />
-                        </div>
-
-
-                        <div className="rounded-2xl border border-[#8DBCC7] p-4">
-                            <p className="text-sm text-slate-700 font-medium">El doctor </p>
-                            <p className="text-sm text-slate-900">{doctor?.name}</p>
-                            <p className="text-sm text-slate-600"> pronto te atenderá </p>
-                        </div>
-
-                        <div>
-                        </div>
-
-                    </div>
-                </div>
-            </CardContent>
-
-            <CardFooter className="flex-col gap-3">
-                {updatedAgo && (
-                    <p className="text-xs text-slate-500">Actualizado {updatedAgo}</p>
                 )}
 
-                <Separator className="w-full opacity-50" />
+                {/* Última actualización */}
+                {updatedAgo && (
+                    <p className="text-center text-xs text-muted-foreground">
+                        Actualizado {updatedAgo}
+                    </p>
+                )}
 
-                <Button type="button" onClick={onBack} className="w-full rounded-xl bg-[#8DBCC7] hover:bg-[#A4CCD9] text-slate-900">
-                    Volver al inicio
-                </Button>
-            </CardFooter>
-        </Card>
+            </div>
+        </div>
     );
 }
 
-function MetricTile({
+function MetricCard({
     icon,
     label,
     value,
+    suffix,
+    highlight = false,
+    highlightType = "success",
 }: {
     icon: React.ReactNode;
     label: string;
     value: string | number;
+    suffix?: string;
+    highlight?: boolean;
+    highlightType?: "success" | "warning";
 }) {
+    const colors = {
+        success: {
+            bg: "bg-success-light",
+            border: "border-success/30",
+            icon: "bg-success/20 text-success",
+            value: "text-success",
+        },
+        warning: {
+            bg: "bg-warning-light",
+            border: "border-warning/30",
+            icon: "bg-warning/20 text-warning",
+            value: "text-warning",
+        },
+    };
+
+    const colorSet = highlight ? colors[highlightType] : {
+        bg: "bg-muted/50",
+        border: "border-border",
+        icon: "bg-muted text-muted-foreground",
+        value: "text-foreground",
+    };
+
     return (
-        <div className="rounded-2xl border bg-white/70 p-4 backdrop-blur supports-[backdrop-filter]:bg-white/50">
-            <div className="flex items-center gap-3 text-slate-800">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl border bg-[#C4E1E6]/40">
+        <div className={cn(
+            "p-4 rounded-2xl border transition-all",
+            colorSet.bg,
+            colorSet.border
+        )}>
+            <div className="flex items-center gap-3">
+                <div className={cn(
+                    "flex items-center justify-center w-10 h-10 rounded-xl",
+                    colorSet.icon
+                )}>
                     {icon}
-                </span>
-                <div className="min-w-0">
-                    <p className="text-xs text-slate-600">{label}</p>
-                    <p className="text-base md:text-lg font-medium leading-tight text-slate-900">{value}</p>
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="text-xs text-muted-foreground truncate">{label}</p>
+                    <p className={cn("text-2xl font-bold", colorSet.value)}>
+                        {value}
+                    </p>
+                    {suffix && (
+                        <p className="text-xs text-muted-foreground">{suffix}</p>
+                    )}
                 </div>
             </div>
         </div>

@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import { Clock } from "lucide-react"
+import { Clock, Loader2 } from "lucide-react"
 import Swal from "sweetalert2"
 import withReactContent from "sweetalert2-react-content"
 import { doctorsService } from "../../../../core/services/doctorsService"
 import { appointmentsService } from "../../../../core/services/appointmentsService"
+import { useCurrentUser } from "../../../../core/hooks/auth/useCurrentUser"
+import { DashboardLayout } from "../../../layouts/dashboardLayout"
+import { PatientSidebar } from "../components/patientSidebar"
 
 const MySwal = withReactContent(Swal)
 
@@ -12,7 +15,13 @@ interface Appointment {
   endTime: string
 }
 
-export default function RequestAppointment() {
+export function RequestAppointment() {
+  // ────────────────────────────────
+  // AUTENTICACIÓN
+  // ────────────────────────────────
+  const { user, isAuthenticated, loading: userLoading } = useCurrentUser()
+  const patientId = user?.id
+
   // ────────────────────────────────
   // ESTADOS
   // ────────────────────────────────
@@ -32,8 +41,6 @@ export default function RequestAppointment() {
   })
 
   const selectedDoctor = doctors.find((doc) => doc.id === filters.doctorId)
-  const patientId = "69090372f2a08c7fe006739a"
-
 
   // ────────────────────────────────
   // CARGAR ESPECIALIDADES
@@ -187,6 +194,8 @@ export default function RequestAppointment() {
   // RESERVAR CITA
   // ────────────────────────────────
   const handleReserve = async (slotStart: string) => {
+    if (!patientId) return
+
     const startTime = `${filters.date}T${slotStart}:00`
 
     try {
@@ -256,24 +265,23 @@ export default function RequestAppointment() {
               icon: "warning",
               title: "Ya tienes una cita en este horario",
               html: `
-          
                 <p style="font-size:16px; margin-bottom:8px">
                   <b>Doctor:</b> ${conflict.doctorId}<br>
                   <b>Fecha:</b> ${conflict.startTime.split("T")[0]}<br>
                   <b>Hora:</b> ${new Date(conflict.startTime)
                     .toTimeString()
                     .slice(0, 5)} - ${new Date(conflict.endTime)
-                .toTimeString()
-                .slice(0, 5)}
+                    .toTimeString()
+                    .slice(0, 5)}
                 </p>
               `,
               confirmButtonColor: "#2563eb",
             })
             return
           }
-        } catch(e){
+        } catch (e) {
           console.log("erorr de erro:", e);
-          
+
           MySwal.fire({
             icon: "error",
             title: "Error",
@@ -314,10 +322,53 @@ export default function RequestAppointment() {
   // ────────────────────────────────
   // RENDER
   // ────────────────────────────────
+  // Estado de carga del usuario
+  if (userLoading) {
+    return (
+      <DashboardLayout
+        sidebar={<PatientSidebar />}
+        showSearch={false}
+        headerHeightClass="pt-[80px]"
+        contentMaxWidthClass="max-w-7xl"
+        variant="inset"
+        collapsible="icon"
+      >
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  // Usuario no autenticado
+  if (!isAuthenticated || !patientId) {
+    return (
+      <DashboardLayout
+        sidebar={<PatientSidebar />}
+        showSearch={false}
+        headerHeightClass="pt-[80px]"
+        contentMaxWidthClass="max-w-7xl"
+        variant="inset"
+        collapsible="icon"
+      >
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <p className="text-lg text-muted-foreground">Debes iniciar sesión para solicitar una cita.</p>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
+    <DashboardLayout
+      sidebar={<PatientSidebar />}
+      showSearch={false}
+      headerHeightClass="pt-[80px]"
+      contentMaxWidthClass="max-w-5xl"
+      variant="inset"
+      collapsible="icon"
+    >
+      <div className="bg-card p-8 rounded-2xl shadow-md border border-border">
+        <h2 className="text-2xl font-semibold text-center text-foreground mb-6">
           🕒 Buscar horarios disponibles
         </h2>
 
@@ -325,12 +376,12 @@ export default function RequestAppointment() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Especialidad */}
           <div>
-            <label className="block text-sm font-medium mb-1">Especialidad</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Especialidad</label>
             <select
               name="specialty"
               value={filters.specialty}
               onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg p-2 focus:ring-2 focus:ring-primary"
             >
               <option value="">Seleccione una especialidad</option>
               {specialties.map((s) => (
@@ -343,12 +394,12 @@ export default function RequestAppointment() {
 
           {/* Doctor */}
           <div>
-            <label className="block text-sm font-medium mb-1">Doctor</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Doctor</label>
             <select
               name="doctorId"
               value={filters.doctorId}
               onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg p-2 focus:ring-2 focus:ring-primary"
               disabled={!filters.specialty || doctors.length === 0}
             >
               <option value="">
@@ -369,38 +420,38 @@ export default function RequestAppointment() {
 
           {/* Fecha */}
           <div>
-            <label className="block text-sm font-medium mb-1">Fecha</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Fecha</label>
             <input
               type="date"
               name="date"
               min={today}
               value={filters.date}
               onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg p-2 focus:ring-2 focus:ring-primary"
             />
           </div>
 
           {/* Hora inicial */}
           <div>
-            <label className="block text-sm font-medium mb-1">Hora inicial</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Hora inicial</label>
             <input
               type="time"
               name="startTime"
               value={filters.startTime}
               onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg p-2 focus:ring-2 focus:ring-primary"
             />
           </div>
 
           {/* Hora final */}
           <div>
-            <label className="block text-sm font-medium mb-1">Hora final</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Hora final</label>
             <input
               type="time"
               name="endTime"
               value={filters.endTime}
               onChange={handleFilterChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg p-2 focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
@@ -408,11 +459,11 @@ export default function RequestAppointment() {
         {/* RESULTADOS */}
         <div className="mt-10">
           {loading ? (
-            <p className="text-center text-blue-600 font-medium animate-pulse">
+            <p className="text-center text-primary font-medium animate-pulse">
               Buscando horarios disponibles...
             </p>
           ) : filteredSlots.length === 0 ? (
-            <p className="text-center text-gray-500 italic">
+            <p className="text-center text-muted-foreground italic">
               No hay horarios disponibles para esta fecha.
             </p>
           ) : (
@@ -420,23 +471,23 @@ export default function RequestAppointment() {
               {filteredSlots.map((slot, i) => (
                 <div
                   key={i}
-                  className="border rounded-xl px-5 py-4 shadow-sm bg-white hover:shadow-md transition-all cursor-pointer"
+                  className="border border-border rounded-xl px-5 py-4 shadow-sm bg-card hover:shadow-md transition-all cursor-pointer"
                 >
                   {selectedDoctor && (
-                    <p className="text-sm text-gray-600 font-medium mb-1">
+                    <p className="text-sm text-muted-foreground font-medium mb-1">
                       {"Dr. " + selectedDoctor.fullname}
                     </p>
                   )}
 
                   <div className="flex flex-col items-center">
-                    <p className="text-xl font-semibold text-blue-600 flex items-center gap-2">
+                    <p className="text-xl font-semibold text-primary flex items-center gap-2">
                       <Clock className="w-5 h-5" />
                       {slot.start} - {slot.end}
                     </p>
 
                     <button
                       onClick={() => handleReserve(slot.start)}
-                      className="mt-4 w-full py-2 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 transition"
+                      className="mt-4 w-full py-2 rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition"
                     >
                       Reservar
                     </button>
@@ -447,6 +498,6 @@ export default function RequestAppointment() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }

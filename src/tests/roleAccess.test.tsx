@@ -130,7 +130,7 @@ describe("Role-based access and session safety tests", () => {
   /**
    * Test case: Verify that PACIENTE and MEDICO users are redirected to their respective dashboards.
    */
-  it("redirects PACIENTE -> /patientPage and MEDICO -> /doctorPage", async () => {
+  it("redirects PACIENTE -> /patient-dashboard and MEDICO -> /doctorPage", async () => {
     const { decodeToken } = await import("../core/utils/decodeToken");
 
     vi.mocked(decodeToken).mockImplementationOnce(() => ({
@@ -174,7 +174,7 @@ describe("Role-based access and session safety tests", () => {
     await user.click(submit);
 
     await waitFor(() =>
-      expect(mockedNavigate).toHaveBeenCalledWith("/patientPage", { replace: true }),
+      expect(mockedNavigate).toHaveBeenCalledWith("/patient-dashboard", { replace: true }),
     );
 
     cleanup();

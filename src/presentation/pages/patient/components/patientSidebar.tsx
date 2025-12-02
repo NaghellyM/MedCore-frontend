@@ -1,17 +1,22 @@
 import { SidebarBase } from "../../../components/globals/sidebar/sidebarBase";
 import { SidebarGroupComponent } from "../../../components/globals/sidebar/SidebarGroup";
-import { CalendarCheck, FileHeart, History, Microscope, Settings, User } from "lucide-react";
+import { CalendarCheck, FileHeart, History, Microscope, FileText, FolderOpen } from "lucide-react";
 
 
 const items = [
     {
         title: "Mis citas",
-        url: "/PatientAppointments",
+        url: "/patient-appointments",
         icon: CalendarCheck,
     },
     {
+        title: "Solicitar cita",
+        url: "/request-appointment",
+        icon: FileText,
+    },
+    {
         title: "Turno de espera",
-        url: "/queuePatient",
+        url: "/patient-queue",
         icon: History,
     },
 ];
@@ -23,22 +28,14 @@ const infoItems = [
         icon: FileHeart,
     },
     {
+        title: "Mis documentos",
+        url: "/patient-documents",
+        icon: FolderOpen,
+    },
+    {
         title: "Resultados de laboratorio",
-        url: "/patientPage",
+        url: "/patient-documents",
         icon: Microscope,
-    },
-];
-
-const profileItems = [
-    {
-        title: "Mi perfil",
-        url: "#",
-        icon: User,
-    },
-    {
-        title: "Configuración",
-        url: "#",
-        icon: Settings,
     },
 ];
 
@@ -47,7 +44,6 @@ export function PatientSidebar() {
         <SidebarBase label="Patient Sidebar">
             <SidebarGroupComponent label="CITAS Y TELEMEDICINA" items={items} />
             <SidebarGroupComponent label="INFORMACIÓN MÉDICA" items={infoItems} />
-            <SidebarGroupComponent label="PERFIL Y CONFIGURACIÓN" items={profileItems} />
         </SidebarBase>
     );
 }

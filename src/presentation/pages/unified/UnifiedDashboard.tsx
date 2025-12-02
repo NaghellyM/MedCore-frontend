@@ -3,7 +3,7 @@ import { AutoDashboardLayout } from '../../layouts/autoDashboardLayout';
 import { useUserRole } from '../../../core/hooks/auth/useUserRole';
 import { DoctorPage } from '../doctor/page/doctorPage';
 import { AdminPageContent } from '../admin/page/adminPageContent';
-import { PatientPageContent } from '../patient/page/patientPage';
+import { PatientDashboard } from '../patient/pages/patientDashboard';
 import { NursePageContent } from '../nurse/page/nursePage';
 
 /**
@@ -31,7 +31,7 @@ const RoleBasedContent: React.FC = () => {
             return <NursePageContent />;
         
         case 'patient':
-            return <PatientPageContent />;
+            return <PatientDashboard />;
         
         default:
             return (
