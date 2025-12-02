@@ -210,8 +210,9 @@ export function useConsultation(options: UseConsultationOptions = {}): UseConsul
 
         setLoadingOrders(true);
         try {
-            const response = await medicalOrdersService.getOrdersByPatientId(patientInfo.id);
-            setOrders(response.orders || []);
+            // El servicio ahora devuelve un array directo
+            const ordersArray = await medicalOrdersService.getOrdersByPatientId(patientInfo.id);
+            setOrders(Array.isArray(ordersArray) ? ordersArray : []);
         } catch (err: any) {
             console.error('Error al cargar órdenes médicas:', err);
         } finally {

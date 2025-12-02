@@ -11,3 +11,4 @@ export { MedicalHistorySelector } from './medicalHistorySelector';
 export { DiagnosticsList } from './diagnosticsList';
 export { PrescriptionsList } from './prescriptionsList';
 export { MedicalOrdersList } from './medicalOrdersList';
+export { MedicalOrdersForm } from './MedicalOrdersForm';

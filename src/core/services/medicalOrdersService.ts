@@ -2,10 +2,7 @@ import httpClinical from "../../infrastructure/http/httpClinical";
 import type {
     CreateLaboratoryOrderDto,
     CreateRadiologyOrderDto,
-    CreateOrderResponse,
-    GetOrdersByPatientResponse,
-    GetOrderByIdResponse,
-    FilterOrdersResponse,
+    MedicalOrderEntity,
     MedicalOrdersFilterParams,
 } from "../types/medicalOrders";
 
@@ -16,12 +13,12 @@ export const medicalOrdersService = {
     /**
      * Crea una nueva orden de laboratorio
      * @param data - Datos de la orden de laboratorio
-     * @returns Promesa con la respuesta de creación
+     * @returns Promesa con la orden creada
      */
     async createLaboratoryOrder(
         data: CreateLaboratoryOrderDto
-    ): Promise<CreateOrderResponse> {
-        const response = await httpClinical.post<CreateOrderResponse>(
+    ): Promise<MedicalOrderEntity> {
+        const response = await httpClinical.post<MedicalOrderEntity>(
             `${medicalOrdersUrl}/laboratory`,
             data
         );
@@ -31,12 +28,12 @@ export const medicalOrdersService = {
     /**
      * Crea una nueva orden de radiología
      * @param data - Datos de la orden de radiología
-     * @returns Promesa con la respuesta de creación
+     * @returns Promesa con la orden creada
      */
     async createRadiologyOrder(
         data: CreateRadiologyOrderDto
-    ): Promise<CreateOrderResponse> {
-        const response = await httpClinical.post<CreateOrderResponse>(
+    ): Promise<MedicalOrderEntity> {
+        const response = await httpClinical.post<MedicalOrderEntity>(
             `${medicalOrdersUrl}/radiology`,
             data
         );
@@ -46,16 +43,16 @@ export const medicalOrdersService = {
     /**
      * Obtiene todas las órdenes médicas de un paciente
      * @param patientId - ID del paciente
-     * @returns Promesa con las órdenes del paciente
+     * @returns Promesa con las órdenes del paciente (array directo)
      */
     async getOrdersByPatientId(
         patientId: string
-    ): Promise<GetOrdersByPatientResponse> {
+    ): Promise<MedicalOrderEntity[]> {
         if (!patientId || patientId.trim() === "") {
             throw new Error("patientId es requerido para obtener las órdenes");
         }
         
-        const response = await httpClinical.get<GetOrdersByPatientResponse>(
+        const response = await httpClinical.get<MedicalOrderEntity[]>(
             `${medicalOrdersUrl}/patient/${patientId}`
         );
         return response.data;
@@ -66,12 +63,12 @@ export const medicalOrdersService = {
      * @param orderId - ID de la orden
      * @returns Promesa con la orden encontrada
      */
-    async getOrderById(orderId: string): Promise<GetOrderByIdResponse> {
+    async getOrderById(orderId: string): Promise<MedicalOrderEntity> {
         if (!orderId || orderId.trim() === "") {
             throw new Error("orderId es requerido para obtener la orden");
         }
         
-        const response = await httpClinical.get<GetOrderByIdResponse>(
+        const response = await httpClinical.get<MedicalOrderEntity>(
             `${medicalOrdersUrl}/${orderId}`
         );
         return response.data;
@@ -80,11 +77,11 @@ export const medicalOrdersService = {
     /**
      * Obtiene todas las órdenes médicas con filtros opcionales
      * @param params - Parámetros de filtrado opcionales
-     * @returns Promesa con las órdenes filtradas
+     * @returns Promesa con las órdenes filtradas (array directo)
      */
     async getOrders(
         params?: MedicalOrdersFilterParams
-    ): Promise<FilterOrdersResponse> {
+    ): Promise<MedicalOrderEntity[]> {
         const queryParams = new URLSearchParams();
         
         if (params) {
@@ -92,8 +89,6 @@ export const medicalOrdersService = {
             if (params.doctorId) queryParams.append("doctorId", params.doctorId);
             if (params.type) queryParams.append("type", params.type);
             if (params.status) queryParams.append("status", params.status);
-            if (params.dateFrom) queryParams.append("dateFrom", params.dateFrom);
-            if (params.dateTo) queryParams.append("dateTo", params.dateTo);
         }
         
         const queryString = queryParams.toString();
@@ -101,7 +96,7 @@ export const medicalOrdersService = {
             ? `${medicalOrdersUrl}?${queryString}` 
             : medicalOrdersUrl;
         
-        const response = await httpClinical.get<FilterOrdersResponse>(url);
+        const response = await httpClinical.get<MedicalOrderEntity[]>(url);
         return response.data;
     },
 
@@ -112,8 +107,8 @@ export const medicalOrdersService = {
      */
     async getLaboratoryOrdersByPatient(
         patientId: string
-    ): Promise<FilterOrdersResponse> {
-        return this.getOrders({ patientId, type: 'laboratory' });
+    ): Promise<MedicalOrderEntity[]> {
+        return this.getOrders({ patientId, type: 'LABORATORY' });
     },
 
     /**
@@ -123,8 +118,8 @@ export const medicalOrdersService = {
      */
     async getRadiologyOrdersByPatient(
         patientId: string
-    ): Promise<FilterOrdersResponse> {
-        return this.getOrders({ patientId, type: 'radiology' });
+    ): Promise<MedicalOrderEntity[]> {
+        return this.getOrders({ patientId, type: 'RADIOLOGY' });
     },
 
     /**
@@ -134,7 +129,7 @@ export const medicalOrdersService = {
      */
     async getOrdersByDoctorId(
         doctorId: string
-    ): Promise<FilterOrdersResponse> {
+    ): Promise<MedicalOrderEntity[]> {
         if (!doctorId || doctorId.trim() === "") {
             throw new Error("doctorId es requerido para obtener las órdenes");
         }
@@ -149,8 +144,8 @@ export const medicalOrdersService = {
      */
     async getPendingOrdersByPatient(
         patientId: string
-    ): Promise<FilterOrdersResponse> {
-        return this.getOrders({ patientId, status: 'pending' });
+    ): Promise<MedicalOrderEntity[]> {
+        return this.getOrders({ patientId, status: 'PENDING' });
     },
 
     /**
@@ -160,7 +155,7 @@ export const medicalOrdersService = {
      */
     async getCompletedOrdersByPatient(
         patientId: string
-    ): Promise<FilterOrdersResponse> {
-        return this.getOrders({ patientId, status: 'completed' });
+    ): Promise<MedicalOrderEntity[]> {
+        return this.getOrders({ patientId, status: 'COMPLETED' });
     },
 };

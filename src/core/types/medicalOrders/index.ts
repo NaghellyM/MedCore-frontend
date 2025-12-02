@@ -4,11 +4,11 @@
  * Definiciones de tipos para laboratory y radiology orders
  */
 
-// Tipos de orden médica
-export type MedicalOrderType = 'laboratory' | 'radiology';
+// Tipos de orden médica (backend usa mayúsculas)
+export type MedicalOrderType = 'LABORATORY' | 'RADIOLOGY';
 
-// Estados de orden médica
-export type MedicalOrderStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
+// Estados de orden médica (backend usa mayúsculas)
+export type MedicalOrderStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
 
 // Tipos de examen de laboratorio
 export type LaboratoryExamType = 
@@ -38,7 +38,13 @@ export type RadiologyExamType =
     | 'fluoroscopia'
     | string;
 
-// Entidad de orden médica
+// Información del doctor en la orden
+export interface OrderDoctorInfo {
+    name: string;
+    specialization: string;
+}
+
+// Entidad de orden médica (según respuesta del backend)
 export interface MedicalOrderEntity {
     id: string;
     patientId: string;
@@ -50,28 +56,21 @@ export interface MedicalOrderEntity {
     results?: string;
     createdAt: string;
     updatedAt: string;
+    doctor?: OrderDoctorInfo;
 }
 
-// DTO para crear orden de laboratorio
+// DTO para crear orden de laboratorio (según API)
 export interface CreateLaboratoryOrderDto {
     patientId: string;
     doctorId: string;
-    examType: LaboratoryExamType;
-    notes?: string;
-    urgency?: 'routine' | 'urgent' | 'stat';
-    instructions?: string;
+    examType: string;
 }
 
-// DTO para crear orden de radiología
+// DTO para crear orden de radiología (según API)
 export interface CreateRadiologyOrderDto {
     patientId: string;
     doctorId: string;
-    examType: RadiologyExamType;
-    notes?: string;
-    urgency?: 'routine' | 'urgent' | 'stat';
-    bodyPart?: string;
-    contrast?: boolean;
-    instructions?: string;
+    examType: string;
 }
 
 // Filtros para búsqueda de órdenes
@@ -84,36 +83,17 @@ export interface MedicalOrdersFilterParams {
     dateTo?: string;
 }
 
-// Respuesta de creación de orden
-export interface CreateOrderResponse {
-    message?: string;
-    order: MedicalOrderEntity;
-}
+// Respuesta de creación de orden (backend devuelve la orden directamente)
+export type CreateOrderResponse = MedicalOrderEntity;
 
-// Respuesta para obtener órdenes por paciente
-export interface GetOrdersByPatientResponse {
-    message?: string;
-    orders: MedicalOrderEntity[];
-    total?: number;
-}
+// Respuesta para obtener órdenes por paciente (backend devuelve array directo)
+export type GetOrdersByPatientResponse = MedicalOrderEntity[];
 
 // Respuesta para obtener una orden por ID
-export interface GetOrderByIdResponse {
-    message?: string;
-    order: MedicalOrderEntity;
-}
+export type GetOrderByIdResponse = MedicalOrderEntity;
 
-// Respuesta para filtrar órdenes
-export interface FilterOrdersResponse {
-    message?: string;
-    orders: MedicalOrderEntity[];
-    total?: number;
-    pagination?: {
-        page: number;
-        limit: number;
-        totalPages: number;
-    };
-}
+// Respuesta para filtrar órdenes (backend devuelve array directo)
+export type FilterOrdersResponse = MedicalOrderEntity[];
 
 // Respuesta de actualización de orden
 export interface UpdateOrderResponse {

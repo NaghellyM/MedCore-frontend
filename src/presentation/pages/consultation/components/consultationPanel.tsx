@@ -222,9 +222,8 @@ export const ConsultationPanel = memo(function ConsultationPanel({
                         orders={orders}
                         patientId={patientInfo?.id || null}
                         loading={loadingOrders}
-                        onAddLaboratory={handleAddLaboratoryOrder}
-                        onAddRadiology={handleAddRadiologyOrder}
                         onView={handleViewOrder}
+                        onRefresh={refreshOrders}
                     />
                 );
 
