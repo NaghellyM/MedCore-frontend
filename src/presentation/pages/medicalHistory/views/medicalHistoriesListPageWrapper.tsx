@@ -4,7 +4,7 @@ import { AutoDashboardLayout } from '../../../layouts/autoDashboardLayout';
 
 export const MedicalHistoriesListPageWrapper: React.FC = () => {
     return (
-        <SmartDashboardLayout 
+        <AutoDashboardLayout 
         sidebarStrategy="existing"
             headerHeightClass="pt-[80px]"
             showSearch={true}
@@ -16,6 +16,6 @@ export const MedicalHistoriesListPageWrapper: React.FC = () => {
                 showFilters={true}
                 enableNavigation={true}
             />
-        </SmartDashboardLayout>
+        </AutoDashboardLayout>
     );
 };

@@ -59,7 +59,7 @@ const RoleBasedContent: React.FC = () => {
  */
 export const UnifiedDashboard: React.FC = () => {
     return (
-        <SmartDashboardLayout
+        <AutoDashboardLayout
             showSearch={true}
             headerHeightClass="pt-[80px]"
             contentMaxWidthClass="max-w-7xl"
@@ -70,6 +70,6 @@ export const UnifiedDashboard: React.FC = () => {
             <div className="min-h-[calc(100vh-5rem)] w-full">
                 <RoleBasedContent />
             </div>
-        </SmartDashboardLayout>
+        </AutoDashboardLayout>
     );
 };

@@ -12,7 +12,7 @@ import { ResponsiveStyleUtils } from "../../core/utils/responsiveStyles";
 /**
  * Props del layout inteligente
  */
-interface SmartDashboardLayoutProps {
+interface AutoDashboardLayoutProps {
     children: React.ReactNode;
     showSearch?: boolean;
     headerHeightClass?: string;
@@ -38,7 +38,7 @@ interface SmartDashboardLayoutProps {
  * - Mantiene compatibilidad con sidebar personalizado
  * - Soporte para diferentes estrategias de renderizado
  */
-export function SmartDashboardLayout({
+export function AutoDashboardLayout({
     children,
     showSearch = true,
     headerHeightClass = "pt-[80px]",
@@ -48,7 +48,7 @@ export function SmartDashboardLayout({
     collapsible = "icon",
     sidebarStrategy = 'existing',
     customSidebar,
-}: SmartDashboardLayoutProps) {
+}: AutoDashboardLayoutProps) {
     const breakpoint = useBreakpoint();
     const isMobileSidebar = useIsMobileSidebar();
     
