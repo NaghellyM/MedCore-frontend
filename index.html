@@ -1,13 +1,38 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8" />
-  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Saira:wght@100..900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Inter:wght@300;400;500;600;700&family=Saira:wght@100..900&display=swap"
     rel="stylesheet">
   <link rel="icon" href="/src/assets/images/Cuidarte_vive_al_100.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f8fdfd" />
+  <meta name="description" content="Cuidarte - Sistema de Gestión Hospitalaria" />
   <title>Cuidarte</title>
+  
+  <!-- Script para prevenir FOUC (Flash of Unstyled Content) en cambio de tema -->
+  <script>
+    (function() {
+      const storageKey = 'medcore-theme';
+      const stored = localStorage.getItem(storageKey);
+      
+      let theme;
+      if (stored === 'dark' || stored === 'light') {
+        theme = stored;
+      } else {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      document.documentElement.classList.add(theme);
+      
+      // Update theme-color meta tag
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', theme === 'dark' ? '#1a1a2e' : '#f8fdfd');
+      }
+    })();
+  </script>
 </head>
 
 <body>

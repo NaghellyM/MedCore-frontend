@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import FormButton from '../../components/globals/button';
 import { verifyEmail } from '../../../core/services/verifyEmailService';
 import { useRedirectByRole } from '../../../core/hooks/auth';
-import { House } from 'lucide-react';
+import { Mail, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Button } from '../../components/ui/button';
+import { ThemeToggle } from '../../components/globals/theme-switcher';
 
 const VerificationPage: React.FC = () => {
     const [params] = useSearchParams();
@@ -16,6 +19,7 @@ const VerificationPage: React.FC = () => {
         [params, location.state]
     );
     const [code, setCode] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const onVerify = async () => {
         try {
@@ -36,6 +40,7 @@ const VerificationPage: React.FC = () => {
                 return;
             }
 
+            setIsLoading(true);
             const res = await verifyEmail(email, code.trim());
             if (res?.accessToken && res?.refreshToken) {
                 localStorage.setItem('accessToken', res.accessToken);
@@ -62,41 +67,110 @@ const VerificationPage: React.FC = () => {
                 title: 'Error de verificación',
                 text: errorMessage
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const goBack = () => navigate('/', { replace: true });
-
     return (
-        <div className="min-h-screen grid place-items-center px-4">
-            <button
-                type="button"
-                onClick={goBack}
-                className="absolute top-4 left-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-            >
-                <House />
-            </button>
-            <div className="w-full max-w-md bg-white p-6 rounded-xl shadow">
-                <img src="/logoCuidarte.png" alt="logo-cuidarte" className="mx-auto mb-4 w-24 h-24" />
-                <h1 className="text-center font-bold text-2xl">Verificación de correo</h1>
-                <p className="text-center text-sm text-gray-600 mt-2">
-                    Hemos enviado un código a <span className="font-medium">{email || '(correo no disponible)'}</span>.
+        <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
+            {/* Toggle de tema en la esquina */}
+            <div className="fixed top-4 right-4 z-10">
+                <ThemeToggle size="sm" />
+            </div>
+
+            <div className="w-full max-w-md space-y-8">
+                <Card>
+                    <CardHeader className="text-center space-y-4">
+                        {/* Logo */}
+                        <div className="flex justify-center">
+                            <img 
+                                src="/logoCuidarte.png" 
+                                alt="Logo Cuidarte" 
+                                className="w-20 h-20 object-contain"
+                            />
+                        </div>
+                        
+                        {/* Icono decorativo */}
+                        <div className="flex justify-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                <ShieldCheck className="h-6 w-6 text-primary" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <CardTitle className="text-2xl">Verificación de correo</CardTitle>
+                            <CardDescription className="mt-2">
+                                Hemos enviado un código a{' '}
+                                <span className="font-medium text-foreground">
+                                    {email || '(correo no disponible)'}
+                                </span>
+                            </CardDescription>
+                        </div>
+                    </CardHeader>
+
+                    <CardContent className="space-y-6">
+                        {/* Campo de código */}
+                        <Input
+                            type="text"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            label="Código de verificación"
+                            placeholder="Ingresa el código enviado a tu correo"
+                            leftIcon={<Mail className="h-4 w-4" />}
+                            disabled={isLoading}
+                        />
+
+                        {/* Botones de acción */}
+                        <div className="space-y-3">
+                            {/* Botón principal: Verificar */}
+                            <Button
+                                type="button"
+                                onClick={onVerify}
+                                fullWidth
+                                loading={isLoading}
+                                loadingText="Verificando..."
+                                size="lg"
+                            >
+                                Verificar código
+                            </Button>
+
+                            {/* Botón secundario: Regresar */}
+                            <Button
+                                type="button"
+                                variant="outline"
+                                fullWidth
+                                onClick={() => navigate(-1)}
+                                leftIcon={<ArrowLeft size={18} />}
+                            >
+                                Regresar
+                            </Button>
+                        </div>
+
+                        {/* Texto de ayuda */}
+                        <p className="text-center text-sm text-muted-foreground">
+                            ¿No recibiste el código?{' '}
+                            <button 
+                                type="button"
+                                className="text-primary hover:underline font-medium"
+                                onClick={() => {
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: 'Reenviar código',
+                                        text: 'Funcionalidad próximamente disponible'
+                                    });
+                                }}
+                            >
+                                Reenviar
+                            </button>
+                        </p>
+                    </CardContent>
+                </Card>
+
+                {/* Footer */}
+                <p className="text-center text-xs text-muted-foreground">
+                    © {new Date().getFullYear()} Cuidarte. Todos los derechos reservados.
                 </p>
-
-                <label className="block text-sm font-medium text-gray-700 mt-6 mb-2">
-                    Código de verificación
-                </label>
-                <input
-                    type="text"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    className="w-full border rounded-md p-2"
-                    placeholder="Ingresa el código enviado a tu correo"
-                />
-
-                <div className="mt-6 space-y-3">
-                    <FormButton type="button" label="Verificar código" onClick={onVerify} />
-                </div>
             </div>
         </div>
     );
