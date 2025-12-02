@@ -1,5 +1,5 @@
 import React from 'react';
-import { DashboardLayout } from "../../layouts/layout";
+import { DashboardLayout } from "../../layouts/dashboardLayout";
 import { PatientSidebar } from '../patient/components/patientSidebar';
 import { ViewMyMedicalHistoryPage } from './views/myMedicalHistoryPageView';
 

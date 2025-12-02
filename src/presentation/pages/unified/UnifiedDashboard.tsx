@@ -1,5 +1,5 @@
 import React from 'react';
-import { SmartDashboardLayout } from '../../layouts/SmartDashboardLayout';
+import { AutoDashboardLayout } from '../../layouts/autoDashboardLayout';
 import { useUserRole } from '../../../core/hooks/auth/useUserRole';
 import { DoctorPage } from '../doctor/page/doctorPage';
 import { AdminPageContent } from '../admin/page/adminPageContent';

@@ -1,6 +1,6 @@
 import { type RouteObject } from "react-router-dom";
 import { RoleRoute } from "./guards";
-import RootLayout from "../layouts/RootLayout";
+import RootLayout from "../layouts/rootLayout";
 import { PatientDashboard } from "../pages/patient/patientDashboard";
 import { QueuePatientPage } from "../pages/Queue/pages/queuePatient";
 import FiltrarCitas from "../pages/patient/components/RequestAppointment";

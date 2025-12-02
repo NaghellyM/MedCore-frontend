@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { DashboardLayout } from "../../../layouts/layout";
+import { DashboardLayout } from "../../../layouts/dashboardLayout";
 import DoctorSidebar from "../../doctor/components/doctorSideBar";
 import BackButton from "../components/button";
 

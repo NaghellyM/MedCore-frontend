@@ -1,6 +1,6 @@
 import type { RouteObject } from "react-router-dom";
 import { RoleRoute } from "./guards";
-import RootLayout from "../layouts/RootLayout";
+import RootLayout from "../layouts/rootLayout";
 import { AdminDashboard } from "../pages/admin/adminDashboard";
 import { AdminRegisterCSV } from "../pages/admin/pages/admiRegisterCSV";
 import { AdminRegisterUser } from "../pages/admin/pages/admiRegisterUser";

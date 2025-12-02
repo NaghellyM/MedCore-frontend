@@ -1,6 +1,6 @@
 import type { RouteObject } from "react-router-dom";
 import { RoleRoute } from "./guards";
-import RootLayout from "../layouts/RootLayout";
+import RootLayout from "../layouts/rootLayout";
 import { DoctorDashboard } from "../pages/doctor/doctorDashboard";
 import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
 import DoctorAppointmentsList from "../pages/doctor/page/DoctorAppointmentsList";

@@ -1,4 +1,4 @@
-import { DashboardLayout } from "../../../layouts/layout";
+import { DashboardLayout } from "../../../layouts/dashboardLayout";
 import { PatientSidebar } from "../../patient/components/patientSidebar";
 import { QueuePatientContainer } from "../containers/queuePatientContainer";
 import { useNavigate, useParams } from "react-router-dom";

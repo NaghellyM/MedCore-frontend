@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Stethoscope, UserPlus, Upload, HeartPulse } from "lucide-react";
-import { DashboardLayout } from "../../layouts/layout";
+import { DashboardLayout } from "../../layouts/dashboardLayout";
 
 export function AdminDashboard() {
   const navigate = useNavigate();

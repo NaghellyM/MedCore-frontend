@@ -1,6 +1,6 @@
 import React from 'react';
 import { MedicalHistoriesListView } from './medicalHistoriesListView';
-import { SmartDashboardLayout } from '../../../layouts/SmartDashboardLayout';
+import { AutoDashboardLayout } from '../../../layouts/autoDashboardLayout';
 
 export const MedicalHistoriesListPageWrapper: React.FC = () => {
     return (

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { DashboardLayout } from "../../../layouts/layout";
+import { DashboardLayout } from "../../../layouts/dashboardLayout";
 import DoctorSidebar from "../../doctor/components/doctorSideBar";
 import { MyDoctorQueueContainer } from "../containers/myDoctorQueueContainer";
 
