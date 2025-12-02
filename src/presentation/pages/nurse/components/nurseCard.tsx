@@ -25,10 +25,10 @@ interface NurseCardProps {
 
 export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
   const statusConfig = {
-    ACTIVE: { text: "Activo", color: "bg-green-200 text-green-800" },
-    INACTIVE: { text: "Inactivo", color: "bg-red-200 text-red-800" },
-    PENDING: { text: "Pendiente", color: "bg-yellow-200 text-yellow-800" },
-    UNKNOWN: { text: "Desconocido", color: "bg-gray-200 text-gray-700" },
+    ACTIVE: { text: "Activo", color: "bg-green-200 dark:bg-green-900/50 text-green-800 dark:text-green-300" },
+    INACTIVE: { text: "Inactivo", color: "bg-red-200 dark:bg-red-900/50 text-red-800 dark:text-red-300" },
+    PENDING: { text: "Pendiente", color: "bg-yellow-200 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300" },
+    UNKNOWN: { text: "Desconocido", color: "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300" },
   } as const
 
   const normalizedStatus = nurse.status?.toUpperCase()
@@ -40,9 +40,9 @@ export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
     ? statusConfig[normalizedStatus] 
     : statusConfig.UNKNOWN
 
-  const gender = Math.random() > 0.5 ? "girl" : "boy"
+  // Usar UI Avatars como servicio de avatares (más confiable)
   const avatarUrl =
-    nurse.avatar || `https://avatar.iran.liara.run/public/${gender}?username=${encodeURIComponent(nurse.fullname)}`
+    nurse.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(nurse.fullname)}&background=ec4899&color=fff&size=128&bold=true`
 
   // 🔹 Editar enfermera directamente en el card
   const handleEdit = async () => {
@@ -115,22 +115,22 @@ export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
   }
 
   return (
-    <div className="relative border rounded-xl p-5 shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1 bg-gradient-to-br from-white via-pink-50 to-pink-100 flex flex-col items-center text-center">
+    <div className="relative border border-border rounded-xl p-5 shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1 bg-card dark:bg-card flex flex-col items-center text-center">
       <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold ${color}`}>
         {text}
       </span>
 
-      <div className="w-24 h-24 rounded-full mb-4 overflow-hidden border-4 border-pink-200 shadow-inner bg-white flex items-center justify-center">
+      <div className="w-24 h-24 rounded-full mb-4 overflow-hidden border-4 border-pink-200 dark:border-pink-800 shadow-inner bg-background flex items-center justify-center">
         <img src={avatarUrl} alt={nurse.fullname} className="w-full h-full object-cover" />
       </div>
 
-      <h3 className="font-bold text-xl text-gray-800 mb-1">{nurse.fullname}</h3>
-      <p className="text-sm text-gray-500 mb-1">ID: {nurse.identificacion}</p>
-      {nurse.email && <p className="text-sm text-gray-500 mb-1">Email: {nurse.email}</p>}
-      {nurse.phone && <p className="text-sm text-gray-500 mb-1">Tel: {nurse.phone}</p>}
-      {nurse.license_number && <p className="text-sm text-gray-500 mb-1">Licencia: {nurse.license_number}</p>}
+      <h3 className="font-bold text-xl text-foreground mb-1">{nurse.fullname}</h3>
+      <p className="text-sm text-muted-foreground mb-1">ID: {nurse.identificacion}</p>
+      {nurse.email && <p className="text-sm text-muted-foreground mb-1">Email: {nurse.email}</p>}
+      {nurse.phone && <p className="text-sm text-muted-foreground mb-1">Tel: {nurse.phone}</p>}
+      {nurse.license_number && <p className="text-sm text-muted-foreground mb-1">Licencia: {nurse.license_number}</p>}
       {nurse.role && (  
-        <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-pink-200 to-pink-300 text-pink-800 shadow-sm uppercase mb-3">
+        <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-pink-200 to-pink-300 dark:from-pink-800 dark:to-pink-700 text-pink-800 dark:text-pink-200 shadow-sm uppercase mb-3">
           {nurse.role}
         </span>
       )}
@@ -138,13 +138,13 @@ export default function NurseCard({ nurse, onDelete, onEdit }: NurseCardProps) {
       <div className="flex space-x-3 mt-auto">
         <button
           onClick={handleEdit}
-          className="flex items-center gap-1 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition"
+          className="flex items-center gap-1 px-3 py-2 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/70 transition"
         >
           <Pencil size={16} /> Editar
         </button>
         <button
           onClick={handleDelete}
-          className="flex items-center gap-1 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
+          className="flex items-center gap-1 px-3 py-2 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/70 transition"
         >
           <Trash2 size={16} /> Eliminar
         </button>

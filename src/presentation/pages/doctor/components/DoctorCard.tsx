@@ -30,17 +30,17 @@ export default function DoctorCard({ doctor, onDelete, onUpdate }: DoctorCardPro
     : "INACTIVE"
 
   const statusConfig = {
-    ACTIVE: { text: "Activo", color: "bg-green-100 text-green-700 border-green-300" },
-    INACTIVE: { text: "Inactivo", color: "bg-red-100 text-red-700 border-red-300" },
-    PENDING: { text: "Pendiente", color: "bg-yellow-100 text-yellow-700 border-yellow-300" },
+    ACTIVE: { text: "Activo", color: "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700" },
+    INACTIVE: { text: "Inactivo", color: "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700" },
+    PENDING: { text: "Pendiente", color: "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700" },
   } as const
 
   const { text, color } = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.INACTIVE
 
-  const gender = Math.random() > 0.5 ? "boy" : "girl"
+  // Usar UI Avatars como servicio de avatares (más confiable)
   const avatarUrl =
     doctor.avatar ||
-    `https://avatar.iran.liara.run/public/${gender}?username=${encodeURIComponent(doctor.name)}`
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(doctor.name)}&background=3b82f6&color=fff&size=128&bold=true`
 
   // 🔹 Eliminar doctor
   const handleDelete = async () => {
@@ -135,35 +135,35 @@ export default function DoctorCard({ doctor, onDelete, onUpdate }: DoctorCardPro
   }
 
   return (
-    <div className="relative border rounded-xl p-5 shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1 bg-gradient-to-br from-white via-blue-50 to-blue-100 flex flex-col items-center text-center">
+    <div className="relative border border-border rounded-xl p-5 shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1 bg-card flex flex-col items-center text-center">
       <div
         className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold border ${color} shadow-sm backdrop-blur-sm`}
       >
         {text}
       </div>
 
-      <div className="w-24 h-24 rounded-full mb-4 overflow-hidden border-4 border-blue-200 shadow-inner bg-white flex items-center justify-center">
+      <div className="w-24 h-24 rounded-full mb-4 overflow-hidden border-4 border-blue-200 dark:border-blue-800 shadow-inner bg-background flex items-center justify-center">
         <img src={avatarUrl} alt={doctor.name} className="w-full h-full object-cover" />
       </div>
 
-      <h3 className="font-bold text-xl text-gray-800 mb-1">{doctor.name}</h3>
-      <p className="text-sm text-gray-500 mb-1">ID: {doctor.identification}</p>
+      <h3 className="font-bold text-xl text-foreground mb-1">{doctor.name}</h3>
+      <p className="text-sm text-muted-foreground mb-1">ID: {doctor.identification}</p>
 
-      <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-purple-200 via-pink-200 to-pink-300 text-purple-800 shadow-sm mb-4">
+      <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-purple-200 via-pink-200 to-pink-300 dark:from-purple-800 dark:via-pink-800 dark:to-pink-700 text-purple-800 dark:text-purple-200 shadow-sm mb-4">
         {doctor.specialty || "Sin especialidad"}
       </span>
 
       <div className="flex gap-3 mt-auto">
         <button
           onClick={handleEdit}
-          className="p-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 shadow-md hover:shadow-lg transition"
+          className="p-2 bg-blue-500 dark:bg-blue-600 text-white rounded-xl hover:bg-blue-600 dark:hover:bg-blue-700 shadow-md hover:shadow-lg transition"
           title="Editar doctor"
         >
           <Pencil size={18} />
         </button>
         <button
           onClick={handleDelete}
-          className="p-2 bg-red-500 text-white rounded-xl hover:bg-red-600 shadow-md hover:shadow-lg transition"
+          className="p-2 bg-red-500 dark:bg-red-600 text-white rounded-xl hover:bg-red-600 dark:hover:bg-red-700 shadow-md hover:shadow-lg transition"
           title="Eliminar doctor"
         >
           <Trash2 size={18} />
