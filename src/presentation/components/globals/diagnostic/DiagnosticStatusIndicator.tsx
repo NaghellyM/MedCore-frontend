@@ -6,7 +6,7 @@
  */
 
 import { CheckCircle, XCircle, Trash2, AlertCircle } from "lucide-react";
-import type { DiagnosticState } from "../../../core/types/medicalHistory";
+import type { DiagnosticState } from "../../../../core/types/medicalHistory";
 
 interface DiagnosticStatusIndicatorProps {
     state: DiagnosticState;

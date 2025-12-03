@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { getHomeRouteByRole } from "../../../../core/utils/navigation";
 
 // Componentes de diagnóstico
-import { DeleteDiagnosticButton, DiagnosticStatusIndicator } from "../../../components/diagnostic";
+import { DeleteDiagnosticButton, DiagnosticStatusIndicator } from "../../../components/globals/diagnostic";
 
 // Hooks de diagnóstico
 import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic";

@@ -6,7 +6,7 @@
  */
 
 import { Trash2, Loader2 } from "lucide-react";
-import { useDeleteDiagnostic } from "../../../core/hooks/diagnostic/useDeleteDiagnostic";
+import { useDeleteDiagnostic } from "../../../../core/hooks/diagnostic/useDeleteDiagnostic";
 
 interface DeleteDiagnosticButtonProps {
     diagnosticId: string;
