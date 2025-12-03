@@ -9,8 +9,11 @@ import {
     Eye,
     Calendar,
     FileText,
-    AlertCircle
+    AlertCircle,
+    Plus,
+    Trash2
 } from 'lucide-react';
+import { useDeleteDiagnostic } from '../../../../core/hooks/diagnostic';
 import type { Diagnostic } from '../../../../core/types/medicalHistory';
 
 interface DiagnosticsListProps {
@@ -20,33 +23,48 @@ interface DiagnosticsListProps {
     loading?: boolean;
     onView: (diagnosticId: string) => void;
     onRefresh?: () => void;
+    onAssign?: () => void;
     className?: string;
 }
 
 /**
  * Componente que muestra la lista de diagnósticos en la consulta
  * NOTA: Los diagnósticos NO se pueden crear ni editar, solo visualizar
+ * Se pueden asignar diagnósticos predefinidos del catálogo y eliminar (soft delete)
  */
 export const DiagnosticsList = memo(function DiagnosticsList({
     diagnostics,
     medicalHistoryId,
-    patientId: _patientId,
+    patientId,
     loading = false,
     onView,
-    onRefresh: _onRefresh,
+    onRefresh,
+    onAssign,
     className,
 }: DiagnosticsListProps) {
+
+    const { isDeleting, deleteDiagnostic, canDelete } = useDeleteDiagnostic({
+        onSuccess: () => {
+            // Recargar la lista después de eliminar
+            onRefresh?.();
+        },
+        showConfirmation: true
+    });
 
     const getStateColor = (state: string) => {
         switch (state) {
             case 'ACTIVE':
-                return 'bg-green-100 text-green-800 border-green-200';
+                return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-green-200 dark:border-green-700';
             case 'COMPLETED':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
+                return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700';
             case 'CANCELLED':
-                return 'bg-red-100 text-red-800 border-red-200';
+                return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700';
+            case 'ARCHIVED':
+                return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 border-yellow-200 dark:border-yellow-700';
+            case 'DELETED':
+                return 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600';
             default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
+                return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700';
         }
     };
 
@@ -58,6 +76,10 @@ export const DiagnosticsList = memo(function DiagnosticsList({
                 return 'Completado';
             case 'CANCELLED':
                 return 'Cancelado';
+            case 'ARCHIVED':
+                return 'Archivado';
+            case 'DELETED':
+                return 'Eliminado';
             default:
                 return state;
         }
@@ -110,12 +132,24 @@ export const DiagnosticsList = memo(function DiagnosticsList({
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                        <Stethoscope className="h-5 w-5 text-purple-600" />
+                        <Stethoscope className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                         Diagnósticos
                     </CardTitle>
-                    <Badge variant="secondary">
-                        {diagnostics.length} registro{diagnostics.length !== 1 ? 's' : ''}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                        <Badge variant="secondary">
+                            {diagnostics.length} registro{diagnostics.length !== 1 ? 's' : ''}
+                        </Badge>
+                        {medicalHistoryId && patientId && onAssign && (
+                            <Button
+                                size="sm"
+                                onClick={onAssign}
+                                className="bg-purple-600 hover:bg-purple-700 text-white"
+                            >
+                                <Plus className="h-4 w-4 mr-1" />
+                                Asignar
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </CardHeader>
 
@@ -168,12 +202,24 @@ export const DiagnosticsList = memo(function DiagnosticsList({
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-8 w-8 text-slate-500 hover:text-purple-600"
+                                            className="h-8 w-8 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400"
                                             onClick={() => onView(diagnostic.id)}
                                             title="Ver detalles"
                                         >
                                             <Eye className="h-4 w-4" />
                                         </Button>
+                                        {canDelete && diagnostic.state !== 'DELETED' && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-8 w-8 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+                                                onClick={() => deleteDiagnostic(diagnostic.id)}
+                                                disabled={isDeleting}
+                                                title="Eliminar diagnóstico"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

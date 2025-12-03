@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../core/utils/cn';
 import { Button } from '../../../components/ui/button';
@@ -16,14 +16,17 @@ import {
     ClipboardList
 } from 'lucide-react';
 import { useConsultation } from '../../../../core/hooks/consultation';
+import { useAssignDiagnostics } from '../../../../core/hooks/diagnostic';
 import { useToast } from '../../../../core/hooks/notifications';
 import { ConsultationSteps } from './consultationSteps';
 import { PatientInfoCard } from './patientInfoCard';
 import { MedicalHistorySelector } from './medicalHistorySelector';
 import { DiagnosticsList } from './diagnosticsList';
+import { DiagnosticSelector } from './diagnosticSelector';
 import { PrescriptionsList } from './prescriptionsList';
 import { MedicalOrdersList } from './medicalOrdersList';
 import type { QueuePatient } from '../../../../core/types/queue';
+import type { SelectedDiagnostic } from '../../../../core/types/diagnostic';
 
 interface ConsultationPanelProps {
     patient: QueuePatient;
@@ -46,6 +49,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
 }: ConsultationPanelProps) {
     const navigate = useNavigate();
     const { success, error: showError } = useToast();
+    const [showDiagnosticSelector, setShowDiagnosticSelector] = useState(false);
     
     const {
         consultation,
@@ -80,6 +84,12 @@ export const ConsultationPanel = memo(function ConsultationPanel({
             showError('Error en la consulta', errorMsg);
         },
     });
+
+    const {
+        isAssigning,
+        assignDiagnostics,
+        reset: resetAssignment
+    } = useAssignDiagnostics();
 
     // Iniciar consulta cuando se monta el componente
     useEffect(() => {
@@ -149,6 +159,38 @@ export const ConsultationPanel = memo(function ConsultationPanel({
         onCancel();
     };
 
+    // Handlers para diagnósticos
+    const handleOpenDiagnosticSelector = () => {
+        setShowDiagnosticSelector(true);
+    };
+
+    const handleCloseDiagnosticSelector = () => {
+        setShowDiagnosticSelector(false);
+        resetAssignment();
+    };
+
+    const handleAssignDiagnostics = async (selectedDiagnostics: SelectedDiagnostic[]) => {
+        if (!patientInfo) {
+            showError('Error', 'No se ha cargado la información del paciente');
+            return;
+        }
+
+        const assigned = await assignDiagnostics(patientInfo.id, selectedDiagnostics);
+        
+        if (assigned) {
+            success(
+                'Diagnósticos asignados',
+                `Se han asignado ${selectedDiagnostics.length} diagnóstico${selectedDiagnostics.length > 1 ? 's' : ''} correctamente`
+            );
+            setShowDiagnosticSelector(false);
+            resetAssignment();
+            // Recargar la lista de diagnósticos
+            refreshDiagnostics();
+        } else {
+            showError('Error', 'No se pudieron asignar los diagnósticos');
+        }
+    };
+
     // Determinar qué pasos están completados
     const getCompletedSteps = () => {
         const completed: string[] = [];
@@ -183,14 +225,25 @@ export const ConsultationPanel = memo(function ConsultationPanel({
 
             case 'diagnostics':
                 return (
-                    <DiagnosticsList
-                        diagnostics={diagnostics}
-                        medicalHistoryId={medicalHistory?.id || null}
-                        patientId={patientInfo?.id || null}
-                        loading={loadingDiagnostics}
-                        onView={handleViewDiagnostic}
-                        onRefresh={refreshDiagnostics}
-                    />
+                    <>
+                        <DiagnosticsList
+                            diagnostics={diagnostics}
+                            medicalHistoryId={medicalHistory?.id || null}
+                            patientId={patientInfo?.id || null}
+                            loading={loadingDiagnostics}
+                            onView={handleViewDiagnostic}
+                            onRefresh={refreshDiagnostics}
+                            onAssign={handleOpenDiagnosticSelector}
+                        />
+                        {patientInfo && (
+                            <DiagnosticSelector
+                                open={showDiagnosticSelector}
+                                onClose={handleCloseDiagnosticSelector}
+                                onConfirm={handleAssignDiagnostics}
+                                patientId={patientInfo.id}
+                            />
+                        )}
+                    </>
                 );
 
             case 'prescriptions':

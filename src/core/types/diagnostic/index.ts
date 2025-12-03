@@ -31,6 +31,17 @@ export type {
 
 export { DIAGNOSTIC_SEVERITIES } from './predefined';
 
+// Asignación de diagnósticos
+export type {
+    AssignDiagnosticDto,
+    AssignDiagnosticsRequest,
+    AssignDiagnosticsResponse,
+    SelectedDiagnostic,
+    UseAssignDiagnosticsState,
+    UseAssignDiagnosticsActions,
+    UseAssignDiagnosticsReturn
+} from './assignment';
+
 // Respuestas del API
 export type {
     ApiResponse as DiagnosticApiResponse,

@@ -6,7 +6,9 @@ import type {
     DiagnosticSearchParams,
     GetPredefinedDiagnosticsResponse,
     GetPredefinedDiagnosticByIdResponse,
-    PredefinedDiagnosticFilters
+    PredefinedDiagnosticFilters,
+    AssignDiagnosticDto,
+    AssignDiagnosticsResponse
 } from "../types/diagnostic";
 
 // Url base para diagnósticos
@@ -14,6 +16,18 @@ const diagnosticBaseUrl = "/diagnostics";
 
 export const diagnosticService = {
     
+    // Asociar un diagnóstico a un paciente
+    async assignDiagnosticToPatient(
+        patientId: string,
+        diagnostic: AssignDiagnosticDto
+    ): Promise<AssignDiagnosticsResponse> {
+        const response = await httpPatient.post<AssignDiagnosticsResponse>(
+            `${diagnosticBaseUrl}/patient/${patientId}`,
+            diagnostic
+        );
+        return response.data;
+    },
+
     //Obtener un diagnóstico predefinido por su ID
     async getDiagnosticById(diagnosticId: string): Promise<GetPredefinedDiagnosticByIdResponse> {
         const response = await httpPatient.get<GetPredefinedDiagnosticByIdResponse>(

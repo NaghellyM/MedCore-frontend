@@ -173,13 +173,17 @@ export function useConsultation(options: UseConsultationOptions = {}): UseConsul
 
     // Cargar diagnósticos del paciente
     // Usamos el endpoint de diagnósticos por paciente para obtener datos actualizados
+    // Solo mostramos diagnósticos ACTIVOS (excluye DELETED y ARCHIVED)
     const refreshDiagnostics = useCallback(async () => {
         if (!patientInfo?.id) return;
         
         setLoadingDiagnostics(true);
         try {
-            // Obtener diagnósticos directamente del servicio de diagnósticos
-            const response = await diagnosticService.getDiagnosticsByPatientId(patientInfo.id);
+            // Obtener solo diagnósticos activos
+            const response = await diagnosticService.getDiagnosticsByPatientId(
+                patientInfo.id,
+                'ACTIVE' // Filtrar solo diagnósticos activos
+            );
             setDiagnostics(response.data || []);
         } catch (err: any) {
             console.error('Error al cargar diagnósticos:', err);
