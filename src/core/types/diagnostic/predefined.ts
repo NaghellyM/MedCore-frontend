@@ -30,6 +30,12 @@ export interface GetPredefinedDiagnosticsResponse {
     data: PredefinedDiagnostic[];
 }
 
+// Respuesta del API para obtener un diagnóstico predefinido por ID
+export interface GetPredefinedDiagnosticByIdResponse {
+    message: string;
+    data: PredefinedDiagnostic;
+}
+
 // Estado del hook usePredefinedDiagnostics
 export interface UsePredefinedDiagnosticsState {
     predefinedDiagnostics: PredefinedDiagnostic[];

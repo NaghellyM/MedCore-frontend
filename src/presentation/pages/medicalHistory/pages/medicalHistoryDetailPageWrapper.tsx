@@ -158,15 +158,9 @@ export const MedicalHistoryDetailPageWrapper: React.FC = () => {
                         <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-2">
                             No se encontró historia clínica
                         </h3>
-                        <p className="text-sm text-slate-500 dark:text-gray-400 mb-4">
-                            Este paciente aún no tiene historia clínica registrada.
+                        <p className="text-sm text-slate-500 dark:text-gray-400">
+                            Este paciente aún no tiene historia clínica registrada. La historia clínica se creará automáticamente al realizar la primera consulta.
                         </p>
-                        <button
-                            onClick={() => navigate(`/medicalHistory/create?patientId=${patientId}`)}
-                            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
-                        >
-                            Crear Historia Clínica
-                        </button>
                     </div>
                 )}
             </div>

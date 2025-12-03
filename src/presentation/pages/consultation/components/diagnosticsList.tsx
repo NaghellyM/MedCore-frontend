@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { cn } from '../../../../core/utils/cn';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
@@ -6,14 +6,11 @@ import { Badge } from '../../../components/ui/badge';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { 
     Stethoscope, 
-    Plus, 
-    Eye, 
-    Edit2,
+    Eye,
     Calendar,
     FileText,
     AlertCircle
 } from 'lucide-react';
-import { AddDiagnosticModal } from './addDiagnosticModal';
 import type { Diagnostic } from '../../../../core/types/medicalHistory';
 
 interface DiagnosticsListProps {
@@ -21,28 +18,24 @@ interface DiagnosticsListProps {
     medicalHistoryId: string | null;
     patientId: string | null;
     loading?: boolean;
-    onAdd: () => void;
     onView: (diagnosticId: string) => void;
-    onEdit: (diagnosticId: string) => void;
     onRefresh?: () => void;
     className?: string;
 }
 
 /**
  * Componente que muestra la lista de diagnósticos en la consulta
+ * NOTA: Los diagnósticos NO se pueden crear ni editar, solo visualizar
  */
 export const DiagnosticsList = memo(function DiagnosticsList({
     diagnostics,
     medicalHistoryId,
-    patientId,
+    patientId: _patientId,
     loading = false,
-    onAdd: _onAdd, // Mantenido para compatibilidad, pero ahora usamos modal interno
     onView,
-    onEdit,
-    onRefresh,
+    onRefresh: _onRefresh,
     className,
 }: DiagnosticsListProps) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const getStateColor = (state: string) => {
         switch (state) {
@@ -127,15 +120,6 @@ export const DiagnosticsList = memo(function DiagnosticsList({
             </CardHeader>
 
             <CardContent className="space-y-4">
-                {/* Botón para agregar */}
-                <Button
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nuevo Diagnóstico
-                </Button>
-
                 {/* Lista de diagnósticos */}
                 {diagnostics.length === 0 ? (
                     <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-center">
@@ -144,7 +128,7 @@ export const DiagnosticsList = memo(function DiagnosticsList({
                             No hay diagnósticos registrados
                         </p>
                         <p className="text-xs text-slate-500 mt-1">
-                            Agrega un nuevo diagnóstico para esta consulta
+                            Los diagnósticos son generados automáticamente por el sistema
                         </p>
                     </div>
                 ) : (
@@ -190,15 +174,6 @@ export const DiagnosticsList = memo(function DiagnosticsList({
                                         >
                                             <Eye className="h-4 w-4" />
                                         </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-slate-500 hover:text-purple-600"
-                                            onClick={() => onEdit(diagnostic.id)}
-                                            title="Editar"
-                                        >
-                                            <Edit2 className="h-4 w-4" />
-                                        </Button>
                                     </div>
                                 </div>
                             </div>
@@ -206,19 +181,6 @@ export const DiagnosticsList = memo(function DiagnosticsList({
                     </div>
                 )}
             </CardContent>
-
-            {/* Modal para agregar diagnósticos */}
-            {patientId && (
-                <AddDiagnosticModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSuccess={() => {
-                        setIsModalOpen(false);
-                        onRefresh?.();
-                    }}
-                    patientId={patientId}
-                />
-            )}
         </Card>
     );
 });

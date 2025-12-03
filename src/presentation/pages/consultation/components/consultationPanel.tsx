@@ -100,21 +100,10 @@ export const ConsultationPanel = memo(function ConsultationPanel({
     }, [currentStep, patientInfo, refreshDiagnostics, refreshPrescriptions, refreshOrders]);
 
     // Handlers para navegación a formularios
-    const handleAddDiagnostic = () => {
-        if (medicalHistory) {
-            navigate(`/medicalHistory/${medicalHistory.id}/diagnosis/new`);
-        }
-    };
-
+    // NOTA: Los diagnósticos NO se pueden crear ni editar, solo visualizar
     const handleViewDiagnostic = (diagnosticId: string) => {
         if (medicalHistory) {
             navigate(`/medicalHistory/${medicalHistory.id}/diagnosis/${diagnosticId}`);
-        }
-    };
-
-    const handleEditDiagnostic = (diagnosticId: string) => {
-        if (medicalHistory) {
-            navigate(`/medicalHistory/${medicalHistory.id}/diagnosis/${diagnosticId}/edit`);
         }
     };
 
@@ -199,9 +188,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
                         medicalHistoryId={medicalHistory?.id || null}
                         patientId={patientInfo?.id || null}
                         loading={loadingDiagnostics}
-                        onAdd={handleAddDiagnostic}
                         onView={handleViewDiagnostic}
-                        onEdit={handleEditDiagnostic}
                         onRefresh={refreshDiagnostics}
                     />
                 );

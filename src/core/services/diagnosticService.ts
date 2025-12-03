@@ -1,28 +1,23 @@
 import httpPatient from "../../infrastructure/http/httpPatient";
 import type {
-    GetDiagnosticByIdResponse,
     GetDiagnosticsByPatientResponse,
-    CreateDiagnosticResponse,
-    UpdateDiagnosticResponse,
-    UpdateDiagnosticStateResponse,
     DeleteDiagnosticResponse,
-    UpdateDiagnosticDto,
     DiagnosticState,
     DiagnosticSearchParams,
     GetPredefinedDiagnosticsResponse,
+    GetPredefinedDiagnosticByIdResponse,
     PredefinedDiagnosticFilters
 } from "../types/diagnostic";
-import type { CreateDiagnosticDto } from "../types/medicalHistory/entities";
 
 // Url base para diagnósticos
 const diagnosticBaseUrl = "/diagnostics";
 
 export const diagnosticService = {
     
-    //Obtener un diagnóstico por su ID
-    async getDiagnosticById(diagnosticId: string): Promise<GetDiagnosticByIdResponse> {
-        const response = await httpPatient.get<GetDiagnosticByIdResponse>(
-            `${diagnosticBaseUrl}/${diagnosticId}`
+    //Obtener un diagnóstico predefinido por su ID
+    async getDiagnosticById(diagnosticId: string): Promise<GetPredefinedDiagnosticByIdResponse> {
+        const response = await httpPatient.get<GetPredefinedDiagnosticByIdResponse>(
+            `${diagnosticBaseUrl}/predefined/${diagnosticId}`
         );
         return response.data;
     },
@@ -80,44 +75,6 @@ export const diagnosticService = {
             : `${diagnosticBaseUrl}/predefined/list`;
             
         const response = await httpPatient.get<GetPredefinedDiagnosticsResponse>(url);
-        return response.data;
-    },
-
-    // Crear un nuevo diagnóstico para un paciente
-    // POST /diagnostics/patient/:patientId
-    async createDiagnostic(
-        patientId: string, 
-        diagnosticData: CreateDiagnosticDto
-    ): Promise<CreateDiagnosticResponse> {
-        const response = await httpPatient.post<CreateDiagnosticResponse>(
-            `${diagnosticBaseUrl}/patient/${patientId}`,
-            diagnosticData
-        );
-        
-        return response.data;
-    },
-
-    // Actualizar un diagnóstico por su ID
-    async updateDiagnostic(
-        diagnosticId: string, 
-        diagnosticData: UpdateDiagnosticDto
-    ): Promise<UpdateDiagnosticResponse> {
-        const response = await httpPatient.patch<UpdateDiagnosticResponse>(
-            `${diagnosticBaseUrl}/${diagnosticId}`,
-            diagnosticData
-        );
-        return response.data;
-    },
-
-    //Actualizar el estado de un diagnóstico 
-    async updateDiagnosticState(
-        diagnosticId: string, 
-        newState: DiagnosticState
-    ): Promise<UpdateDiagnosticStateResponse> {
-        const response = await httpPatient.patch<UpdateDiagnosticStateResponse>(
-            `${diagnosticBaseUrl}/${diagnosticId}/state`,
-            { state: newState }
-        );
         return response.data;
     },
 

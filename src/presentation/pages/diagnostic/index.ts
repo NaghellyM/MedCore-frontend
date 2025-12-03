@@ -7,10 +7,7 @@
 // Components
 export { DiagnosticCard } from './components/DiagnosticCard';
 
-// Forms  
-export { DiagnosticForm } from './forms/diagnosticForm';
-
-// Views
-export { CreateDiagnosticView } from './views/createDiagnosticView';
-export { EditDiagnosticView } from './views/editDiagnosticView';
-export { DiagnosticListView } from './views/diagnosticListView';
+// Views (Read-only: list and view only, no creation or editing)
+export { DiagnosticListView } from './pages/diagnosticListView';
+export { AllDiagnosticsPage } from './pages/allDiagnosticsPage';
+export { DiagnosticDetailPage } from './pages/diagnosticDetailPage';

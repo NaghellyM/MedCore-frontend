@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { DashboardLayout } from "../../../layouts/dashboardLayout";
 import DoctorSidebar from '../../doctor/components/doctorSideBar';
-import { PatientMedicalSummaryView } from './patientMedicalSummaryView';
+import { PatientMedicalSummaryView } from './patientMedicalHistoryView';
 
 export const PatientMedicalSummaryPageWrapper: React.FC = () => {
     const { patientId } = useParams<{ patientId: string }>();

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Edit, Eye, Trash2 } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Diagnostic } from "../../../../core/types/diagnostic";
 import { useDeleteDiagnostic } from "../../../../core/hooks/diagnostic/useDeleteDiagnostic";
@@ -31,11 +31,6 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
     const handleDelete = useCallback(async () => {
         await deleteDiagnostic(diagnostic.id);
     }, [deleteDiagnostic, diagnostic.id]);
-
-    const handleEdit = useCallback(() => {
-        // Navegar a la página de edición del diagnóstico
-        navigate(`/medicalHistory/${diagnostic.medicalHistoryId}/diagnosis/${diagnostic.id}/edit`);
-    }, [navigate, diagnostic.medicalHistoryId, diagnostic.id]);
 
     const handleView = useCallback(() => {
         // Navegar a la página de lista de diagnósticos de esta historia médica
@@ -84,14 +79,6 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                                 title="Ver detalles"
                             >
                                 <Eye className="w-4 h-4" />
-                            </button>
-                            
-                            <button
-                                onClick={handleEdit}
-                                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
-                                title="Editar diagnóstico"
-                            >
-                                <Edit className="w-4 h-4" />
                             </button>
                             
                             {canDelete && (

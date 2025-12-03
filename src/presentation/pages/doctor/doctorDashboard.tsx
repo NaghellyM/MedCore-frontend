@@ -1,5 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { CalendarCheck, Users, FileText, Upload } from "lucide-react";
+import { 
+  CalendarCheck, 
+  Users, 
+  FileText, 
+  Upload, 
+  Stethoscope,
+  Pill,
+  ClipboardList,
+  FolderOpen
+} from "lucide-react";
 import UserHeader from "../../components/globals/header";
 
 export function DoctorDashboard() {
@@ -23,12 +32,44 @@ export function DoctorDashboard() {
       action: () => navigate("/queueDoctor"),
     },
     {
+      title: "Consulta Médica",
+      icon: <Stethoscope size={48} className="text-teal-500 dark:text-teal-400" />,
+      description: "Realizar consulta completa con diagnósticos y tratamientos.",
+      color: "from-teal-100 to-teal-50 dark:from-teal-950 dark:to-teal-900",
+      hover: "hover:shadow-teal-200 dark:hover:shadow-teal-800/30",
+      action: () => navigate("/consultation"),
+    },
+    {
+      title: "Historiales Médicos",
+      icon: <FolderOpen size={48} className="text-indigo-500 dark:text-indigo-400" />,
+      description: "Consulta historiales clínicos de pacientes.",
+      color: "from-indigo-100 to-indigo-50 dark:from-indigo-950 dark:to-indigo-900",
+      hover: "hover:shadow-indigo-200 dark:hover:shadow-indigo-800/30",
+      action: () => navigate("/medicalHistory/list"),
+    },
+    {
       title: "Diagnósticos",
       icon: <FileText size={48} className="text-purple-500 dark:text-purple-400" />,
-      description: "Crear y consultar diagnósticos de pacientes.",
+      description: "Visualizar diagnósticos de pacientes (solo lectura).",
       color: "from-purple-100 to-purple-50 dark:from-purple-950 dark:to-purple-900",
       hover: "hover:shadow-purple-200 dark:hover:shadow-purple-800/30",
-      action: () => navigate("/queueDoctor"),
+      action: () => navigate("/diagnostics"),
+    },
+    {
+      title: "Recetas Médicas",
+      icon: <Pill size={48} className="text-pink-500 dark:text-pink-400" />,
+      description: "Crear y consultar recetas electrónicas.",
+      color: "from-pink-100 to-pink-50 dark:from-pink-950 dark:to-pink-900",
+      hover: "hover:shadow-pink-200 dark:hover:shadow-pink-800/30",
+      action: () => navigate("/prescriptions"),
+    },
+    {
+      title: "Órdenes Médicas",
+      icon: <ClipboardList size={48} className="text-cyan-500 dark:text-cyan-400" />,
+      description: "Generar órdenes de laboratorio y radiología.",
+      color: "from-cyan-100 to-cyan-50 dark:from-cyan-950 dark:to-cyan-900",
+      hover: "hover:shadow-cyan-200 dark:hover:shadow-cyan-800/30",
+      action: () => navigate("/orders"),
     },
     {
       title: "Subir Documentos",
@@ -46,26 +87,42 @@ export function DoctorDashboard() {
       <UserHeader showSearch={false} showThemeToggle={true} />
 
       {/* Contenido principal */}
-      <main className="pt-[100px] min-h-screen flex justify-center items-center p-4 sm:p-6 md:p-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8 w-full max-w-7xl">
-          {sections.map((section) => (
-            <button
-              key={section.title}
-              onClick={section.action}
-              className={`relative group bg-gradient-to-b ${section.color} rounded-2xl p-6 md:p-8 text-left shadow-lg transition-all duration-300 ${section.hover} hover:scale-105 w-full min-h-[220px] md:min-h-[260px] flex flex-col justify-center items-center`}
-            >
-              <div className="flex flex-col items-center text-center space-y-3 md:space-y-4">
-                <div className="bg-card p-3 md:p-4 rounded-full shadow-inner transition-colors duration-300">
-                  {section.icon}
+      <main className="pt-[100px] min-h-screen p-4 sm:p-6 md:p-10">
+        <div className="w-full max-w-7xl mx-auto">
+          {/* Título del Dashboard */}
+          <div className="mb-6 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+              Panel del Médico
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base">
+              Gestiona consultas, pacientes y documentación médica
+            </p>
+          </div>
+
+
+          {/* Grid de tarjetas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            {sections.map((section) => (
+              <button
+                key={section.title}
+                onClick={section.action}
+                className={`relative group bg-gradient-to-b ${section.color} rounded-2xl p-5 md:p-6 text-left shadow-lg transition-all duration-300 ${section.hover} hover:scale-105 hover:-translate-y-1 w-full min-h-[200px] md:min-h-[220px] flex flex-col justify-center items-center`}
+              >
+                <div className="flex flex-col items-center text-center space-y-2 md:space-y-3">
+                  <div className="bg-card p-3 rounded-full shadow-inner transition-colors duration-300">
+                    {section.icon}
+                  </div>
+                  <h2 className="text-base md:text-lg font-bold text-foreground">
+                    {section.title}
+                  </h2>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
+                    {section.description}
+                  </p>
                 </div>
-                <h2 className="text-lg md:text-xl font-bold text-foreground">
-                  {section.title}
-                </h2>
-                <p className="text-muted-foreground text-xs md:text-sm">{section.description}</p>
-              </div>
-              <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-border transition"></div>
-            </button>
-          ))}
+                <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-border/50 transition"></div>
+              </button>
+            ))}
+          </div>
         </div>
       </main>
     </div>

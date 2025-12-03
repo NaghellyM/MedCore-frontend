@@ -17,11 +17,11 @@ export interface DiagnosticTableColumn {
 }
 
 // Props de tabla de diagnósticos
+// NOTA: Los diagnósticos NO se pueden editar, solo visualizar y eliminar
 export interface DiagnosticTableProps {
     diagnostics: DiagnosticSummary[];
     columns?: DiagnosticTableColumn[];
     loading?: boolean;
-    onEdit?: (diagnostic: DiagnosticSummary) => void;
     onDelete?: (diagnostic: DiagnosticSummary) => void;
     onView?: (diagnostic: DiagnosticSummary) => void;
     onSort?: (column: string, direction: 'asc' | 'desc') => void;
@@ -32,9 +32,9 @@ export interface DiagnosticTableProps {
 }
 
 // Props de tarjeta de diagnóstico
+// NOTA: Los diagnósticos NO se pueden editar, solo visualizar y eliminar
 export interface DiagnosticCardProps {
     diagnostic: DiagnosticSummary;
-    onEdit?: (diagnostic: DiagnosticSummary) => void;
     onDelete?: (diagnostic: DiagnosticSummary) => void;
     onView?: (diagnostic: DiagnosticSummary) => void;
     showActions?: boolean;
@@ -43,9 +43,9 @@ export interface DiagnosticCardProps {
 }
 
 // Props de vista detallada
+// NOTA: Los diagnósticos NO se pueden editar, solo visualizar y eliminar
 export interface DiagnosticDetailProps {
     diagnostic: Diagnostic;
-    onEdit?: () => void;
     onDelete?: () => void;
     onBack?: () => void;
     showActions?: boolean;
@@ -53,14 +53,14 @@ export interface DiagnosticDetailProps {
 }
 
 // Props de modal de diagnóstico
+// NOTA: Los diagnósticos NO se pueden crear ni editar, solo visualizar
 export interface DiagnosticModalProps {
     isOpen: boolean;
     onClose: () => void;
-    diagnostic?: Diagnostic;
-    mode: 'create' | 'edit' | 'view';
+    diagnostic: Diagnostic;
+    mode: 'view';
     patientId: string;
     medicalHistoryId?: string;
-    onSave?: (data: DiagnosticFormData) => void | Promise<void>;
     onDelete?: (diagnosticId: string) => void | Promise<void>;
 }
 
@@ -94,10 +94,9 @@ export interface DiagnosticActionsProps {
 }
 
 // Estados de carga
+// NOTA: Los diagnósticos NO se pueden crear ni actualizar, solo visualizar y eliminar
 export interface DiagnosticLoadingStates {
     list: boolean;
-    create: boolean;
-    update: boolean;
     delete: boolean;
     detail: boolean;
 }

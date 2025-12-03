@@ -120,7 +120,6 @@ const getDoctorMenuConfig = (): MenuConfig => {
                 label: 'PACIENTES',
                 items: [
                     { title: 'Historiales médicos', url: '/medicalHistory/list', icon: ClipboardPlus },
-                    { title: 'Crear historia clínica', url: '/medicalHistory/create', icon: ClipboardPlus },
                 ]
             }
         ]

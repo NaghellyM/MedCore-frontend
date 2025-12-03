@@ -4,11 +4,13 @@ import RootLayout from "../layouts/rootLayout";
 import { DoctorDashboard } from "../pages/doctor/doctorDashboard";
 import QueueDoctorPage from "../pages/Queue/pages/queueDoctor";
 import DoctorAppointmentsList from "../pages/doctor/page/doctorAppointmentsList";
-import { CreateDiagnosticView } from "../pages/diagnostic/views/createDiagnosticView";
-import { EditDiagnosticView } from "../pages/diagnostic/views/editDiagnosticView";
-import { DiagnosticListView } from "../pages/diagnostic/views/diagnosticListView";
+import { DiagnosticListView } from "../pages/diagnostic/pages/diagnosticListView";
+import { AllDiagnosticsPage } from "../pages/diagnostic/pages/allDiagnosticsPage";
+import { DiagnosticDetailPage } from "../pages/diagnostic/pages/diagnosticDetailPage";
 import UploadDiagnosticDocument from "../pages/doctor/page/uploadDocument";
 import { ConsultationPage } from "../pages/consultation";
+import { PrescriptionsPage } from "../pages/doctor/page/prescriptionsPage";
+import { OrdersPage } from "../pages/doctor/page/ordersPage";
 
 export const doctorRoutes: RouteObject = {
     element: <RoleRoute allow={["doctor"]} />,
@@ -19,11 +21,16 @@ export const doctorRoutes: RouteObject = {
                 { path: "doctorPage", element: <DoctorDashboard /> },
                 { path: "queueDoctor", element: <QueueDoctorPage /> },
                 { path: "doctorAppointmentsList", element: <DoctorAppointmentsList /> },
-                { path: "documentsUpload", element: <UploadDiagnosticDocument /> },
                 { path: "consultation", element: <ConsultationPage /> },
-                {path: "medicalHistory/:medicalHistoryId/diagnosis",element: <DiagnosticListView />},
-                {path: "medicalHistory/:medicalHistoryId/diagnosis/new", element: <CreateDiagnosticView />},
-                {path: "medicalHistory/:medicalHistoryId/diagnosis/:diagnosticId/edit", element: <EditDiagnosticView />},
+                { path: "prescriptions", element: <PrescriptionsPage /> },
+                { path: "orders", element: <OrdersPage /> },
+                { path: "documentsUpload", element: <UploadDiagnosticDocument /> },
+                // Listar todos los diagnósticos del sistema
+                { path: "diagnostics", element: <AllDiagnosticsPage /> },
+                // Listar diagnósticos de una historia médica específica
+                { path: "medicalHistory/:medicalHistoryId/diagnosis", element: <DiagnosticListView /> },
+                // Ver detalle de un diagnóstico específico
+                { path: "medical-history/:medicalHistoryId/diagnosis/:diagnosticId", element: <DiagnosticDetailPage /> },
             ],
         },
     ],

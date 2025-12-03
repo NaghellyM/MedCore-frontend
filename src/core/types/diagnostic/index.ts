@@ -22,6 +22,7 @@ export type {
     PredefinedDiagnostic,
     PredefinedDiagnosticFilters,
     GetPredefinedDiagnosticsResponse,
+    GetPredefinedDiagnosticByIdResponse,
     UsePredefinedDiagnosticsState,
     UsePredefinedDiagnosticsActions,
     UsePredefinedDiagnosticsReturn,

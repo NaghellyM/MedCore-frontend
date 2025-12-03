@@ -1,17 +1,15 @@
-// Hook para manejar operaciones CRUD de diagnósticos
+// Hook para manejar operaciones de lectura y eliminación de diagnósticos
+// NOTA: Los diagnósticos NO se pueden crear ni editar
 
 import { useState, useCallback } from 'react';
 import { diagnosticService } from "../../services/diagnosticService";
 import { medicalHistoryService } from "../../services/medicalHistoryService";
-import { DiagnosticDtoValidator } from "../../validators/diagnosticDtoValidator";
 import type {
     DiagnosticSummary,
     DiagnosticSearchParams,
-    UpdateDiagnosticDto,
     DiagnosticState,
     UseDiagnosticsReturn
 } from "../../types/diagnostic";
-import type { CreateDiagnosticDto } from "../../types/medicalHistory/entities";
 
 export const useDiagnostics = (): UseDiagnosticsReturn => {
     const [diagnostics, setDiagnostics] = useState<DiagnosticSummary[]>([]);
@@ -21,22 +19,23 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
-    const fetchDiagnostics = useCallback(async (params?: DiagnosticSearchParams) => {
+    const fetchDiagnostics = useCallback(async (params?: DiagnosticSearchParams & { predefined?: boolean }) => {
         try {
             setLoading(true);
             setError(null);
 
             let response;
 
-            if (params?.medicalHistoryId) {
+            if (params?.predefined) {
+                // Obtener diagnósticos predefinidos
+                response = await diagnosticService.getPredefinedDiagnostics(params);
+            } else if (params?.medicalHistoryId) {
                 // Si se proporciona medicalHistoryId, obtener primero la información del historial médico
                 // para conseguir el patientId y luego obtener los diagnósticos por paciente
                 const medicalHistoryResponse = await medicalHistoryService.getMedicalHistoryById(params.medicalHistoryId);
                 const patientId = medicalHistoryResponse.data.patientId;
-                
                 // Obtener diagnósticos por patientId y filtrar por medicalHistoryId en el frontend
                 response = await diagnosticService.getDiagnosticsByPatientId(patientId, params.state);
-                
                 // Filtrar los diagnósticos que pertenecen a esta historia médica específica
                 if (response.data && Array.isArray(response.data)) {
                     response.data = response.data.filter((diagnostic: any) => 
@@ -66,37 +65,8 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
         }
     }, []);
 
-    const createDiagnostic = useCallback(async (
-        patientId: string,
-        data: CreateDiagnosticDto
-    ): Promise<void> => {
-        try {
-            setError(null);
-            DiagnosticDtoValidator.validateCreateDiagnosticDto(data);
-            await diagnosticService.createDiagnostic(patientId, data);
-            await fetchDiagnostics();
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Error al crear diagnóstico';
-            setError(errorMessage);
-            throw err;
-        }
-    }, [fetchDiagnostics]);
-
-    const updateDiagnostic = useCallback(async (
-        id: string,
-        data: UpdateDiagnosticDto
-    ): Promise<void> => {
-        try {
-            setError(null);
-            await diagnosticService.updateDiagnostic(id, data);
-
-            await fetchDiagnostics();
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Error al actualizar diagnóstico';
-            setError(errorMessage);
-            throw err;
-        }
-    }, [fetchDiagnostics]);
+    // NOTA: createDiagnostic y updateDiagnostic fueron eliminados
+    // Los diagnósticos NO se pueden crear ni editar desde el frontend
 
     const deleteDiagnostic = useCallback(async (id: string): Promise<void> => {
         try {
@@ -110,20 +80,8 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
         }
     }, [fetchDiagnostics]);
 
-    const updateDiagnosticState = useCallback(async (
-        id: string,
-        state: DiagnosticState
-    ): Promise<void> => {
-        try {
-            setError(null);
-            await diagnosticService.updateDiagnosticState(id, state);
-            await fetchDiagnostics();
-        } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : 'Error al actualizar estado';
-            setError(errorMessage);
-            throw err;
-        }
-    }, [fetchDiagnostics]);
+    // NOTA: updateDiagnosticState fue eliminado
+    // Los diagnósticos solo se pueden eliminar (soft delete)
 
     const refetch = useCallback(async () => {
         await fetchDiagnostics();
@@ -151,10 +109,7 @@ export const useDiagnostics = (): UseDiagnosticsReturn => {
 
         // Acciones
         fetchDiagnostics,
-        createDiagnostic,
-        updateDiagnostic,
         deleteDiagnostic,
-        updateDiagnosticState,
         refetch,
         reset
     };

@@ -110,6 +110,7 @@ export interface DiagnosticDetails extends Diagnostic {
 // Resumen de diagnóstico para listas
 export interface DiagnosticSummary {
     id: string;
+    medicalHistoryId: string;
     title: string;
     description?: string | null;
     diagnosis: string | null;
@@ -136,4 +137,5 @@ export interface DiagnosticSearchParams extends DiagnosticFilters {
     limit?: number;
     sortBy?: 'consultDate' | 'createdAt' | 'title';
     sortOrder?: 'asc' | 'desc';
+    predefined?: boolean; // Permite obtener diagnósticos predefinidos
 }

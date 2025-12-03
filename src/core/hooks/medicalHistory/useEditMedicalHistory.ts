@@ -2,20 +2,15 @@
  * HOOK PARA EDITAR HISTORIA MÉDICA
  * ================================
  * Hook especializado para manejar la edición de historias médicas existentes
- * Coordina la actualización de la historia médica y sus diagnósticos asociados
+ * NOTA: Los diagnósticos NO se editan desde aquí, solo la metadata de la historia clínica
  */
 
 import { useState, useCallback } from "react";
 import { medicalHistoryService } from "../../services/medicalHistoryService";
-import { diagnosticService } from "../../services/diagnosticService";
-import { DiagnosticMapper } from "../../mappers/diagnosticMapper";
-import { DiagnosticDtoValidator } from "../../validators/diagnosticDtoValidator";
 import { useToast } from "../notifications/useToast";
 import type {
-    MedicalHistoryFormData,
-    Diagnostic
+    MedicalHistoryFormData
 } from "../../types/medicalHistory";
-import type { UpdateDiagnosticDto } from "../../types/medicalHistory/entities";
 
 interface UseEditMedicalHistoryOptions {
     onSuccess?: (historyId: string) => void;
@@ -26,7 +21,6 @@ interface UseEditMedicalHistoryOptions {
 interface EditMedicalHistoryResult {
     success: boolean;
     historyId?: string;
-    diagnosticId?: string;
     error?: string;
 }
 
@@ -34,8 +28,7 @@ interface UseEditMedicalHistoryReturn {
     isUpdating: boolean;
     updateMedicalHistory: (
         historyId: string,
-        formData: Partial<MedicalHistoryFormData>,
-        existingDiagnostics?: Diagnostic[]
+        formData: Partial<MedicalHistoryFormData>
     ) => Promise<EditMedicalHistoryResult>;
 }
 
@@ -54,8 +47,7 @@ export function useEditMedicalHistory(
 
     const updateMedicalHistory = useCallback(async (
         historyId: string,
-        formData: Partial<MedicalHistoryFormData>,
-        existingDiagnostics: Diagnostic[] = []
+        formData: Partial<MedicalHistoryFormData>
     ): Promise<EditMedicalHistoryResult> => {
         setIsUpdating(true);
         logDebug("Starting medical history update", { historyId, formData });
@@ -66,20 +58,13 @@ export function useEditMedicalHistory(
                 throw new Error("Información del paciente es requerida");
             }
 
-            // Validar diagnóstico usando el validador especializado
-            const validationError = DiagnosticDtoValidator.validateMedicalHistoryForDiagnostic(formData);
-            if (validationError) {
-                throw new Error(validationError);
-            }
-
             logDebug("Form data validation passed");
 
             // PASO 2: Actualizar la historia médica (metadatos básicos)
-            // Nota: En el flujo actual, la historia médica principalmente sirve como contenedor
-            // Los datos reales están en los diagnósticos
+            // NOTA: Los diagnósticos NO se crean ni editan aquí
             const historyUpdateData = {
-                // Los metadatos que queramos actualizar en la historia médica
                 updatedAt: new Date().toISOString()
+                // Agregar otros campos de metadata que se necesiten actualizar
             };
 
             const historyUpdateResult = await medicalHistoryService.updateMedicalHistory(
@@ -89,60 +74,10 @@ export function useEditMedicalHistory(
 
             logDebug("Medical history updated", historyUpdateResult);
 
-            // PASO 3: Manejar diagnósticos
-            let diagnosticResult: any = null;
-
-            // Transformar datos del formulario a DTO de diagnóstico
-            const diagnosticDto = DiagnosticMapper.fromMedicalHistoryForm(formData);
-            logDebug("Diagnostic DTO created", diagnosticDto);
-
-            if (existingDiagnostics && existingDiagnostics.length > 0) {
-                // Si hay diagnósticos existentes, actualizar el más reciente (o el primero)
-                const diagnosticToUpdate = existingDiagnostics[0];
-                logDebug("Updating existing diagnostic", { diagnosticId: diagnosticToUpdate.id });
-
-                // Preparar datos de actualización (solo campos que han cambiado)
-                const updateData: UpdateDiagnosticDto = {
-                    title: diagnosticDto.title,
-                    description: diagnosticDto.description,
-                    symptoms: diagnosticDto.symptoms,
-                    diagnosis: diagnosticDto.diagnosis,
-                    treatment: diagnosticDto.treatment,
-                    observations: diagnosticDto.observations,
-                    prescriptions: diagnosticDto.prescriptions,
-                    physicalExam: diagnosticDto.physicalExam,
-                    vitalSigns: diagnosticDto.vitalSigns,
-                    consultDate: diagnosticDto.consultDate,
-                    nextAppointment: diagnosticDto.nextAppointment,
-                    customFields: diagnosticDto.customFields
-                };
-
-                diagnosticResult = await diagnosticService.updateDiagnostic(
-                    diagnosticToUpdate.id,
-                    updateData
-                );
-
-                logDebug("Diagnostic updated successfully", diagnosticResult);
-
-            } else {
-                // Si no hay diagnósticos existentes, crear uno nuevo
-                logDebug("Creating new diagnostic for existing history");
-
-                diagnosticResult = await diagnosticService.createDiagnostic(
-                    formData.patientInfo.id,
-                    diagnosticDto
-                );
-
-                logDebug("New diagnostic created", diagnosticResult);
-            }
-
-            // PASO 4: Procesar resultado exitoso
+            // PASO 3: Procesar resultado exitoso
             const result: EditMedicalHistoryResult = {
                 success: true,
-                historyId,
-                diagnosticId: diagnosticResult?.data?.diagnosticId || 
-                              diagnosticResult?.data?.id ||
-                              existingDiagnostics[0]?.id
+                historyId
             };
 
             logDebug("Medical history edit completed successfully", result);
