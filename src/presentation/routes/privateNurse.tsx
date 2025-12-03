@@ -1,6 +1,6 @@
 import type { RouteObject } from "react-router-dom";
 import { RoleRoute } from "./guards";
-import RootLayout from "../layouts/RootLayout";
+import RootLayout from "../layouts/rootLayout";
 import { NurseDashboard } from "../pages/nurse/nurseDashboard";
 
 

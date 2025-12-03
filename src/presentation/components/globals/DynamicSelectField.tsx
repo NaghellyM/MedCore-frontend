@@ -38,13 +38,14 @@ export function DynamicSelectField({
                 {(field) => (
                     <select
                         {...field}
-                        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full p-2 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
                     >
-                        <option value="">{placeholder}</option>
+                        <option value="" className="bg-card text-muted-foreground">{placeholder}</option>
                         {options.map((option) => (
                             <option
                                 key={option.id || option.name}
                                 value={option.value || option.name}
+                                className="bg-card text-foreground"
                             >
                                 {option.name}
                             </option>

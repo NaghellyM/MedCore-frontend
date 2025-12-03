@@ -29,7 +29,7 @@ export interface DiagnosticDocument {
     uploadedAt: string;
 }
 
-export type DiagnosticState = "ACTIVE" | "INACTIVE";
+export type DiagnosticState = "ACTIVE" | "ARCHIVED" | "DELETED";
 
 export interface Diagnostic {
     id: string;

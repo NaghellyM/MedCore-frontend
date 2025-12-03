@@ -49,13 +49,13 @@ export function useDiagnosticFilter(options: UseDiagnosticFilterOptions = {}): U
             // Filtrar solo diagnósticos activos (no eliminados)
             return diagnostics.filter(diagnostic => {
                 // Los diagnósticos eliminados tienen estado 'DELETED'
-                // Los diagnósticos inactivos pueden ser 'INACTIVE'
+                // Los diagnósticos archivados pueden ser 'ARCHIVED'
                 const isDeleted = diagnostic.state === 'DELETED';
-                const isInactive = diagnostic.state === 'INACTIVE';
+                const isArchived = diagnostic.state === 'ARCHIVED';
                 
                 // Para médicos: solo mostrar diagnósticos activos
-                // Para admins: mostrar activos e inactivos, pero no eliminados (a menos que se especifique)
-                return !isDeleted && (shouldShowDeleted || !isInactive);
+                // Para admins: mostrar activos y archivados, pero no eliminados (a menos que se especifique)
+                return !isDeleted && (shouldShowDeleted || !isArchived);
             });
         };
     }, [shouldShowDeleted]);

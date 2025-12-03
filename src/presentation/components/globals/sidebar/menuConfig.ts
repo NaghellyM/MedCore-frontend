@@ -167,29 +167,23 @@ const getNurseMenuConfig = (): MenuConfig => {
  * Configuración de menú para pacientes
  */
 const getPatientMenuConfig = (): MenuConfig => {
-    const { CalendarCheck, History, FileHeart, Microscope, User, Settings } = require('lucide-react');
+    const { CalendarCheck, History, FileHeart, Microscope, FolderOpen } = require('lucide-react');
     
     return {
         groups: [
             {
                 label: 'CITAS Y TELEMEDICINA',
                 items: [
-                    { title: 'Mis citas', url: '/PatientAppointments', icon: CalendarCheck },
-                    { title: 'Turno de espera', url: '/queuePatient', icon: History },
+                    { title: 'Mis citas', url: '/patient-appointments', icon: CalendarCheck },
+                    { title: 'Turno de espera', url: '/patient-queue', icon: History },
                 ]
             },
             {
                 label: 'INFORMACIÓN MÉDICA',
                 items: [
                     { title: 'Mi historial clínico', url: '/my-medical-history', icon: FileHeart },
-                    { title: 'Resultados de laboratorio', url: '/patientPage', icon: Microscope },
-                ]
-            },
-            {
-                label: 'PERFIL Y CONFIGURACIÓN',
-                items: [
-                    { title: 'Mi perfil', url: '#', icon: User },
-                    { title: 'Configuración', url: '#', icon: Settings },
+                    { title: 'Mis documentos', url: '/patient-documents', icon: FolderOpen },
+                    { title: 'Resultados de laboratorio', url: '/patient-documents', icon: Microscope },
                 ]
             }
         ]

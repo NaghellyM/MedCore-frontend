@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { usePatientMedicalHistory } from "../../../../core/hooks/medicalHistory/useMedicalHistory";
 import { usePatientDisplay } from "../../../../core/hooks/queue/usePatientDisplay";
-import { DiagnosticCard } from "../../diagnostic/components/diagnosticCard";
+import { DiagnosticCard } from "../../diagnostic/components/DiagnosticCard";
 
 interface PatientMedicalSummaryViewProps {
     patientId: string;
@@ -109,7 +109,7 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
     const patientStats = history ? {
         totalDiagnostics: history.diagnostics.length,
         activeDiagnostics: history.diagnostics.filter((d: any) => d.state === "ACTIVE").length,
-        inactiveDiagnostics: history.diagnostics.filter((d: any) => d.state === "INACTIVE").length,
+        archivedDiagnostics: history.diagnostics.filter((d: any) => d.state === "ARCHIVED").length,
         totalDocuments: history.diagnostics.reduce((sum: number, d: any) => sum + (d.documents?.length || 0), 0),
         upcomingAppointments: history.diagnostics.filter((d: any) => 
             d.nextAppointment && new Date(d.nextAppointment) > new Date()
@@ -143,8 +143,8 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
         return (
             <div className="flex items-center justify-center py-12">
                 <div className="text-center">
-                    <Activity className="w-8 h-8 animate-pulse text-blue-600 mx-auto mb-2" />
-                    <p className="text-sm text-slate-500">Cargando resumen médico del paciente...</p>
+                    <Activity className="w-8 h-8 animate-pulse text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                    <p className="text-sm text-slate-500 dark:text-gray-400">Cargando resumen médico del paciente...</p>
                 </div>
             </div>
         );
@@ -152,12 +152,12 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
 
     if (isError) {
         return (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-6">
-                <div className="flex items-center gap-2 text-red-800 mb-2">
+            <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-6 transition-colors duration-300">
+                <div className="flex items-center gap-2 text-red-800 dark:text-red-300 mb-2">
                     <XCircle className="w-5 h-5" />
                     <h3 className="font-medium">Error al cargar el resumen médico</h3>
                 </div>
-                <p className="text-sm text-red-600">{errorMessage}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
             </div>
         );
     }
@@ -165,11 +165,11 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
     if (!history) {
         return (
             <div className="text-center py-12">
-                <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-slate-900 mb-2">
+                <FileText className="w-12 h-12 text-slate-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-2">
                     No se encontró historial médico
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-gray-400">
                     Este paciente aún no tiene historia clínica registrada.
                 </p>
             </div>
@@ -180,23 +180,23 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
         <div className="space-y-6">
             {/* Header del Paciente */}
             {showPatientInfo && (
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-6 shadow-sm transition-colors duration-300">
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User className="w-8 h-8 text-blue-600" />
+                        <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
+                            <User className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div className="flex-1">
-                            <h1 className="text-2xl font-semibold text-slate-900 mb-1">
+                            <h1 className="text-2xl font-semibold text-slate-900 dark:text-gray-100 mb-1">
                                 Resumen Médico del Paciente
                             </h1>
-                            <p className="text-lg text-slate-700">
+                            <p className="text-lg text-slate-700 dark:text-gray-300">
                                 {displayText}
                             </p>
                         </div>
                         {patientStats?.lastConsultation && (
-                            <div className="text-right text-sm text-slate-500">
+                            <div className="text-right text-sm text-slate-500 dark:text-gray-400">
                                 <p>Última consulta</p>
-                                <p className="font-medium text-slate-900">
+                                <p className="font-medium text-slate-900 dark:text-gray-100">
                                     {patientStats.lastConsultation.toLocaleDateString()}
                                 </p>
                                 <p className="text-xs">
@@ -207,17 +207,17 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
                     </div>
 
                     {/* Médico Tratante */}
-                    <div className="bg-slate-50 rounded-lg p-4">
+                    <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-4 transition-colors duration-300">
                         <div className="flex items-center gap-3">
-                            <Stethoscope className="w-5 h-5 text-blue-600" />
+                            <Stethoscope className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                             <div>
-                                <p className="text-sm font-medium text-slate-900">
+                                <p className="text-sm font-medium text-slate-900 dark:text-gray-100">
                                     Médico Tratante Principal
                                 </p>
-                                <p className="text-sm text-slate-700">
+                                <p className="text-sm text-slate-700 dark:text-gray-300">
                                     Dr. {history.doctor.fullname}
                                 </p>
-                                <p className="text-xs text-slate-500">
+                                <p className="text-xs text-slate-500 dark:text-gray-400">
                                     {history.doctor.email}
                                 </p>
                             </div>
@@ -228,15 +228,15 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
 
             {/* Estadísticas del Paciente */}
             {showStatistics && patientStats && (
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-6 shadow-sm transition-colors duration-300">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <h2 className="text-lg font-semibold text-slate-800 dark:text-gray-100 flex items-center gap-2">
                             <TrendingUp className="w-5 h-5" />
                             Estadísticas Médicas
                         </h2>
                         <button
                             onClick={() => setExpandedStats(!expandedStats)}
-                            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
                         >
                             {expandedStats ? "Ocultar" : "Ver más"}
                             {expandedStats ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -244,41 +244,41 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div className="text-center p-4 bg-blue-50 rounded-lg">
-                            <p className="text-3xl font-bold text-blue-600">{patientStats.totalDiagnostics}</p>
-                            <p className="text-sm text-blue-700">Total Diagnósticos</p>
+                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg transition-colors duration-300">
+                            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{patientStats.totalDiagnostics}</p>
+                            <p className="text-sm text-blue-700 dark:text-blue-300">Total Diagnósticos</p>
                         </div>
-                        <div className="text-center p-4 bg-emerald-50 rounded-lg">
-                            <p className="text-3xl font-bold text-emerald-600">{patientStats.activeDiagnostics}</p>
-                            <p className="text-sm text-emerald-700">Activos</p>
+                        <div className="text-center p-4 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg transition-colors duration-300">
+                            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{patientStats.activeDiagnostics}</p>
+                            <p className="text-sm text-emerald-700 dark:text-emerald-300">Activos</p>
                         </div>
-                        <div className="text-center p-4 bg-amber-50 rounded-lg">
-                            <p className="text-3xl font-bold text-amber-600">{patientStats.totalDocuments}</p>
-                            <p className="text-sm text-amber-700">Documentos</p>
+                        <div className="text-center p-4 bg-amber-50 dark:bg-amber-900/30 rounded-lg transition-colors duration-300">
+                            <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{patientStats.totalDocuments}</p>
+                            <p className="text-sm text-amber-700 dark:text-amber-300">Documentos</p>
                         </div>
-                        <div className="text-center p-4 bg-purple-50 rounded-lg">
-                            <p className="text-3xl font-bold text-purple-600">{patientStats.upcomingAppointments}</p>
-                            <p className="text-sm text-purple-700">Citas Pendientes</p>
+                        <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg transition-colors duration-300">
+                            <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">{patientStats.upcomingAppointments}</p>
+                            <p className="text-sm text-purple-700 dark:text-purple-300">Citas Pendientes</p>
                         </div>
                     </div>
 
                     {expandedStats && (
-                        <div className="border-t border-slate-200 pt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="border-t border-slate-200 dark:border-gray-600 pt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                             <div className="flex items-center gap-2">
                                 <Heart className="w-4 h-4 text-red-400" />
-                                <span className="text-slate-600">
-                                    Estado general: <span className="font-medium text-emerald-600">Estable</span>
+                                <span className="text-slate-600 dark:text-gray-400">
+                                    Estado general: <span className="font-medium text-emerald-600 dark:text-emerald-400">Estable</span>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Activity className="w-4 h-4 text-blue-400" />
-                                <span className="text-slate-600">
-                                    Diagnósticos inactivos: <span className="font-medium">{patientStats.inactiveDiagnostics}</span>
+                                <span className="text-slate-600 dark:text-gray-400">
+                                    Diagnósticos archivados: <span className="font-medium">{patientStats.archivedDiagnostics}</span>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-slate-400" />
-                                <span className="text-slate-600">
+                                <Clock className="w-4 h-4 text-slate-400 dark:text-gray-500" />
+                                <span className="text-slate-600 dark:text-gray-400">
                                     Primera consulta: <span className="font-medium">
                                         {new Date(history.createdAt).toLocaleDateString()}
                                     </span>
@@ -291,22 +291,22 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
 
             {/* Timeline */}
             {showTimeline && (
-                <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                <div className="bg-white dark:bg-gray-800 rounded-xl border border-slate-200 dark:border-gray-700 p-6 shadow-sm transition-colors duration-300">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <h2 className="text-lg font-semibold text-slate-800 dark:text-gray-100 flex items-center gap-2">
                             <Clock className="w-5 h-5" />
                             Línea de Tiempo Médica
                         </h2>
                         <div className="flex items-center gap-4">
                             {/* Búsqueda */}
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Buscar eventos..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="pl-10 pr-4 py-2 text-sm border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
                                 />
                             </div>
                             
@@ -314,7 +314,7 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
                             <select
                                 value={timelineFilter}
                                 onChange={(e) => setTimelineFilter(e.target.value as any)}
-                                className="text-sm border border-slate-300 rounded-lg px-3 py-2"
+                                className="text-sm border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-3 py-2 transition-colors duration-300"
                             >
                                 <option value="all">Todos los eventos</option>
                                 <option value="diagnostics">Solo diagnósticos</option>
@@ -325,11 +325,11 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
 
                     {filteredTimeline.length === 0 ? (
                         <div className="text-center py-8">
-                            <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-slate-900 mb-2">
+                            <Calendar className="w-12 h-12 text-slate-400 dark:text-gray-500 mx-auto mb-4" />
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-2">
                                 No se encontraron eventos
                             </h3>
-                            <p className="text-sm text-slate-500">
+                            <p className="text-sm text-slate-500 dark:text-gray-400">
                                 {searchTerm || timelineFilter !== "all" 
                                     ? "Intenta ajustar los filtros de búsqueda"
                                     : "Aún no hay eventos médicos registrados para este paciente"
@@ -342,24 +342,24 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
                                 <div key={item.id} className="flex gap-4">
                                     {/* Timeline line */}
                                     <div className="flex flex-col items-center">
-                                        <div className="w-10 h-10 bg-white border-2 border-slate-200 rounded-full flex items-center justify-center shadow-sm">
+                                        <div className="w-10 h-10 bg-white dark:bg-gray-700 border-2 border-slate-200 dark:border-gray-600 rounded-full flex items-center justify-center shadow-sm transition-colors duration-300">
                                             {getTypeIcon(item.type)}
                                         </div>
                                         {index < filteredTimeline.length - 1 && (
-                                            <div className="w-0.5 h-16 bg-slate-200 mt-2"></div>
+                                            <div className="w-0.5 h-16 bg-slate-200 dark:bg-gray-600 mt-2"></div>
                                         )}
                                     </div>
 
                                     {/* Event content */}
                                     <div className="flex-1 pb-8">
-                                        <div className="bg-slate-50 rounded-lg p-4">
+                                        <div className="bg-slate-50 dark:bg-gray-700/50 rounded-lg p-4 transition-colors duration-300">
                                             <div className="flex items-start justify-between mb-2">
                                                 <div>
-                                                    <h3 className="font-medium text-slate-900 flex items-center gap-2">
+                                                    <h3 className="font-medium text-slate-900 dark:text-gray-100 flex items-center gap-2">
                                                         {item.title}
                                                         {item.status && getStatusIcon(item.status)}
                                                     </h3>
-                                                    <p className="text-sm text-slate-500">
+                                                    <p className="text-sm text-slate-500 dark:text-gray-400">
                                                         {new Date(item.date).toLocaleDateString('es', {
                                                             weekday: 'long',
                                                             year: 'numeric',
@@ -370,15 +370,15 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
                                                 </div>
                                                 <span className={`px-2 py-1 text-xs rounded-full ${
                                                     item.type === "diagnostic" 
-                                                        ? "bg-blue-100 text-blue-700"
-                                                        : "bg-purple-100 text-purple-700"
+                                                        ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                                                        : "bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300"
                                                 }`}>
                                                     {item.type === "diagnostic" ? "Diagnóstico" : "Cita"}
                                                 </span>
                                             </div>
                                             
                                             {item.description && (
-                                                <p className="text-sm text-slate-600 mb-3">
+                                                <p className="text-sm text-slate-600 dark:text-gray-400 mb-3">
                                                     {item.description}
                                                 </p>
                                             )}
@@ -400,7 +400,7 @@ export const PatientMedicalSummaryView: React.FC<PatientMedicalSummaryViewProps>
 
             {/* Información de Paginación */}
             {pagination && pagination.totalPages > 1 && (
-                <div className="text-center text-sm text-slate-500">
+                <div className="text-center text-sm text-slate-500 dark:text-gray-400">
                     <p>
                         Mostrando página {pagination.page} de {pagination.totalPages}
                         <span className="mx-1">•</span>

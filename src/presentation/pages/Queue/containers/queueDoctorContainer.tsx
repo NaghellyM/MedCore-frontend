@@ -32,6 +32,9 @@ export function DoctorQueueContainer({
         refetch,
         callNext,
         callingNext,
+        pauseAttention,
+        pausing,
+        isPaused,
         nextUp,
         currentPatient,
         completeAttention,
@@ -39,6 +42,25 @@ export function DoctorQueueContainer({
     } = useDoctorCurrentQueue(doctorId, { pollMs });
 
     const canCallNext = (totalsByStatus["WAITING"] ?? 0) > 0 && !callingNext && !currentPatient;
+    const canPauseAttention = !pausing && !callingNext && !completing;
+
+    //
+    const handlePauseAttention = async () => {
+        if (!canPauseAttention) {
+            warning('No se puede pausar la atención',
+                'No se puede pausar la atención mientras se está llamando a un paciente o completando una atención');
+            return;
+        }
+        try {
+            await asyncOperation.execute(() => pauseAttention(), {
+                loadingMessage: 'Pausando atención...',
+                successMessage: `Atención ha sido pausada exitosamente`,
+                errorMessage: 'Ha ocurrido un error inesperado'
+            });
+        } catch (error) {
+            console.error('Error al pausar la atención:', error);
+        }
+    };
 
     const handleCallNext = async () => {
         if (!canCallNext) {
@@ -96,6 +118,10 @@ export function DoctorQueueContainer({
                 onCallNext={handleCallNext}
                 callingNext={callingNext}
                 canCallNext={canCallNext}
+                canPauseAttention={!pausing && !callingNext && !completing}
+                onPauseAttention={handlePauseAttention}
+                pausing={pausing}
+                isPaused={isPaused}
                 nextUp={transformNextPatient(nextUp)}
                 currentPatient={currentPatient}
                 onCompleteAttention={handleCompleteAttention}

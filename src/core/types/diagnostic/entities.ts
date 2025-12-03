@@ -4,7 +4,10 @@
  */
 
 // Estados del diagnóstico (actualizado según respuesta real del backend)
-export type DiagnosticState = "ACTIVE" | "INACTIVE" | "DELETED";
+// ACTIVE: Diagnóstico activo y visible
+// ARCHIVED: Diagnóstico archivado (oculto pero recuperable)
+// DELETED: Diagnóstico eliminado lógicamente (soft delete)
+export type DiagnosticState = "ACTIVE" | "ARCHIVED" | "DELETED";
 
 // Documentos diagnósticos (según respuesta real del backend)
 export interface DiagnosticDocument {

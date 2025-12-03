@@ -7,9 +7,10 @@
 import { useState, useEffect, useRef } from "react";
 import { AlertCircle, Loader2, ArrowLeft, Save, Edit3, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getHomeRouteByRole } from "../../../../core/utils/navigation";
 
 // Componentes de diagnóstico
-import { DeleteDiagnosticButton, DiagnosticStatusIndicator } from "../../../components/diagnostic";
+import { DeleteDiagnosticButton, DiagnosticStatusIndicator } from "../../../components/globals/diagnostic";
 
 // Hooks de diagnóstico
 import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic";
@@ -256,60 +257,60 @@ export function SimpleEditMedicalHistoryForm({
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             {/* Header */}
-            <div className="bg-white rounded-lg border p-6">
+            <div className="bg-card rounded-lg border border-border p-6 transition-colors duration-300">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <button
-                            onClick={() => navigate(-1)}
-                            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+                            onClick={() => navigate(getHomeRouteByRole())}
+                            className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
                         >
                             <ArrowLeft className="h-5 w-5" />
                             <span>Volver</span>
                         </button>
-                        <div className="h-6 w-px bg-gray-300"></div>
-                        <h1 className="text-xl font-semibold text-gray-900">
+                        <div className="h-6 w-px bg-border"></div>
+                        <h1 className="text-xl font-semibold text-foreground">
                             Editar Historia Clínica
                         </h1>
                     </div>
-                    <div className="text-sm text-gray-500">
-                        ID: <code className="bg-gray-100 px-2 py-1 rounded">{historyId}</code>
+                    <div className="text-sm text-muted-foreground">
+                        ID: <code className="bg-muted px-2 py-1 rounded text-foreground">{historyId}</code>
                     </div>
                 </div>
             </div>
 
             {/* Información de la historia */}
-            <div className="bg-white rounded-lg border p-6">
-                <h2 className="text-lg font-semibold mb-4">Información de la Historia</h2>
+            <div className="bg-card rounded-lg border border-border p-6 transition-colors duration-300">
+                <h2 className="text-lg font-semibold text-foreground mb-4">Información de la Historia</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
                             ID del Paciente
                         </label>
-                        <div className="text-sm text-gray-900">{medicalHistory.patientId}</div>
+                        <div className="text-sm text-foreground">{medicalHistory.patientId}</div>
                     </div>
                     
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
                             Médico Tratante
                         </label>
-                        <div className="text-sm text-gray-900">Dr. {medicalHistory.doctor.fullname}</div>
+                        <div className="text-sm text-foreground">Dr. {medicalHistory.doctor.fullname}</div>
                     </div>
                     
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
                             Fecha de Creación
                         </label>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-foreground">
                             {new Date(medicalHistory.createdAt).toLocaleDateString()}
                         </div>
                     </div>
                     
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-muted-foreground mb-1">
                             Última Actualización
                         </label>
-                        <div className="text-sm text-gray-900">
+                        <div className="text-sm text-foreground">
                             {new Date(medicalHistory.updatedAt).toLocaleDateString()}
                         </div>
                     </div>
@@ -317,21 +318,21 @@ export function SimpleEditMedicalHistoryForm({
             </div>
 
             {/* Diagnósticos */}
-            <div className="bg-white rounded-lg border p-6">
+            <div className="bg-card rounded-lg border border-border p-6 transition-colors duration-300">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-lg font-semibold text-foreground">
                             Diagnósticos Asociados ({diagnostics.length})
                         </h2>
                         
                         {/* Toggle para mostrar eliminados (solo admin) */}
                         {canViewDeleted && (
-                            <label className="flex items-center gap-2 text-sm text-gray-600">
+                            <label className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <input
                                     type="checkbox"
                                     checked={showDeletedDiagnostics}
                                     onChange={(e) => setShowDeletedDiagnostics(e.target.checked)}
-                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                    className="rounded border-border text-primary focus:ring-primary"
                                 />
                                 <span>Mostrar eliminados</span>
                             </label>
@@ -343,7 +344,7 @@ export function SimpleEditMedicalHistoryForm({
                             <button
                                 onClick={saveDiagnostic}
                                 disabled={isSaving}
-                                className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                                className="flex items-center space-x-2 px-3 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors"
                             >
                                 <Save className="h-4 w-4" />
                                 <span>{isSaving ? 'Guardando...' : 'Guardar'}</span>
@@ -351,7 +352,7 @@ export function SimpleEditMedicalHistoryForm({
                             <button
                                 onClick={cancelEditing}
                                 disabled={isSaving}
-                                className="flex items-center space-x-2 px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 disabled:opacity-50"
+                                className="flex items-center space-x-2 px-3 py-2 bg-muted text-foreground rounded-md hover:bg-muted/80 disabled:opacity-50 transition-colors"
                             >
                                 <X className="h-4 w-4" />
                                 <span>Cancelar</span>
@@ -361,16 +362,16 @@ export function SimpleEditMedicalHistoryForm({
                 </div>
                 
                 {diagnostics.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-muted-foreground">
                         No hay diagnósticos registrados
                     </div>
                 ) : (
                     <div className="space-y-4">
                         {filterDiagnostics(diagnostics).map((diagnostic, index) => (
-                            <div key={diagnostic.id} className="border rounded-lg p-4">
+                            <div key={diagnostic.id} className="border border-border rounded-lg p-4 transition-colors duration-300">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3">
-                                        <h3 className="font-medium text-lg">Diagnóstico #{index + 1}</h3>
+                                        <h3 className="font-medium text-lg text-foreground">Diagnóstico #{index + 1}</h3>
                                         <DiagnosticStatusIndicator 
                                             state={diagnostic.state} 
                                             size="sm"
@@ -381,7 +382,7 @@ export function SimpleEditMedicalHistoryForm({
                                             <>
                                                 <button
                                                     onClick={() => startEditingDiagnostic(diagnostic)}
-                                                    className="flex items-center space-x-1 px-2 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm"
+                                                    className="flex items-center space-x-1 px-2 py-1 text-primary hover:bg-primary/10 rounded text-sm transition-colors"
                                                 >
                                                     <Edit3 className="h-4 w-4" />
                                                     <span>Editar</span>
@@ -402,98 +403,98 @@ export function SimpleEditMedicalHistoryForm({
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                     Título *
                                                 </label>
                                                 <input
                                                     type="text"
                                                     value={editForm.title || ''}
                                                     onChange={(e) => handleFormChange('title', e.target.value)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                     Fecha de Consulta *
                                                 </label>
                                                 <input
                                                     type="date"
                                                     value={editForm.consultDate || ''}
                                                     onChange={(e) => handleFormChange('consultDate', e.target.value)}
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                                 />
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                 Descripción *
                                             </label>
                                             <textarea
                                                 value={editForm.description || ''}
                                                 onChange={(e) => handleFormChange('description', e.target.value)}
                                                 rows={3}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                 Síntomas *
                                             </label>
                                             <textarea
                                                 value={editForm.symptoms || ''}
                                                 onChange={(e) => handleFormChange('symptoms', e.target.value)}
                                                 rows={2}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                 Diagnóstico *
                                             </label>
                                             <textarea
                                                 value={editForm.diagnosis || ''}
                                                 onChange={(e) => handleFormChange('diagnosis', e.target.value)}
                                                 rows={2}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                 Tratamiento *
                                             </label>
                                             <textarea
                                                 value={editForm.treatment || ''}
                                                 onChange={(e) => handleFormChange('treatment', e.target.value)}
                                                 rows={3}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                 Observaciones
                                             </label>
                                             <textarea
                                                 value={editForm.observations || ''}
                                                 onChange={(e) => handleFormChange('observations', e.target.value)}
                                                 rows={2}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label className="block text-sm font-medium text-muted-foreground mb-1">
                                                 Próxima Cita
                                             </label>
                                             <input
                                                 type="date"
                                                 value={editForm.nextAppointment || ''}
                                                 onChange={(e) => handleFormChange('nextAppointment', e.target.value)}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                                             />
                                         </div>
                                     </div>
@@ -502,54 +503,54 @@ export function SimpleEditMedicalHistoryForm({
                                     <div className="space-y-3">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                             <div>
-                                                <span className="font-medium text-gray-700">Título:</span>
-                                                <p className="mt-1">{diagnostic.title}</p>
+                                                <span className="font-medium text-muted-foreground">Título:</span>
+                                                <p className="mt-1 text-foreground">{diagnostic.title}</p>
                                             </div>
                                             <div>
-                                                <span className="font-medium text-gray-700">Fecha:</span>
-                                                <p className="mt-1">{new Date(diagnostic.consultDate).toLocaleDateString()}</p>
+                                                <span className="font-medium text-muted-foreground">Fecha:</span>
+                                                <p className="mt-1 text-foreground">{new Date(diagnostic.consultDate).toLocaleDateString()}</p>
                                             </div>
                                         </div>
 
                                         {diagnostic.description && (
                                             <div>
-                                                <span className="font-medium text-gray-700">Descripción:</span>
-                                                <p className="mt-1 text-sm">{diagnostic.description}</p>
+                                                <span className="font-medium text-muted-foreground">Descripción:</span>
+                                                <p className="mt-1 text-sm text-foreground">{diagnostic.description}</p>
                                             </div>
                                         )}
 
                                         {diagnostic.symptoms && (
                                             <div>
-                                                <span className="font-medium text-gray-700">Síntomas:</span>
-                                                <p className="mt-1 text-sm">{diagnostic.symptoms}</p>
+                                                <span className="font-medium text-muted-foreground">Síntomas:</span>
+                                                <p className="mt-1 text-sm text-foreground">{diagnostic.symptoms}</p>
                                             </div>
                                         )}
 
                                         {diagnostic.diagnosis && (
                                             <div>
-                                                <span className="font-medium text-gray-700">Diagnóstico:</span>
-                                                <p className="mt-1 text-sm">{diagnostic.diagnosis}</p>
+                                                <span className="font-medium text-muted-foreground">Diagnóstico:</span>
+                                                <p className="mt-1 text-sm text-foreground">{diagnostic.diagnosis}</p>
                                             </div>
                                         )}
 
                                         {diagnostic.treatment && (
                                             <div>
-                                                <span className="font-medium text-gray-700">Tratamiento:</span>
-                                                <p className="mt-1 text-sm">{diagnostic.treatment}</p>
+                                                <span className="font-medium text-muted-foreground">Tratamiento:</span>
+                                                <p className="mt-1 text-sm text-foreground">{diagnostic.treatment}</p>
                                             </div>
                                         )}
 
                                         {diagnostic.observations && (
                                             <div>
-                                                <span className="font-medium text-gray-700">Observaciones:</span>
-                                                <p className="mt-1 text-sm text-gray-600">{diagnostic.observations}</p>
+                                                <span className="font-medium text-muted-foreground">Observaciones:</span>
+                                                <p className="mt-1 text-sm text-muted-foreground">{diagnostic.observations}</p>
                                             </div>
                                         )}
 
                                         {diagnostic.nextAppointment && (
                                             <div>
-                                                <span className="font-medium text-gray-700">Próxima Cita:</span>
-                                                <p className="mt-1 text-sm">{new Date(diagnostic.nextAppointment).toLocaleDateString()}</p>
+                                                <span className="font-medium text-muted-foreground">Próxima Cita:</span>
+                                                <p className="mt-1 text-sm text-foreground">{new Date(diagnostic.nextAppointment).toLocaleDateString()}</p>
                                             </div>
                                         )}
                                     </div>
@@ -561,12 +562,12 @@ export function SimpleEditMedicalHistoryForm({
             </div>
 
             {/* Instrucciones de uso */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-primary/10 border border-primary/30 rounded-lg p-4 transition-colors duration-300">
                 <div className="flex items-center space-x-2">
-                    <AlertCircle className="h-5 w-5 text-blue-600" />
+                    <AlertCircle className="h-5 w-5 text-primary" />
                     <div>
-                        <h3 className="font-medium text-blue-800">Cómo editar</h3>
-                        <p className="text-sm text-blue-700 mt-1">
+                        <h3 className="font-medium text-foreground">Cómo editar</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
                             Haz clic en "Editar" junto a cualquier diagnóstico para modificar su información. 
                             Los campos marcados con (*) son obligatorios.
                         </p>
@@ -576,7 +577,7 @@ export function SimpleEditMedicalHistoryForm({
                                     const testUrl = `http://localhost:3003/api/v1/medical-history/${historyId}`;
                                     window.open(testUrl, '_blank');
                                 }}
-                                className="px-3 py-1 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200"
+                                className="px-3 py-1 bg-primary/20 text-primary rounded text-xs hover:bg-primary/30 transition-colors"
                             >
                                 Ver datos del backend
                             </button>
@@ -586,7 +587,7 @@ export function SimpleEditMedicalHistoryForm({
             </div>
             {/* Indicador de guardado */}
             {isSaving && (
-                <div className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg">
+                <div className="fixed bottom-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow-lg">
                     <div className="flex items-center space-x-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
                         <span className="text-sm">Guardando cambios...</span>

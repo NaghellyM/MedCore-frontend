@@ -1,4 +1,4 @@
-import { DashboardLayout } from "../../../layouts/layout";
+import { DashboardLayout } from "../../../layouts/dashboardLayout";
 import DoctorSidebar from "../../doctor/components/doctorSideBar";
 import EncounterForm from "../components/encounterForm";
 import Swal from "sweetalert2";

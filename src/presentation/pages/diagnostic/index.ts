@@ -5,7 +5,7 @@
  */
 
 // Components
-export { DiagnosticCard } from './components/diagnosticCard';
+export { DiagnosticCard } from './components/DiagnosticCard';
 
 // Forms  
 export { DiagnosticForm } from './forms/diagnosticForm';

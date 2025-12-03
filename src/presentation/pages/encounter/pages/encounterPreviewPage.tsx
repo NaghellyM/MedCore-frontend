@@ -1,7 +1,6 @@
-// src/presentation/pages/encounter/pages/EncounterPreviewPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DashboardLayout } from "../../../layouts/layout";
+import { DashboardLayout } from "../../../layouts/dashboardLayout";
 import DoctorSidebar from "../../doctor/components/doctorSideBar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";

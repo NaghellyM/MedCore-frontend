@@ -13,10 +13,7 @@ export type MyDoctorQueueContainerProps = {
     className?: string;
 };
 
-/**
- * Container para la cola del doctor autenticado
- * Usa el ID del doctor logueado automáticamente
- */
+// Usa el hook useMyDoctorQueue que obtiene automáticamente el ID del doctor autenticado
 export function MyDoctorQueueContainer({
     onBack,
     pollMs = 15000,
@@ -34,6 +31,9 @@ export function MyDoctorQueueContainer({
         refetch,
         callNext,
         callingNext,
+        pauseAttention,
+        pausing,
+        isPaused,
         nextUp,
         currentPatient,
         completeAttention,
@@ -42,6 +42,25 @@ export function MyDoctorQueueContainer({
 
     const canCallNext = (totalsByStatus["WAITING"] ?? 0) > 0 && !callingNext && !currentPatient;
 
+    const canPauseAttention = !pausing && !callingNext && !completing;
+
+    const handlePauseAttention = async () => {
+        if (!canPauseAttention) {
+            warning('No se puede pausar la atención',
+                'No se puede pausar la atención mientras se está llamando a un paciente o completando una atención');
+            return;
+        }
+        
+        try {
+            await asyncOperation.execute(() => pauseAttention(), {
+                loadingMessage: 'Pausando atención...',
+                successMessage: `Atención ha sido pausada exitosamente`,
+                errorMessage: 'Ha ocurrido un error inesperado'
+            });
+        } catch (error) {
+            console.error('Error al pausar la atención:', error);
+        }
+    };
     const handleCallNext = async () => {
         if (!canCallNext) {
             warning('No se puede llamar al siguiente paciente',
@@ -88,6 +107,7 @@ export function MyDoctorQueueContainer({
                 description: "Tu cola está vacía en este momento.",
                 className: className
             }}
+            
         >
             <DoctorQueue
                 className={className}
@@ -99,6 +119,10 @@ export function MyDoctorQueueContainer({
                 onCallNext={handleCallNext}
                 callingNext={callingNext}
                 canCallNext={canCallNext}
+                canPauseAttention={canPauseAttention}
+                onPauseAttention={handlePauseAttention}
+                pausing={pausing}
+                isPaused={isPaused}
                 nextUp={transformNextPatient(nextUp)}
                 currentPatient={currentPatient}
                 onCompleteAttention={handleCompleteAttention}

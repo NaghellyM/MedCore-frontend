@@ -95,16 +95,16 @@ export function QueuePatientContainer({
     // Estado de carga
     if (loading) {
         return (
-            <Card className="w-full max-w-md border-0 shadow-lg">
+            <Card className="w-full max-w-md border-0 shadow-xl bg-card">
                 <CardHeader>
-                    <CardTitle className="text-slate-900">Obteniendo tu turno…</CardTitle>
-                    <CardDescription className="text-slate-600">Por favor, espera un momento.</CardDescription>
+                    <CardTitle className="text-foreground">Obteniendo tu turno…</CardTitle>
+                    <CardDescription className="text-muted-foreground">Por favor, espera un momento.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-6 space-y-4">
-                    <div className="h-24 w-full rounded-2xl bg-slate-100 animate-pulse" />
+                    <div className="h-24 w-full rounded-2xl bg-muted animate-pulse" />
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="h-16 rounded-2xl bg-slate-100 animate-pulse" />
-                        <div className="h-16 rounded-2xl bg-slate-100 animate-pulse" />
+                        <div className="h-16 rounded-2xl bg-muted animate-pulse" />
+                        <div className="h-16 rounded-2xl bg-muted animate-pulse" />
                     </div>
                 </CardContent>
             </Card>
@@ -114,10 +114,10 @@ export function QueuePatientContainer({
     // Estado cuando no está en cola y no hay error de autenticación
     if (!position && !error && showJoinQueueOption) {
         return (
-            <Card className="w-full max-w-md border-0 shadow-lg">
+            <Card className="w-full max-w-md border-0 shadow-xl bg-card">
                 <CardHeader>
-                    <CardTitle className="text-slate-900">No estás en ninguna cola</CardTitle>
-                    <CardDescription className="text-slate-600">
+                    <CardTitle className="text-foreground">No estás en ninguna cola</CardTitle>
+                    <CardDescription className="text-muted-foreground">
                         ¿Deseas unirte a una cola para tu cita?
                     </CardDescription>
                 </CardHeader>
@@ -125,6 +125,7 @@ export function QueuePatientContainer({
                     <Button 
                         onClick={handleJoinQueue} 
                         disabled={joiningQueue || !defaultAppointmentId}
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                         {joiningQueue ? "Uniéndose..." : "Unirse a la cola"}
                     </Button>
@@ -141,15 +142,17 @@ export function QueuePatientContainer({
     // Estado de error o sin datos
     if (error || !derived) {
         return (
-            <Card className="w-full max-w-md border-0 shadow-lg">
+            <Card className="w-full max-w-md border-0 shadow-xl bg-card">
                 <CardHeader>
-                    <CardTitle className="text-slate-900">No pudimos cargar tu turno</CardTitle>
-                    <CardDescription className="text-slate-600">
+                    <CardTitle className="text-foreground">No pudimos cargar tu turno</CardTitle>
+                    <CardDescription className="text-muted-foreground">
                         {error ?? "Intenta nuevamente o vuelve más tarde."}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-6 flex items-center gap-2">
-                    <Button onClick={refetch}>Reintentar</Button>
+                    <Button onClick={refetch} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                        Reintentar
+                    </Button>
                     {onBack && (
                         <Button variant="ghost" onClick={onBack}>
                             Volver

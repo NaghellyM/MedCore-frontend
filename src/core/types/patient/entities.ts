@@ -2,7 +2,7 @@
  * TIPOS UNIFICADOS DE PACIENTES
  * =============================
  * Este archivo unifica todas las interfaces de pacientes eliminando duplicaciones
- * y resolviendo inconsistencias entre models/ y types/
+ * y resendo inconsistencias entre models/ y types/
  */
 
 // Estados y enums base

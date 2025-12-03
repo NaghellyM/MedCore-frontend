@@ -8,7 +8,9 @@ import type {
     DeleteDiagnosticResponse,
     UpdateDiagnosticDto,
     DiagnosticState,
-    DiagnosticSearchParams
+    DiagnosticSearchParams,
+    GetPredefinedDiagnosticsResponse,
+    PredefinedDiagnosticFilters
 } from "../types/diagnostic";
 import type { CreateDiagnosticDto } from "../types/medicalHistory/entities";
 
@@ -58,7 +60,31 @@ export const diagnosticService = {
         return response.data;
     },
 
-    // Crear un nuevo diagnóstico asociado a un paciente
+    // Obtener diagnósticos predefinidos del sistema
+    async getPredefinedDiagnostics(
+        filters?: PredefinedDiagnosticFilters
+    ): Promise<GetPredefinedDiagnosticsResponse> {
+        const queryParams = new URLSearchParams();
+        
+        if (filters) {
+            if (filters.category) {
+                queryParams.append('category', filters.category);
+            }
+            if (filters.severity) {
+                queryParams.append('severity', filters.severity);
+            }
+        }
+
+        const url = queryParams.toString()
+            ? `${diagnosticBaseUrl}/predefined/list?${queryParams.toString()}`
+            : `${diagnosticBaseUrl}/predefined/list`;
+            
+        const response = await httpPatient.get<GetPredefinedDiagnosticsResponse>(url);
+        return response.data;
+    },
+
+    // Crear un nuevo diagnóstico para un paciente
+    // POST /diagnostics/patient/:patientId
     async createDiagnostic(
         patientId: string, 
         diagnosticData: CreateDiagnosticDto
@@ -96,12 +122,13 @@ export const diagnosticService = {
     },
 
     
-    // Eliminar un diagnóstico por su ID
+    // Eliminar un diagnóstico por su ID (soft delete usando PATCH al endpoint de estado)
     async deleteDiagnostic(
         diagnosticId: string
     ): Promise<DeleteDiagnosticResponse> {
-        const response = await httpPatient.delete<DeleteDiagnosticResponse>(
-            `${diagnosticBaseUrl}/${diagnosticId}`
+        const response = await httpPatient.patch<DeleteDiagnosticResponse>(
+            `${diagnosticBaseUrl}/${diagnosticId}/state`,
+            { state: "DELETED" }
         );
         return response.data;
     }

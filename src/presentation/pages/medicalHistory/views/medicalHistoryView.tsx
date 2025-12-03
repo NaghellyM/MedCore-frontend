@@ -12,7 +12,7 @@ import {
     Mail
 } from "lucide-react";
 import type { MedicalHistory, DiagnosticState } from "../../../../core/types/medicalHistory/index";
-import { DiagnosticCard } from "../../diagnostic/components/diagnosticCard";
+import { DiagnosticCard } from "../../diagnostic/components/DiagnosticCard";
 import { useDiagnosticFilter } from "../../../../core/hooks/diagnostic/useDiagnosticFilter";
 import { useAuth } from "../../../../core/context/authContext";
 
@@ -85,7 +85,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     const stats = useMemo(() => ({
         total: localDiagnostics.length,
         active: localDiagnostics.filter((d: any) => d.state === "ACTIVE").length,
-        inactive: localDiagnostics.filter((d: any) => d.state === "INACTIVE").length,
+        archived: localDiagnostics.filter((d: any) => d.state === "ARCHIVED").length,
         deleted: localDiagnostics.filter((d: any) => d.state === "DELETED").length,
         withDocuments: localDiagnostics.filter((d: any) => d.documents && d.documents.length > 0).length,
         withNextAppointment: localDiagnostics.filter((d: any) => d.nextAppointment).length
@@ -93,17 +93,17 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
 
     const getStateColor = (state: DiagnosticState) => {
         switch (state) {
-            case "ACTIVE": return "text-emerald-600 bg-emerald-50";
-            case "INACTIVE": return "text-slate-600 bg-slate-50";
-            case "DELETED": return "text-red-600 bg-red-50";
-            default: return "text-slate-600 bg-slate-50";
+            case "ACTIVE": return "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30";
+            case "ARCHIVED": return "text-slate-600 bg-slate-50 dark:text-gray-400 dark:bg-gray-800";
+            case "DELETED": return "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/30";
+            default: return "text-slate-600 bg-slate-50 dark:text-gray-400 dark:bg-gray-800";
         }
     };
 
     const getStateLabel = (state: DiagnosticState) => {
         switch (state) {
             case "ACTIVE": return "Activos";
-            case "INACTIVE": return "Inactivos";
+            case "ARCHIVED": return "Archivados";
             case "DELETED": return "Eliminados";
             default: return "Todos";
         }
@@ -112,47 +112,47 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     return (
         <div className="flex flex-col gap-6">
             {/* Encabezado de la Historia Clínica */}
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <section className="rounded-2xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm transition-colors duration-300">
                 <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <FileText className="w-6 h-6 text-blue-600" />
+                        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
+                            <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-semibold text-slate-900">
+                            <h1 className="text-xl font-semibold text-slate-900 dark:text-gray-100">
                                 Historia Clínica
                             </h1>
-                            <p className="text-sm text-slate-500">
+                            <p className="text-sm text-slate-500 dark:text-gray-400">
                                 ID: {history.id}
                             </p>
                         </div>
                     </div>
-                    <div className="text-right text-sm text-slate-500">
+                    <div className="text-right text-sm text-slate-500 dark:text-gray-400">
                         <p>Creada: {new Date(history.createdAt).toLocaleDateString()}</p>
                         <p>Actualizada: {new Date(history.updatedAt).toLocaleDateString()}</p>
                     </div>
                 </div>
 
                 {/* Información del Médico */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 dark:bg-gray-700/50 rounded-lg transition-colors duration-300">
                     <div className="flex items-center gap-3">
-                        <Stethoscope className="w-5 h-5 text-blue-600" />
+                        <Stethoscope className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         <div>
-                            <p className="text-sm font-medium text-slate-900">
+                            <p className="text-sm font-medium text-slate-900 dark:text-gray-100">
                                 Médico Tratante
                             </p>
-                            <p className="text-sm text-slate-700">
+                            <p className="text-sm text-slate-700 dark:text-gray-300">
                                 Dr. {history.doctor.fullname}
                             </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-blue-600" />
+                        <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         <div>
-                            <p className="text-sm font-medium text-slate-900">
+                            <p className="text-sm font-medium text-slate-900 dark:text-gray-100">
                                 Contacto
                             </p>
-                            <p className="text-sm text-slate-700">
+                            <p className="text-sm text-slate-700 dark:text-gray-300">
                                 {history.doctor.email}
                             </p>
                         </div>
@@ -162,16 +162,16 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
 
             {/* Estadísticas */}
             {showStatistics && (
-                <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <section className="rounded-2xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm transition-colors duration-300">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <h2 className="text-lg font-semibold text-slate-800 dark:text-gray-100 flex items-center gap-2">
                             <TrendingUp className="w-5 h-5" />
                             {isPatient ? "Resumen" : "Resumen Estadístico"}
                         </h2>
                         {!isPatient && (
                             <button
                                 onClick={() => setShowStatisticsDetails(!showStatisticsDetails)}
-                                className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
                             >
                                 {showStatisticsDetails ? "Ocultar" : "Ver más"}
                                 {showStatisticsDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -180,27 +180,27 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="text-center p-3 bg-blue-50 rounded-lg">
-                            <p className="text-2xl font-bold text-blue-600">{stats.active}</p>
-                            <p className="text-sm text-blue-700">Total Diagnósticos</p>
+                        <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg transition-colors duration-300">
+                            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.active}</p>
+                            <p className="text-sm text-blue-700 dark:text-blue-300">Total Diagnósticos</p>
                         </div>
-                        <div className="text-center p-3 bg-amber-50 rounded-lg">
-                            <p className="text-2xl font-bold text-amber-600">{stats.withDocuments}</p>
-                            <p className="text-sm text-amber-700">Con Documentos</p>
+                        <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/30 rounded-lg transition-colors duration-300">
+                            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.withDocuments}</p>
+                            <p className="text-sm text-amber-700 dark:text-amber-300">Con Documentos</p>
                         </div>
                     </div>
 
                     {!isPatient && showStatisticsDetails && (
-                        <div className="mt-4 pt-4 border-t border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-gray-600 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-slate-400" />
-                                <span className="text-slate-600">
+                                <Calendar className="w-4 h-4 text-slate-400 dark:text-gray-500" />
+                                <span className="text-slate-600 dark:text-gray-400">
                                     Citas programadas: <span className="font-medium">{stats.withNextAppointment}</span>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Activity className="w-4 h-4 text-slate-400" />
-                                <span className="text-slate-600">
+                                <Activity className="w-4 h-4 text-slate-400 dark:text-gray-500" />
+                                <span className="text-slate-600 dark:text-gray-400">
                                     Tasa de actividad: <span className="font-medium">
                                         {stats.total > 0 ? Math.round((stats.active / stats.total) * 100) : 0}%
                                     </span>
@@ -231,7 +231,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                             >
                                 Todos ({stats.total})
                             </button>
-                            {(["ACTIVE", "INACTIVE"] as DiagnosticState[]).map(state => (
+                            {(["ACTIVE", "ARCHIVED"] as DiagnosticState[]).map(state => (
                                 <button
                                     key={state}
                                     onClick={() => setSelectedState(state)}
@@ -251,8 +251,8 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                                     onClick={() => setSelectedState("DELETED")}
                                     className={`px-3 py-1 text-xs rounded-full border transition-colors ${
                                         selectedState === "DELETED"
-                                            ? "bg-red-50 text-red-700 border-red-200"
-                                            : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
+                                            ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800"
+                                            : "bg-white dark:bg-gray-700 text-slate-600 dark:text-gray-300 border-slate-300 dark:border-gray-600 hover:bg-slate-50 dark:hover:bg-gray-600"
                                     }`}
                                 >
                                     Eliminados ({stats.deleted})
@@ -263,12 +263,12 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                         {/* Toggle para mostrar/ocultar eliminados (solo admin) */}
                         {canViewDeleted && stats.deleted > 0 && (
                             <div className="flex items-center gap-2 ml-4">
-                                <label className="flex items-center gap-2 text-sm text-slate-600">
+                                <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-gray-400">
                                     <input
                                         type="checkbox"
                                         checked={showDeleted}
                                         onChange={(e) => setShowDeleted(e.target.checked)}
-                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                        className="rounded border-slate-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
                                     />
                                     <span>Incluir eliminados en vista general</span>
                                 </label>
@@ -276,7 +276,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                         )}
 
                         <div className="flex items-center gap-2 ml-auto">
-                            <span className="text-sm text-slate-600">Ordenar por:</span>
+                            <span className="text-sm text-slate-600 dark:text-gray-400">Ordenar por:</span>
                             <select
                                 value={`${sortBy}-${sortOrder}`}
                                 onChange={(e) => {
@@ -284,7 +284,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                                     setSortBy(newSortBy as "date" | "title");
                                     setSortOrder(newSortOrder as "asc" | "desc");
                                 }}
-                                className="text-sm border border-slate-300 rounded px-2 py-1"
+                                className="text-sm border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded px-2 py-1 transition-colors duration-300"
                             >
                                 <option value="date-desc">Fecha (más reciente)</option>
                                 <option value="date-asc">Fecha (más antigua)</option>
@@ -299,17 +299,17 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
             {/* Lista de Diagnósticos */}
             <section className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-slate-800">
+                    <h2 className="text-lg font-semibold text-slate-800 dark:text-gray-100">
                         Diagnósticos
                         {selectedState !== "all" && (
-                            <span className="ml-2 text-sm font-normal text-slate-500">
+                            <span className="ml-2 text-sm font-normal text-slate-500 dark:text-gray-400">
                                 ({filteredDiagnostics.length} de {localDiagnostics.length})
                             </span>
                         )}
                     </h2>
                     
                     {filteredDiagnostics.length > 0 && (
-                        <div className="flex items-center gap-2 text-sm text-slate-500">
+                        <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-gray-400">
                             <Clock className="w-4 h-4" />
                             <span>
                                 Última consulta: {
@@ -323,15 +323,15 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                 </div>
 
                 {filteredDiagnostics.length === 0 ? (
-                    <div className="text-center py-8 bg-white rounded-lg border border-slate-200">
-                        <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-slate-900 mb-2">
+                    <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 transition-colors duration-300">
+                        <FileText className="w-12 h-12 text-slate-400 dark:text-gray-500 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-2">
                             {selectedState === "all" 
                                 ? "No hay diagnósticos registrados"
                                 : `No hay diagnósticos ${getStateLabel(selectedState as DiagnosticState).toLowerCase()}`
                             }
                         </h3>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 dark:text-gray-400">
                             {selectedState === "all"
                                 ? "Esta historia clínica aún no tiene diagnósticos asociados."
                                 : "Intenta cambiar el filtro para ver otros diagnósticos."

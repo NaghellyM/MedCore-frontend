@@ -1,10 +1,10 @@
 import React from 'react';
 import { ViewPatientMedicalHistoryPage } from './views/medicalHistoryPageView';
-import { SmartDashboardLayout } from '../../layouts/SmartDashboardLayout';
+import { AutoDashboardLayout } from '../../layouts/autoDashboardLayout';
 
 export const MedicalHistoryPage: React.FC = () => {
     return (
-        <SmartDashboardLayout
+        <AutoDashboardLayout
             headerHeightClass="pt-[80px]"
             showSearch={true}
             contentMaxWidthClass="max-w-7xl"
@@ -13,6 +13,6 @@ export const MedicalHistoryPage: React.FC = () => {
             sidebarStrategy="existing"
         >
             <ViewPatientMedicalHistoryPage />
-        </SmartDashboardLayout>
+        </AutoDashboardLayout>
     );
 };

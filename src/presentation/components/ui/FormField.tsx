@@ -25,7 +25,7 @@ export function FormField({
 }: FormFieldProps) {
     return (
         <div className={`space-y-1 ${className}`}>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-foreground">
                 {label}
             </label>
 
@@ -40,7 +40,7 @@ export function FormField({
                             {...field}
                             type={type}
                             placeholder={placeholder}
-                            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full p-2 border border-border rounded-lg bg-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
                         />
                     )
                 }
@@ -50,7 +50,7 @@ export function FormField({
                 <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-red-500 text-sm"
+                    className="text-destructive text-sm"
                 >
                     {error.message}
                 </motion.p>

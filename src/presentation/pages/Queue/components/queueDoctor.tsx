@@ -3,7 +3,7 @@ import { Separator } from "@radix-ui/themes";
 import { Badge } from "../../../components/ui/badge";
 import { cn } from "../../../../core/utils/cn";
 import { Button } from "../../../components/ui/button";
-import { ChevronLeft, SkipForward, Users, Clock } from "lucide-react";
+import { ChevronLeft, SkipForward, Users, Clock, Play, Pause } from "lucide-react";
 import { CurrentPatientCard } from "./currentPatientCard";
 import { PatientNameDisplay } from "../../../components/globals/PatientNameDisplay";
 import { humanizeAgo, queueStatusToLabel, queueStatusToVariant } from "../../../../core/utils/format";
@@ -12,20 +12,20 @@ import type { QueuePatient, QueueItemDTO } from "../../../../core/types/queue";
 
 const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }) => {
     const { displayState, displayText } = usePatientDisplay(item.patientId);
-    
+
     return (
-        <li className="flex items-center justify-between p-4">
+        <li className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-3">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border bg-white">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted text-foreground font-semibold text-sm">
                     N°{item.queueNumber}
                 </span>
                 <div className="min-w-0">
-                    <PatientNameDisplay 
-                        displayState={displayState} 
+                    <PatientNameDisplay
+                        displayState={displayState}
                         displayText={displayText}
-                        className="text-sm font-medium"
+                        className="text-sm font-medium text-foreground"
                     />
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-muted-foreground">
                         Creado: {new Date(item.createdAt).toLocaleString()}
                     </p>
                 </div>
@@ -33,7 +33,7 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
 
             <div className="flex items-center gap-2">
                 <Badge variant={queueStatusToVariant(item.status)}>{queueStatusToLabel(item.status)}</Badge>
-                <span className="text-xs text-slate-500">#{index + 1}</span>
+                <span className="text-xs text-muted-foreground font-medium">#{index + 1}</span>
             </div>
         </li>
     );
@@ -41,9 +41,9 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
 
 const NextUpPatientDisplay = ({ patientId }: { patientId: string }) => {
     const { displayState, displayText } = usePatientDisplay(patientId);
-    
+
     return (
-        <span className="text-xs text-slate-600">
+        <span className="text-xs text-muted-foreground">
             {displayState === 'success' ? displayText : `Paciente ${patientId.slice(-4)}`}
         </span>
     );
@@ -60,6 +60,10 @@ export type DoctorQueueProps = {
     onCallNext?: () => void;
     callingNext?: boolean;
     canCallNext?: boolean;
+    canPauseAttention?: boolean;
+    onPauseAttention?: () => void;
+    pausing?: boolean;
+    isPaused?: boolean;
     nextUp?: { queueNumber: number, patientId: string } | null;
     currentPatient?: QueuePatient | null;
     onCompleteAttention?: (appointmentId: string) => void;
@@ -76,6 +80,10 @@ export function DoctorQueue({
     onCallNext,
     callingNext,
     canCallNext,
+    canPauseAttention,
+    onPauseAttention,
+    pausing,
+    isPaused,
     nextUp,
     currentPatient,
     onCompleteAttention,
@@ -95,7 +103,7 @@ export function DoctorQueue({
             )}
 
             {/* Tarjeta principal de la cola */}
-            <Card className="border-0 shadow-lg">
+            <Card className="border border-border shadow-lg bg-card dark:shadow-none dark:border-border/50">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -105,12 +113,12 @@ export function DoctorQueue({
                                     size="icon"
                                     onClick={onBack}
                                     aria-label="Volver"
-                                    className="rounded-2xl hover:bg-[#C4E1E6]/40"
+                                    className="rounded-xl hover:bg-muted"
                                 >
                                     <ChevronLeft className="h-5 w-5" />
                                 </Button>
                             )}
-                            <CardTitle className="text-slate-900">{title}</CardTitle>
+                            <CardTitle className="text-foreground">{title}</CardTitle>
                         </div>
                         <div className="flex items-center gap-2">
                             <StatusPill label="En espera" value={totalsByStatus["WAITING"] ?? 0} />
@@ -119,12 +127,12 @@ export function DoctorQueue({
 
                     {/* Sección para llamar al siguiente paciente */}
                     {nextUp && !currentPatient && (
-                        <div className="mt-4 p-4 rounded-lg bg-[#EBFFD8]/50 border border-[#8DBCC7]/30">
+                        <div className="mt-4 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2">
-                                        <Users className="h-4 w-4 text-slate-600" />
-                                        <span className="text-sm font-medium text-slate-900">
+                                        <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                        <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
                                             Siguiente: #{nextUp.queueNumber}
                                         </span>
                                     </div>
@@ -133,7 +141,7 @@ export function DoctorQueue({
                                 <Button
                                     onClick={onCallNext}
                                     disabled={!canCallNext || callingNext}
-                                    className="bg-[#8DBCC7] hover:bg-[#A4CCD9] text-slate-900 disabled:opacity-50"
+                                    className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white disabled:opacity-50 shadow-md hover:shadow-lg transition-all"
                                     size="sm"
                                 >
                                     {callingNext ? (
@@ -152,30 +160,92 @@ export function DoctorQueue({
                         </div>
                     )}
 
+                    {/* Botón de Pausar/Reanudar atención */}
+                    <div className={cn(
+                        "mt-4 p-4 rounded-xl border transition-colors",
+                        isPaused 
+                            ? "bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/50" 
+                            : "bg-muted/50 dark:bg-muted/30 border-border"
+                    )}>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                {isPaused ? (
+                                    <>
+                                        <Pause className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                                        <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                                            Atención pausada
+                                        </span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Play className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                        <span className="text-sm text-muted-foreground">
+                                            Atención activa
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                            <Button
+                                onClick={onPauseAttention}
+                                disabled={!canPauseAttention || pausing}
+                                variant={isPaused ? "default" : "outline"}
+                                size="sm"
+                                className={cn(
+                                    "transition-all",
+                                    isPaused 
+                                        ? "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white" 
+                                        : "border-amber-400 dark:border-amber-600 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/50"
+                                )}
+                            >
+                                {pausing ? (
+                                    <>
+                                        <Clock className="h-4 w-4 mr-2 animate-spin" />
+                                        {isPaused ? "Reanudando..." : "Pausando..."}
+                                    </>
+                                ) : isPaused ? (
+                                    <>
+                                        <Play className="h-4 w-4 mr-2" />
+                                        Reanudar atención
+                                    </>
+                                ) : (
+                                    <>
+                                        <Pause className="h-4 w-4 mr-2" />
+                                        Pausar atención
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                        {isPaused && (
+                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-2">
+                                ⚠️ No se llamarán nuevos pacientes mientras la atención esté pausada
+                            </p>
+                        )}
+                    </div>
+
                     {!nextUp && totalsByStatus["WAITING"] === 0 && !currentPatient && (
-                        <div className="mt-4 p-4 rounded-lg bg-slate-50 border border-slate-200">
-                            <p className="text-sm text-slate-600 text-center">
+                        <div className="mt-4 p-4 rounded-xl bg-muted/50 dark:bg-muted/30 border border-border">
+                            <p className="text-sm text-muted-foreground text-center">
                                 No hay pacientes en espera
                             </p>
                         </div>
                     )}
 
                     {currentPatient && nextUp && (
-                        <div className="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200">
-                            <p className="text-xs text-amber-800 text-center">
+                        <div className="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-700/50">
+                            <p className="text-xs text-amber-800 dark:text-amber-200 text-center">
                                 ⚠️ Completa la atención del paciente actual antes de llamar al siguiente
                             </p>
                         </div>
                     )}
 
-                    {updatedText && <p className="text-xs text-slate-500 mt-2">{updatedText}</p>}
+                    {updatedText && <p className="text-xs text-muted-foreground mt-2">{updatedText}</p>}
                 </CardHeader>
 
                 <CardContent className="p-0">
                     <Separator className="opacity-50" />
-                    <ul className="divide-y">
+                    <ul className="divide-y divide-border">
                         {items.length === 0 && (
-                            <li className="p-4 text-sm text-slate-600">No hay pacientes en espera.</li>
+                            <li className="p-4 text-sm text-muted-foreground">No hay pacientes en espera.</li>
                         )}
 
                         {items.map((it, idx) => (
@@ -187,7 +257,7 @@ export function DoctorQueue({
                 <CardFooter className="flex-col gap-3">
                     <Separator className="w-full opacity-50" />
                     {updatedText && (
-                        <p className="text-xs text-slate-500">{updatedText}</p>
+                        <p className="text-xs text-muted-foreground">{updatedText}</p>
                     )}
                 </CardFooter>
             </Card>
@@ -195,10 +265,10 @@ export function DoctorQueue({
     );
 }
 
-function StatusPill({ label,    value }: { label: string; value: number }) {
+function StatusPill({ label, value }: { label: string; value: number }) {
     return (
-        <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-slate-700 bg-[#8DBCC7]/20">
-            {label}: <strong className="font-medium">{value}</strong>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 dark:border-primary/40 px-3 py-1 text-xs font-medium text-primary bg-primary/10 dark:bg-primary/20">
+            {label}: <strong className="font-semibold">{value}</strong>
         </span>
     );
 }

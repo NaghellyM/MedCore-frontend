@@ -1,33 +1,392 @@
-@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Saira:ital,wght@0,100..900;1,100..900&family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Tokens del Sistema de Diseño 
+
+  Paleta 1 (Azules suaves - Calma, Confianza): #8DBCC7, #A4CCD9, #C4E1E6, #EBFFD8
+  Paleta 2 (Morado + Acentos - Profesionalismo): #647FBC, #91ADC8, #AED6CF, #FAFDD6
+  
+  Decisiones de diseño:
+  - Primary (#647FBC): Color principal de acción, botones CTA, enlaces importantes
+  - Secondary (#8DBCC7): Acciones secundarias, elementos de soporte visual
+  - Accent (#AED6CF): Highlights, badges informativos, estados hover sutiles
+  - Success (#10B981): Estados positivos, confirmaciones, indicadores de salud
+  - Warning (#F59E0B): Alertas moderadas, precauciones médicas
+  - Danger (#EF4444): Errores, alertas críticas, estados de emergencia
+*/
+
 @layer base {
   :root {
-    --sidebar-background: #8dbcc7;
-    --sidebar-foreground: #ffffff;
-    --sidebar-primary: #647fbc;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #91adc8;
-    --sidebar-accent-foreground: #ffffff;
-    --sidebar-border: #d6cfd2;
-    --sidebar-ring: #647fbc;
+    /* Paleta de colores - Tema claro */
+
+    /* Primary: Morado profesional (#647FBC) - Acciones principales */
+    --primary: 227 40% 56%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 227 40% 46%;
+
+    /* Secondary: Azul suave (#8DBCC7) - Acciones secundarias */
+    --secondary: 191 35% 67%;
+    --secondary-foreground: 220 20% 20%;
+    --secondary-hover: 191 35% 57%;
+
+    /* Accent: Verde agua suave (#AED6CF) - Highlights, badges */
+    --accent: 167 32% 76%;
+    --accent-foreground: 220 20% 20%;
+
+    /* Fondo y superficies */
+    --background: 180 20% 99%;
+    --foreground: 220 20% 15%;
+
+    /* Superficies de tarjeta - ligeramente elevadas */
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 15%;
+
+    /* Atenuado - texto secundario, placeholders */
+    --muted: 191 20% 95%;
+    --muted-foreground: 220 10% 45%;
+
+    /* Superficies de popover/dropdown */
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 15%;
+
+    /* Elementos de formulario */
+    --border: 191 20% 85%;
+    --input: 191 20% 90%;
+    --ring: 227 40% 56%;
+
+    /* Colores semánticos */
+
+    /* Success: Verde médico - Estados positivos, confirmaciones */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 160 60% 95%;
+
+    /* Warning: Ámbar - Precauciones, alertas moderadas */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 10%;
+    --warning-light: 38 92% 95%;
+
+    /* Destructive: Rojo - Errores, emergencias */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 84% 97%;
+
+    /* Info: Azul informativo */
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+    --info-light: 199 89% 95%;
+
+    /* Tokens del sidebar - Coherente con el fondo en tema claro */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 15%;
+    --sidebar-primary: 227 40% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 10% 95%;
+    --sidebar-accent-foreground: 220 20% 15%;
+    --sidebar-border: 0 0% 100%;
+    --sidebar-ring: 227 40% 56%;
+
+    /* Colores de gráficos */
+    --chart-1: 227 40% 56%;
+    --chart-2: 191 35% 67%;
+    --chart-3: 167 32% 76%;
+    --chart-4: 160 84% 39%;
+    --chart-5: 38 92% 50%;
+
+    /* Tipografía */
+    --font-sans: 'Inter', 'Saira', system-ui, -apple-system, sans-serif;
+    --font-display: 'Fjalla One', 'Inter', sans-serif;
+
+    /* Tamaños de fuente (rem) */
+    --text-xs: 0.75rem;
+    /* 12px - Pequeñas notas, labels secundarios */
+    --text-sm: 0.875rem;
+    /* 14px - Labels, texto secundario */
+    --text-base: 1rem;
+    /* 16px - Texto de párrafo */
+    --text-lg: 1.125rem;
+    /* 18px - Subtítulos pequeños */
+    --text-xl: 1.25rem;
+    /* 20px - Subtítulos */
+    --text-2xl: 1.5rem;
+    /* 24px - Títulos de sección */
+    --text-3xl: 1.875rem;
+    /* 30px - Títulos de página */
+    --text-4xl: 2.25rem;
+    /* 36px - Títulos principales */
+
+    /* Alturas de línea */
+    --leading-tight: 1.25;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+
+    /* Pesos de fuente */
+    --font-light: 300;
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    /* Espaciado */
+    --spacing-0: 0;
+    --spacing-1: 0.25rem;
+    /* 4px */
+    --spacing-2: 0.5rem;
+    /* 8px */
+    --spacing-3: 0.75rem;
+    /* 12px */
+    --spacing-4: 1rem;
+    /* 16px */
+    --spacing-5: 1.25rem;
+    /* 20px */
+    --spacing-6: 1.5rem;
+    /* 24px */
+    --spacing-8: 2rem;
+    /* 32px */
+    --spacing-10: 2.5rem;
+    /* 40px */
+    --spacing-12: 3rem;
+    /* 48px */
+    --spacing-16: 4rem;
+    /* 64px */
+
+    /* Bordes redondeados */
+    --radius-none: 0;
+    --radius-sm: 0.25rem;
+    /* 4px - Badges pequeños */
+    --radius-md: 0.5rem;
+    /* 8px - Botones, inputs */
+    --radius-lg: 0.75rem;
+    /* 12px - Cards, modales */
+    --radius-xl: 1rem;
+    /* 16px - Containers grandes */
+    --radius-2xl: 1.5rem;
+    /* 24px - Elementos destacados */
+    --radius-full: 9999px;
+    /* Píldoras, avatares */
+    --radius: 0.5rem;
+    /* Radio por defecto */
+
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+    /* Transiciones */
+    --transition-fast: 150ms;
+    --transition-normal: 200ms;
+    --transition-slow: 300ms;
   }
 
+  /* Tema oscuro
+     Buen contraste para legibilidad en entornos con poca luz */
   .dark {
-    --sidebar-background: #ffffff;
-    --sidebar-foreground: #ffffff;
-    --sidebar-border: rgba(255, 255, 255, 0.1);
+    /* Primary: Azul médico suave */
+    --primary: 210 60% 60%;
+    --primary-foreground: 210 20% 98%;
+    --primary-hover: 210 60% 70%;
+
+    /* Secondary: Cyan suave - complementa el azul médico */
+    --secondary: 190 40% 25%;
+    --secondary-foreground: 190 20% 95%;
+    --secondary-hover: 190 40% 35%;
+
+    /* Accent: Verde azulado suave - asociado con salud y bienestar */
+    --accent: 175 35% 25%;
+    --accent-foreground: 175 20% 95%;
+
+    /* Fondo principal - Gris azulado oscuro, suave para los ojos */
+    --background: 220 25% 14%;
+    --foreground: 210 20% 98%;
+
+    /* Superficies de tarjeta - Ligeramente elevadas */
+    --card: 220 25% 16%;
+    --card-foreground: 210 20% 98%;
+
+    /* Texto atenuado - Suficiente contraste para legibilidad */
+    --muted: 220 20% 22%;
+    --muted-foreground: 215 15% 75%;
+
+    /* Popover/Dropdown */
+    --popover: 220 25% 16%;
+    --popover-foreground: 210 20% 98%;
+
+    /* Elementos de formulario */
+    --border: 220 20% 28%;
+    --input: 220 20% 20%;
+    --ring: 210 60% 60%;
+
+    /* Colores semánticos - Ajustados para buen contraste en oscuro */
+    
+    /* Success: Verde médico - Estados positivos, signos vitales normales */
+    --success: 152 60% 50%;
+    --success-foreground: 152 20% 98%;
+    --success-light: 152 40% 18%;
+
+    /* Warning: Ámbar cálido - Alertas moderadas, precauciones */
+    --warning: 40 85% 55%;
+    --warning-foreground: 40 90% 10%;
+    --warning-light: 40 50% 18%;
+
+    /* Destructive: Rojo suave - Emergencias, alertas críticas */
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 50% 18%;
+
+    /* Info: Azul claro - Información, notificaciones */
+    --info: 200 80% 55%;
+    --info-foreground: 200 20% 98%;
+    --info-light: 200 50% 18%;
+
+    /* Sidebar - Coherente con el fondo en tema oscuro */
+    --sidebar-background: 220 25% 14%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 210 60% 60%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 220 20% 20%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 220 20% 22%;
+    --sidebar-ring: 210 60% 60%;
+
+    /* Colores de gráficos - Paleta distinguible y agradable */
+    --chart-1: 210 60% 60%;
+    --chart-2: 175 50% 50%;
+    --chart-3: 152 55% 50%;
+    --chart-4: 40 80% 55%;
+    --chart-5: 280 50% 60%;
+
+    /* Sombras - Más sutiles en tema oscuro */
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 8px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 10px 20px -3px rgb(0 0 0 / 0.5), 0 4px 8px -4px rgb(0 0 0 / 0.4);
+    --shadow-xl: 0 20px 30px -5px rgb(0 0 0 / 0.5), 0 8px 12px -6px rgb(0 0 0 / 0.4);
+  }
+
+  /* Estilos base */
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Estilos de foco visible para accesibilidad */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Estilos de selección */
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+
+  /* Estilos de barra de desplazamiento */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
   }
 }
 
+/* Capa de componentes */
 @layer components {
+
+  /* Clase btn heredada - mantener por compatibilidad */
   .btn {
-    @apply flex items-center gap-2 bg-cuidarte-accent text-white font-sans font-bold;
+    @apply flex items-center gap-2 bg-primary text-primary-foreground font-sans font-medium;
+  }
+
+  /* Utilidades de tipografía */
+  .text-display {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
+  }
+
+  .text-body {
+    font-family: var(--font-sans);
+    @apply leading-relaxed;
+  }
+
+  /* Utilidad de anillo de foco */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Utilidades de elevación de tarjetas */
+  .card-elevated {
+    @apply bg-card shadow-md border border-border rounded-lg;
+  }
+
+  .card-flat {
+    @apply bg-card border border-border rounded-lg;
+  }
+
+  /* Contenedor de campo de formulario */
+  .form-field {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .form-error {
+    @apply text-sm text-destructive mt-1;
+  }
+
+  .form-hint {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Indicadores de estado para sistema médico */
+  .status-active {
+    @apply bg-success/10 text-success border-success/20;
+  }
+
+  .status-pending {
+    @apply bg-warning/10 text-warning border-warning/20;
+  }
+
+  .status-critical {
+    @apply bg-destructive/10 text-destructive border-destructive/20;
+  }
+
+  .status-inactive {
+    @apply bg-muted text-muted-foreground border-border;
   }
 }
 
+/* Capa de utilidades */
+@layer utilities {
+
+  /* Utilidades de animación */
+  .animate-in {
+    animation-duration: var(--transition-normal);
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+  }
+
+  .animate-out {
+    animation-duration: var(--transition-fast);
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+  }
+}
+
+/* Animaciones keyframe */
 @keyframes slide-in-from-right {
   from {
     transform: translateX(100%);
@@ -40,6 +399,124 @@
   }
 }
 
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-soft {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .animate-slide-in-from-right {
-  animation: slide-in-from-right 0.3s ease-out;
+  animation: slide-in-from-right var(--transition-slow) ease-out;
+}
+
+.animate-slide-in-from-left {
+  animation: slide-in-from-left var(--transition-slow) ease-out;
+}
+
+.animate-slide-in-from-top {
+  animation: slide-in-from-top var(--transition-slow) ease-out;
+}
+
+.animate-slide-in-from-bottom {
+  animation: slide-in-from-bottom var(--transition-slow) ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in var(--transition-normal) ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in var(--transition-normal) ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

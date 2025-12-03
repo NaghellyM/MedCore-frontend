@@ -119,7 +119,7 @@ describe("Authentication Flow tests", () => {
       { role: "ADMINISTRADOR", expectedPath: "/adminPage" },
       { role: "MEDICO", expectedPath: "/doctorPage" },
       { role: "ENFERMERA", expectedPath: "/nursePage" },
-      { role: "PACIENTE", expectedPath: "/patientPage" },
+      { role: "PACIENTE", expectedPath: "/patient-dashboard" },
     ];
 
     for (const { role } of roles) {

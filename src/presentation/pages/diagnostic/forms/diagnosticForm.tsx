@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, AlertCircle, User, FileText } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, User, FileText, Sparkles } from "lucide-react";
 import { useToast } from "../../../../core/hooks/notifications/useToast";
 import { useDiagnosticForm } from "../../../../core/types/diagnostic/useDiagnosticForm";
-import type { Diagnostic } from "../../../../core/types/diagnostic";
+import type { Diagnostic, PredefinedDiagnostic } from "../../../../core/types/diagnostic";
+import { PredefinedDiagnosticSelector } from "../components/PredefinedDiagnosticSelector";
 
 interface DiagnosticFormProps {
     mode?: "create" | "edit";
@@ -26,6 +28,7 @@ export function DiagnosticForm({
     const navigate = useNavigate();
     const params = useParams();
     const { success, error: showError } = useToast();
+    const [selectedPredefinedId, setSelectedPredefinedId] = useState<string | undefined>();
     
     
     const finalPatientId = patientId || params.patientId;
@@ -38,7 +41,8 @@ export function DiagnosticForm({
         handleSubmit,
         formErrors,
         saveDiagnostic,
-        isValid
+        isValid,
+        setValue
     } = useDiagnosticForm({
         mode,
         patientId: finalPatientId,
@@ -68,6 +72,21 @@ export function DiagnosticForm({
             showError("Error al guardar el diagnóstico", error);
         }
     });
+
+    // Handler para seleccionar un diagnóstico predefinido
+    const handlePredefinedSelect = (predefined: PredefinedDiagnostic) => {
+        setSelectedPredefinedId(predefined.id);
+        
+        // Auto-rellenar campos del formulario con los datos del diagnóstico predefinido
+        setValue("title", predefined.name, { shouldValidate: true });
+        setValue("description", predefined.description, { shouldValidate: true });
+        setValue("symptoms", predefined.commonSymptoms, { shouldValidate: true });
+        setValue("diagnosis", `${predefined.code} - ${predefined.name}`, { shouldValidate: true });
+        setValue("treatment", predefined.recommendedTreatment, { shouldValidate: true });
+        setValue("observations", predefined.observations || "", { shouldValidate: true });
+        
+        success("Diagnóstico predefinido cargado. Puede modificar los campos según sea necesario.");
+    };
 
     const handleCancel = () => {
         if (onCancel) {
@@ -133,6 +152,29 @@ export function DiagnosticForm({
 
             {/* Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Selector de Diagnóstico Predefinido (solo en modo crear) */}
+                {mode === "create" && (
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Sparkles className="w-5 h-5 text-blue-600" />
+                            <h2 className="text-lg font-semibold text-gray-900">
+                                Diagnóstico Predefinido
+                            </h2>
+                            <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">
+                                Opcional
+                            </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-4">
+                            Seleccione un diagnóstico de la lista predefinida para auto-completar el formulario. 
+                            Puede modificar los campos después de seleccionar.
+                        </p>
+                        <PredefinedDiagnosticSelector
+                            onSelect={handlePredefinedSelect}
+                            selectedId={selectedPredefinedId}
+                        />
+                    </div>
+                )}
+
                 {/* Información Básica */}
                 <div className="bg-white rounded-lg border p-6">
                     <div className="flex items-center gap-2 mb-4">

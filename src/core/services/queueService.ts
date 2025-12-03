@@ -53,5 +53,11 @@ export const queueService = {
     )
     return response.data
   },
+  
+  // Pausar la atención de un doctor
+  async pauseDoctorAttention(doctorId: string) {
+    const response = await httpClinical.put(`${queueUrl}/doctor/${doctorId}/pause`);
+    return response.data;
+}
 
 }
