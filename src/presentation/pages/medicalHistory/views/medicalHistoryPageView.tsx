@@ -22,7 +22,7 @@ export const ViewPatientMedicalHistoryPage: React.FC = () => {
         <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6">
             <header className="flex items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-semibold text-slate-900">
+                    <h1 className="text-2xl font-semibold text-slate-900 dark:text-gray-100">
                         Historias clínicas de  <PatientNameDisplay
                             displayState={displayState}
                             displayText={displayText}
@@ -33,12 +33,12 @@ export const ViewPatientMedicalHistoryPage: React.FC = () => {
             </header>
             {isLoading && (
                 <div className="flex items-center justify-center py-8">
-                    <p className="text-sm text-slate-500">Cargando historia clínica…</p>
+                    <p className="text-sm text-slate-500 dark:text-gray-400">Cargando historia clínica…</p>
                 </div>
             )}
 
             {isError && (
-                <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+                <div className="rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-900/30 p-4 text-sm text-rose-700 dark:text-rose-300 transition-colors duration-300">
                     <p className="font-medium">Error al cargar la historia clínica</p>
                     <p className="mt-1">{errorMessage}</p>
                 </div>
@@ -49,7 +49,7 @@ export const ViewPatientMedicalHistoryPage: React.FC = () => {
                     <MedicalHistoryView history={history} />
                     {pagination && (
                         <div className="mt-4 text-center">
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 dark:text-gray-400">
                                 Página {pagination.page} de {pagination.totalPages}
                                 <span className="mx-1">•</span>
                                 {pagination.total} diagnóstico{pagination.total !== 1 ? 's' : ''} en total
@@ -61,7 +61,7 @@ export const ViewPatientMedicalHistoryPage: React.FC = () => {
 
             {!isLoading && !isError && !history && (
                 <div className="text-center py-8">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-gray-400">
                         No se encontró información de historia clínica para este paciente.
                     </p>
                 </div>

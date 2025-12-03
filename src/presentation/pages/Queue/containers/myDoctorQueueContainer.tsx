@@ -13,10 +13,7 @@ export type MyDoctorQueueContainerProps = {
     className?: string;
 };
 
-/**
- * Container para la cola del doctor autenticado
- * Usa el ID del doctor logueado automáticamente
- */
+// Usa el hook useMyDoctorQueue que obtiene automáticamente el ID del doctor autenticado
 export function MyDoctorQueueContainer({
     onBack,
     pollMs = 15000,

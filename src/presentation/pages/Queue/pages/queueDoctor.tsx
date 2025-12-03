@@ -3,10 +3,6 @@ import DoctorSidebar from "../../doctor/components/doctorSideBar";
 import { MyDoctorQueueContainer } from "../containers/myDoctorQueueContainer";
 import { Users } from "lucide-react";
 
-/**
- * Página de cola del doctor
- * Muestra automáticamente la cola del doctor autenticado
- */
 export default function DoctorQueuePage() {
     return (
         <DashboardLayout sidebar={<DoctorSidebar />} showSearch={false}>

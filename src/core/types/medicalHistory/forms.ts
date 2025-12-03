@@ -200,7 +200,7 @@ export interface DiagnosticFieldsConfig {
 
 // Datos del formulario de filtros de diagnóstico  
 export interface DiagnosticFilterFormData {
-    state?: "ACTIVE" | "INACTIVE" | "DELETED";
+    state?: "ACTIVE" | "ARCHIVED" | "DELETED";
     doctorId?: string;
     dateFrom?: string;
     dateTo?: string;

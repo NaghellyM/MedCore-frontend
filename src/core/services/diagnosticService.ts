@@ -122,12 +122,13 @@ export const diagnosticService = {
     },
 
     
-    // Eliminar un diagnóstico por su ID
+    // Eliminar un diagnóstico por su ID (soft delete usando PATCH al endpoint de estado)
     async deleteDiagnostic(
         diagnosticId: string
     ): Promise<DeleteDiagnosticResponse> {
-        const response = await httpPatient.delete<DeleteDiagnosticResponse>(
-            `${diagnosticBaseUrl}/${diagnosticId}`
+        const response = await httpPatient.patch<DeleteDiagnosticResponse>(
+            `${diagnosticBaseUrl}/${diagnosticId}/state`,
+            { state: "DELETED" }
         );
         return response.data;
     }

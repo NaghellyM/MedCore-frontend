@@ -2,13 +2,11 @@ import React from 'react';
 import { AutoDashboardLayout } from '../../layouts/autoDashboardLayout';
 import { useUserRole } from '../../../core/hooks/auth/useUserRole';
 import { DoctorPage } from '../doctor/page/doctorPage';
-import { AdminPageContent } from '../admin/page/adminPageContent';
+import { AdminDashboard } from '../admin/adminDashboard';
 import { PatientDashboard } from '../patient/pages/patientDashboard';
 import { NursePageContent } from '../nurse/page/nursePage';
 
-/**
- * Componente de contenido dinámico según el rol
- */
+// Componente de contenido dinámico según el rol
 const RoleBasedContent: React.FC = () => {
     const { role, loading } = useUserRole();
 
@@ -22,7 +20,7 @@ const RoleBasedContent: React.FC = () => {
 
     switch (role) {
         case 'admin':
-            return <AdminPageContent />;
+            return <AdminDashboard />;
         
         case 'doctor':
             return <DoctorPage />;
@@ -44,19 +42,6 @@ const RoleBasedContent: React.FC = () => {
     }
 };
 
-/**
- * Dashboard unificado que funciona para todos los roles
- * 
- * Este componente automáticamente:
- * - Detecta el rol del usuario autenticado
- * - Muestra el sidebar apropiado
- * - Renderiza el contenido correspondiente al rol
- * 
- * Uso:
- * - Reemplaza los dashboards específicos por rol
- * - Simplifica el routing
- * - Centraliza la lógica de renderizado por rol
- */
 export const UnifiedDashboard: React.FC = () => {
     return (
         <AutoDashboardLayout

@@ -96,17 +96,17 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-slate-900">
+                    <h1 className="text-2xl font-semibold text-slate-900 dark:text-gray-100">
                         Historias Clínicas
                     </h1>
-                    <p className="text-sm text-slate-600 mt-1">
+                    <p className="text-sm text-slate-600 dark:text-gray-400 mt-1">
                         Listado completo de historias clínicas registradas
                     </p>
                 </div>
                 <button
                     onClick={refresh}
                     disabled={isLoading}
-                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50"
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-slate-300 dark:border-gray-600 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors duration-300"
                 >
                     <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
                     Actualizar
@@ -115,30 +115,30 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
 
             {/* Search and Filters */}
             {showFilters && (
-                <div className="bg-white rounded-lg border border-slate-200 p-4 space-y-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-slate-200 dark:border-gray-700 p-4 space-y-4 transition-colors duration-300">
                     {/* Main Search */}
                     <form onSubmit={handleSearch} className="flex gap-2">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Buscar por nombre del paciente o documento..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
                             />
                         </div>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 transition-colors"
                         >
                             Buscar
                         </button>
                         <button
                             type="button"
                             onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                            className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
+                            className="px-4 py-2 border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-200 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
                         >
                             <Filter className="w-4 h-4" />
                             Filtros
@@ -147,52 +147,52 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
 
                     {/* Advanced Filters */}
                     {showAdvancedFilters && (
-                        <div className="border-t border-slate-200 pt-4 space-y-4">
+                        <div className="border-t border-slate-200 dark:border-gray-600 pt-4 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
                                         Nombre del Paciente
                                     </label>
                                     <input
                                         type="text"
                                         value={tempFilters.patientName}
                                         onChange={(e) => setTempFilters({...tempFilters, patientName: e.target.value})}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-3 py-2 border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
                                         placeholder="Nombre completo"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
                                         Documento del Paciente
                                     </label>
                                     <input
                                         type="text"
                                         value={tempFilters.patientDocument}
                                         onChange={(e) => setTempFilters({...tempFilters, patientDocument: e.target.value})}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-3 py-2 border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
                                         placeholder="Número de documento"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
                                         Fecha Desde
                                     </label>
                                     <input
                                         type="date"
                                         value={tempFilters.dateFrom}
                                         onChange={(e) => setTempFilters({...tempFilters, dateFrom: e.target.value})}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-3 py-2 border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-1">
                                         Fecha Hasta
                                     </label>
                                     <input
                                         type="date"
                                         value={tempFilters.dateTo}
                                         onChange={(e) => setTempFilters({...tempFilters, dateTo: e.target.value})}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full px-3 py-2 border border-slate-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
                                     />
                                 </div>
                             </div>
@@ -201,14 +201,14 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                                 <button
                                     type="button"
                                     onClick={handleApplyFilters}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
                                 >
                                     Aplicar Filtros
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleClearFilters}
-                                    className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2"
+                                    className="px-4 py-2 border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-200 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
                                 >
                                     <X className="w-4 h-4" />
                                     Limpiar
@@ -219,12 +219,12 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
 
                     {/* Active Filters Indicator */}
                     {hasActiveFilters && (
-                        <div className="flex items-center gap-2 text-sm text-blue-700">
+                        <div className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-400">
                             <Filter className="w-4 h-4" />
                             <span>Filtros activos aplicados</span>
                             <button
                                 onClick={handleClearFilters}
-                                className="text-blue-600 hover:text-blue-800 underline"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline"
                             >
                                 Limpiar todos
                             </button>
@@ -237,23 +237,23 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
             {isLoading && (
                 <div className="flex items-center justify-center py-12">
                     <div className="text-center">
-                        <RefreshCw className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
-                        <p className="text-sm text-slate-500">Cargando historias clínicas...</p>
+                        <RefreshCw className="w-8 h-8 animate-spin text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                        <p className="text-sm text-slate-500 dark:text-gray-400">Cargando historias clínicas...</p>
                     </div>
                 </div>
             )}
 
             {/* Error State */}
             {isError && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-                    <div className="flex items-center gap-2 text-red-800">
+                <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-4 transition-colors duration-300">
+                    <div className="flex items-center gap-2 text-red-800 dark:text-red-300">
                         <X className="w-5 h-5" />
                         <p className="font-medium">Error al cargar las historias clínicas</p>
                     </div>
-                    <p className="text-sm text-red-600 mt-1">{errorMessage}</p>
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">{errorMessage}</p>
                     <button
                         onClick={refresh}
-                        className="mt-3 text-sm text-red-600 hover:text-red-800 underline"
+                        className="mt-3 text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline"
                     >
                         Intentar de nuevo
                     </button>
@@ -265,7 +265,7 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                 <>
                     {/* Results Count */}
                     {pagination && (
-                        <div className="flex items-center justify-between text-sm text-slate-600">
+                        <div className="flex items-center justify-between text-sm text-slate-600 dark:text-gray-400">
                             <p>
                                 Mostrando {medicalHistories.length} de {pagination.total} historias clínicas
                             </p>
@@ -280,11 +280,11 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                     {/* Medical Histories List */}
                     {medicalHistories.length === 0 ? (
                         <div className="text-center py-12">
-                            <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-slate-900 mb-2">
+                            <FileText className="w-12 h-12 text-slate-400 dark:text-gray-500 mx-auto mb-4" />
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-gray-100 mb-2">
                                 No se encontraron historias clínicas
                             </h3>
-                            <p className="text-sm text-slate-500 mb-4">
+                            <p className="text-sm text-slate-500 dark:text-gray-400 mb-4">
                                 {hasActiveFilters 
                                     ? "Intenta ajustar los filtros de búsqueda"
                                     : "Aún no hay historias clínicas registradas"
@@ -293,7 +293,7 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                             {hasActiveFilters && (
                                 <button
                                     onClick={handleClearFilters}
-                                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline text-sm"
                                 >
                                     Limpiar filtros
                                 </button>
@@ -305,20 +305,20 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                                 <div
                                     key={history.id}
                                     onClick={() => handleHistoryClick(history.id, history.patient.id)}
-                                    className="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                                    className="bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md dark:hover:shadow-gray-900/50 transition-all duration-300 cursor-pointer"
                                 >
                                     <div className="flex items-start justify-between">
                                         <div className="flex-1 space-y-2">
                                             {/* Patient Info */}
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                                    <User className="w-5 h-5 text-blue-600" />
+                                                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
+                                                    <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-semibold text-slate-900">
+                                                    <h3 className="font-semibold text-slate-900 dark:text-gray-100">
                                                         {history.patient.fullname}
                                                     </h3>
-                                                    <div className="flex items-center gap-4 text-sm text-slate-600">
+                                                    <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-gray-400">
                                                         <span>CC: {history.patient.identificacion}</span>
                                                         {history.patient.historyNumber && (
                                                             <span>HC: {history.patient.historyNumber}</span>
@@ -329,15 +329,15 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
 
                                             {/* Medical Info */}
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                                <div className="flex items-center gap-2 text-slate-600">
+                                                <div className="flex items-center gap-2 text-slate-600 dark:text-gray-400">
                                                     <Stethoscope className="w-4 h-4" />
                                                     <span>Dr. {history.doctor.fullname}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-slate-600">
+                                                <div className="flex items-center gap-2 text-slate-600 dark:text-gray-400">
                                                     <FileText className="w-4 h-4" />
                                                     <span>{history.totalDiagnostics} diagnóstico{history.totalDiagnostics !== 1 ? 's' : ''}</span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-slate-600">
+                                                <div className="flex items-center gap-2 text-slate-600 dark:text-gray-400">
                                                     <Clock className="w-4 h-4" />
                                                     <span>
                                                         {history.lastDiagnosticDate 
@@ -349,7 +349,7 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                                             </div>
 
                                             {/* Timeline */}
-                                            <div className="flex items-center gap-4 text-xs text-slate-500">
+                                            <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-gray-500">
                                                 <div className="flex items-center gap-1">
                                                     <Calendar className="w-3 h-3" />
                                                     <span>Creada: {new Date(history.createdAt).toLocaleDateString()}</span>
@@ -367,14 +367,14 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                                                     e.stopPropagation();
                                                     navigate(`/medicalHistory/${history.id}/edit`);
                                                 }}
-                                                className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                className="p-2 text-slate-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                                                 title="Editar historia clínica"
                                             >
                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                 </svg>
                                             </button>
-                                            <ChevronRight className="w-5 h-5 text-slate-400" />
+                                            <ChevronRight className="w-5 h-5 text-slate-400 dark:text-gray-500" />
                                         </div>
                                     </div>
                                 </div>
@@ -388,7 +388,7 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                             <button
                                 onClick={() => loadPage(pagination.page - 1)}
                                 disabled={pagination.page <= 1}
-                                className="px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-2 text-sm border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-200 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 Anterior
                             </button>
@@ -400,10 +400,10 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                                         <button
                                             key={page}
                                             onClick={() => loadPage(page)}
-                                            className={`w-8 h-8 text-sm rounded-lg ${
+                                            className={`w-8 h-8 text-sm rounded-lg transition-colors ${
                                                 page === pagination.page
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'border border-slate-300 hover:bg-slate-50'
+                                                    ? 'bg-blue-600 dark:bg-blue-500 text-white'
+                                                    : 'border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700'
                                             }`}
                                         >
                                             {page}
@@ -415,7 +415,7 @@ export const MedicalHistoriesListView: React.FC<MedicalHistoriesListViewProps> =
                             <button
                                 onClick={() => loadPage(pagination.page + 1)}
                                 disabled={pagination.page >= pagination.totalPages}
-                                className="px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-2 text-sm border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-200 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 Siguiente
                             </button>

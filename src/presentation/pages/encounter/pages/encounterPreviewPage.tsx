@@ -1,4 +1,3 @@
-// src/presentation/pages/encounter/pages/EncounterPreviewPage.tsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "../../../layouts/dashboardLayout";

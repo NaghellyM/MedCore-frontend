@@ -47,13 +47,13 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
         : "Sin definir";
 
     return (
-        <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm flex flex-col gap-2">
+        <article className="rounded-2xl border border-border bg-background dark:bg-[hsl(220,25%,16%)] p-4 shadow-sm flex flex-col gap-2 transition-colors duration-300">
             <header className="flex items-start justify-between gap-2">
                 <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-slate-800">
+                    <h3 className="text-lg font-semibold text-foreground">
                         {diagnostic.title}
                     </h3>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                         Consulta del {consultDate}
                     </p>
                 </div>
@@ -62,16 +62,16 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                     <span
                         className={`rounded-full px-3 py-1 text-xs font-medium ${
                             diagnostic.state === "ACTIVE"
-                                ? "bg-emerald-50 text-emerald-700"
-                                : diagnostic.state === "INACTIVE"
-                                ? "bg-slate-100 text-slate-500"
-                                : "bg-red-50 text-red-700"
+                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                                : diagnostic.state === "ARCHIVED"
+                                ? "bg-muted text-muted-foreground"
+                                : "bg-destructive/20 text-destructive"
                             }`}
                     >
                         {diagnostic.state === "ACTIVE" 
                             ? "Activa" 
-                            : diagnostic.state === "INACTIVE" 
-                            ? "Inactiva" 
+                            : diagnostic.state === "ARCHIVED" 
+                            ? "Archivada" 
                             : "Eliminada"}
                     </span>
 
@@ -80,7 +80,7 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                         <div className="flex items-center gap-1">
                             <button
                                 onClick={handleView}
-                                className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
                                 title="Ver detalles"
                             >
                                 <Eye className="w-4 h-4" />
@@ -88,7 +88,7 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                             
                             <button
                                 onClick={handleEdit}
-                                className="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
                                 title="Editar diagnóstico"
                             >
                                 <Edit className="w-4 h-4" />
@@ -98,7 +98,7 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                                 <button
                                     onClick={handleDelete}
                                     disabled={isDeleting}
-                                    className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     title="Eliminar diagnóstico"
                                 >
                                     <Trash2 className={`w-4 h-4 ${isDeleting ? 'animate-pulse' : ''}`} />
@@ -111,10 +111,10 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
 
             {diagnostic.diagnosis && (
                 <section>
-                    <h4 className="text-sm font-semibold text-slate-700 mb-1">
+                    <h4 className="text-sm font-semibold text-foreground mb-1">
                         Diagnóstico
                     </h4>
-                    <p className="text-sm text-slate-600 whitespace-pre-line">
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
                         {diagnostic.diagnosis}
                     </p>
                 </section>
@@ -122,10 +122,10 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
 
             {diagnostic.symptoms && (
                 <section>
-                    <h4 className="text-sm font-semibold text-slate-700 mb-1">
+                    <h4 className="text-sm font-semibold text-foreground mb-1">
                         Síntomas
                     </h4>
-                    <p className="text-sm text-slate-600 whitespace-pre-line">
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
                         {diagnostic.symptoms}
                     </p>
                 </section>
@@ -133,10 +133,10 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
 
             {diagnostic.treatment && (
                 <section>
-                    <h4 className="text-sm font-semibold text-slate-700 mb-1">
+                    <h4 className="text-sm font-semibold text-foreground mb-1">
                         Tratamiento
                     </h4>
-                    <p className="text-sm text-slate-600 whitespace-pre-line">
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
                         {diagnostic.treatment}
                     </p>
                 </section>
@@ -144,10 +144,10 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
 
             {diagnostic.prescriptions && (
                 <section>
-                    <h4 className="text-sm font-semibold text-slate-700 mb-1">
+                    <h4 className="text-sm font-semibold text-foreground mb-1">
                         Prescripciones
                     </h4>
-                    <p className="text-sm text-slate-600 whitespace-pre-line">
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
                         {diagnostic.prescriptions}
                     </p>
                 </section>
@@ -155,14 +155,14 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
 
             {diagnostic.documents && diagnostic.documents.length > 0 && (
                 <section>
-                    <h4 className="text-sm font-semibold text-slate-700 mb-1">
+                    <h4 className="text-sm font-semibold text-foreground mb-1">
                         Documentos ({diagnostic.documents.length})
                     </h4>
                     <div className="flex flex-wrap gap-1">
                         {diagnostic.documents.map((doc: any) => (
                             <span 
                                 key={doc.id}
-                                className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
+                                className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
                             >
                                 📄 {doc.filename}
                             </span>
@@ -171,7 +171,7 @@ export const DiagnosticCard: React.FC<DiagnosticCardProps> = ({
                 </section>
             )}
 
-            <footer className="mt-2 flex flex-wrap gap-2 text-xs text-slate-500">
+            <footer className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
                 <span>Próxima cita: {nextAppointment}</span>
             </footer>
         </article>

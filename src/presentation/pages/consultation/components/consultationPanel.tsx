@@ -73,7 +73,8 @@ export const ConsultationPanel = memo(function ConsultationPanel({
         loadingOrders,
     } = useConsultation({
         onComplete: async () => {
-            await onComplete(patient.appointmentId);
+            // Usar patient.id (ID del ticket de cola) en lugar de appointmentId
+            await onComplete(patient.id);
         },
         onError: (errorMsg) => {
             showError('Error en la consulta', errorMsg);
@@ -89,14 +90,14 @@ export const ConsultationPanel = memo(function ConsultationPanel({
 
     // Cargar datos cuando cambia el paso
     useEffect(() => {
-        if (currentStep === 'diagnostics' && medicalHistory) {
+        if (currentStep === 'diagnostics' && patientInfo) {
             refreshDiagnostics();
         } else if (currentStep === 'prescriptions' && patientInfo) {
             refreshPrescriptions();
         } else if (currentStep === 'orders' && patientInfo) {
             refreshOrders();
         }
-    }, [currentStep, medicalHistory, patientInfo, refreshDiagnostics, refreshPrescriptions, refreshOrders]);
+    }, [currentStep, patientInfo, refreshDiagnostics, refreshPrescriptions, refreshOrders]);
 
     // Handlers para navegación a formularios
     const handleAddDiagnostic = () => {

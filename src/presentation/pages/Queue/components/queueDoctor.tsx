@@ -14,9 +14,9 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
     const { displayState, displayText } = usePatientDisplay(item.patientId);
 
     return (
-        <li className="flex items-center justify-between p-4">
+        <li className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-3">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-card text-foreground">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-muted text-foreground font-semibold text-sm">
                     N°{item.queueNumber}
                 </span>
                 <div className="min-w-0">
@@ -33,7 +33,7 @@ const QueuePatientItem = ({ item, index }: { item: QueueItemDTO; index: number }
 
             <div className="flex items-center gap-2">
                 <Badge variant={queueStatusToVariant(item.status)}>{queueStatusToLabel(item.status)}</Badge>
-                <span className="text-xs text-muted-foreground">#{index + 1}</span>
+                <span className="text-xs text-muted-foreground font-medium">#{index + 1}</span>
             </div>
         </li>
     );
@@ -103,7 +103,7 @@ export function DoctorQueue({
             )}
 
             {/* Tarjeta principal de la cola */}
-            <Card className="border border-border shadow-lg bg-card">
+            <Card className="border border-border shadow-lg bg-card dark:shadow-none dark:border-border/50">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export function DoctorQueue({
                                     size="icon"
                                     onClick={onBack}
                                     aria-label="Volver"
-                                    className="rounded-2xl hover:bg-muted"
+                                    className="rounded-xl hover:bg-muted"
                                 >
                                     <ChevronLeft className="h-5 w-5" />
                                 </Button>
@@ -127,12 +127,12 @@ export function DoctorQueue({
 
                     {/* Sección para llamar al siguiente paciente */}
                     {nextUp && !currentPatient && (
-                        <div className="mt-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                        <div className="mt-4 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2">
-                                        <Users className="h-4 w-4 text-muted-foreground" />
-                                        <span className="text-sm font-medium text-foreground">
+                                        <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                        <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
                                             Siguiente: #{nextUp.queueNumber}
                                         </span>
                                     </div>
@@ -141,7 +141,7 @@ export function DoctorQueue({
                                 <Button
                                     onClick={onCallNext}
                                     disabled={!canCallNext || callingNext}
-                                    className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50"
+                                    className="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white disabled:opacity-50 shadow-md hover:shadow-lg transition-all"
                                     size="sm"
                                 >
                                     {callingNext ? (
@@ -162,23 +162,23 @@ export function DoctorQueue({
 
                     {/* Botón de Pausar/Reanudar atención */}
                     <div className={cn(
-                        "mt-4 p-4 rounded-lg border",
+                        "mt-4 p-4 rounded-xl border transition-colors",
                         isPaused 
-                            ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300 dark:border-yellow-700" 
-                            : "bg-muted border-border"
+                            ? "bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700/50" 
+                            : "bg-muted/50 dark:bg-muted/30 border-border"
                     )}>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 {isPaused ? (
                                     <>
-                                        <Pause className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-                                        <span className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                                        <Pause className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                                        <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
                                             Atención pausada
                                         </span>
                                     </>
                                 ) : (
                                     <>
-                                        <Play className="h-4 w-4 text-muted-foreground" />
+                                        <Play className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                                         <span className="text-sm text-muted-foreground">
                                             Atención activa
                                         </span>
@@ -191,9 +191,10 @@ export function DoctorQueue({
                                 variant={isPaused ? "default" : "outline"}
                                 size="sm"
                                 className={cn(
+                                    "transition-all",
                                     isPaused 
-                                        ? "bg-green-600 hover:bg-green-700 text-white" 
-                                        : "border-yellow-400 text-yellow-700 hover:bg-yellow-50"
+                                        ? "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white" 
+                                        : "border-amber-400 dark:border-amber-600 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/50"
                                 )}
                             >
                                 {pausing ? (
@@ -215,14 +216,14 @@ export function DoctorQueue({
                             </Button>
                         </div>
                         {isPaused && (
-                            <p className="text-xs text-yellow-700 dark:text-yellow-400 mt-2">
+                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-2">
                                 ⚠️ No se llamarán nuevos pacientes mientras la atención esté pausada
                             </p>
                         )}
                     </div>
 
                     {!nextUp && totalsByStatus["WAITING"] === 0 && !currentPatient && (
-                        <div className="mt-4 p-4 rounded-lg bg-muted border border-border">
+                        <div className="mt-4 p-4 rounded-xl bg-muted/50 dark:bg-muted/30 border border-border">
                             <p className="text-sm text-muted-foreground text-center">
                                 No hay pacientes en espera
                             </p>
@@ -230,8 +231,8 @@ export function DoctorQueue({
                     )}
 
                     {currentPatient && nextUp && (
-                        <div className="mt-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700">
-                            <p className="text-xs text-amber-800 dark:text-amber-300 text-center">
+                        <div className="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-700/50">
+                            <p className="text-xs text-amber-800 dark:text-amber-200 text-center">
                                 ⚠️ Completa la atención del paciente actual antes de llamar al siguiente
                             </p>
                         </div>
@@ -266,8 +267,8 @@ export function DoctorQueue({
 
 function StatusPill({ label, value }: { label: string; value: number }) {
     return (
-        <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-xs text-foreground bg-muted">
-            {label}: <strong className="font-medium">{value}</strong>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 dark:border-primary/40 px-3 py-1 text-xs font-medium text-primary bg-primary/10 dark:bg-primary/20">
+            {label}: <strong className="font-semibold">{value}</strong>
         </span>
     );
 }

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import {ArrowLeft, CheckCircle, AlertCircle, ClipboardPlus, UserPlus } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertCircle, ClipboardPlus, UserPlus } from "lucide-react";
 import { useToast } from "../../../../core/hooks/notifications/useToast";
+import { getHomeRouteByRole } from "../../../../core/utils/navigation";
 import { PatientSearchSection } from "../components/patientSearchSection";
 import { MedicalHistoryForm } from "./medicalHistoryForm";
 import type { PatientSearchResult } from "../../../../core/types/patient";
@@ -112,24 +113,37 @@ export function MedicalHistoryManagementForm() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50/50">
+        <div className="min-h-screen bg-background transition-colors duration-300">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Botón Volver al inicio */}
+                <div className="mb-6">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(getHomeRouteByRole())}
+                        className="gap-2 text-muted-foreground hover:text-foreground"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Volver al inicio
+                    </Button>
+                </div>
+
                 {/* Header */}
                 <div className="mb-8">                 
                     <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <ClipboardPlus className="w-6 h-6 text-white" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                            <ClipboardPlus className="w-6 h-6 text-primary-foreground" />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
-                                <h1 className="text-2xl font-bold text-slate-900">
+                                <h1 className="text-2xl font-bold text-foreground">
                                     {mode === "create" ? "Nueva Historia Clínica" : "Editar Historia Clínica"}
                                 </h1>
                                 <Badge variant={mode === "create" ? "default" : "secondary"}>
                                     {mode === "create" ? "Nuevo" : "Edición"}
                                 </Badge>
                             </div>
-                            <p className="text-slate-500">
+                            <p className="text-muted-foreground">
                                 {currentStep === "search" 
                                     ? "Seleccione un paciente para comenzar el registro"
                                     : `Completando historia clínica para ${selectedPatient?.fullname}`
@@ -147,7 +161,7 @@ export function MedicalHistoryManagementForm() {
                             isCompleted={currentStep === "form"} 
                         />
                         <div className={`h-0.5 flex-1 rounded-full transition-colors ${
-                            currentStep === "form" ? "bg-blue-500" : "bg-slate-200"
+                            currentStep === "form" ? "bg-primary" : "bg-border"
                         }`} />
                         <StepIndicator 
                             step={2} 
@@ -162,13 +176,13 @@ export function MedicalHistoryManagementForm() {
                 {saveStatus.type && (
                     <div className={`mb-6 p-4 rounded-xl border flex items-center gap-3 animate-in slide-in-from-top-2 ${
                         saveStatus.type === "success"
-                            ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                            : "bg-red-50 border-red-200 text-red-800"
+                            ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                            : "bg-destructive/10 border-destructive/30 text-destructive"
                     }`}>
                         {saveStatus.type === "success" ? (
-                            <CheckCircle className="w-5 h-5 text-emerald-600" />
+                            <CheckCircle className="w-5 h-5" />
                         ) : (
-                            <AlertCircle className="w-5 h-5 text-red-600" />
+                            <AlertCircle className="w-5 h-5" />
                         )}
                         <span className="font-medium">{saveStatus.message}</span>
                     </div>
@@ -187,10 +201,10 @@ export function MedicalHistoryManagementForm() {
 
                         {/* Panel de ayuda */}
                         <div className="lg:col-span-1">
-                            <Card className="border-slate-200 shadow-sm">
+                            <Card className="border-border bg-card shadow-sm">
                                 <CardHeader className="pb-4">
-                                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
-                                        <UserPlus className="w-5 h-5 text-blue-600" />
+                                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+                                        <UserPlus className="w-5 h-5 text-primary" />
                                     </div>
                                     <CardTitle className="text-lg">¿Cómo crear una historia?</CardTitle>
                                     <CardDescription>
@@ -214,8 +228,8 @@ export function MedicalHistoryManagementForm() {
                                         description="Revise la información y guarde la historia clínica en el sistema."
                                     />
 
-                                    <div className="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                                        <p className="text-xs text-amber-800">
+                                    <div className="mt-6 p-3 bg-warning/10 border border-warning/30 rounded-lg">
+                                        <p className="text-xs text-warning dark:text-warning">
                                             <strong>Nota:</strong> Los campos marcados con (*) son obligatorios.
                                         </p>
                                     </div>
@@ -269,10 +283,10 @@ function StepIndicator({
             <div className={`
                 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all
                 ${isCompleted 
-                    ? "bg-blue-500 text-white" 
+                    ? "bg-primary text-primary-foreground" 
                     : isActive 
-                        ? "bg-blue-100 text-blue-700 ring-2 ring-blue-500 ring-offset-2" 
-                        : "bg-slate-100 text-slate-400"
+                        ? "bg-primary/10 text-primary ring-2 ring-primary ring-offset-2 ring-offset-background" 
+                        : "bg-muted text-muted-foreground"
                 }
             `}>
                 {isCompleted ? (
@@ -282,7 +296,7 @@ function StepIndicator({
                 )}
             </div>
             <span className={`text-sm font-medium transition-colors ${
-                isActive || isCompleted ? "text-slate-900" : "text-slate-400"
+                isActive || isCompleted ? "text-foreground" : "text-muted-foreground"
             }`}>
                 {title}
             </span>
@@ -302,12 +316,12 @@ function HelpStep({
 }) {
     return (
         <div className="flex gap-3">
-            <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 mt-0.5">
+            <div className="w-6 h-6 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 mt-0.5">
                 {number}
             </div>
             <div>
-                <p className="text-sm font-medium text-slate-900">{title}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+                <p className="text-sm font-medium text-foreground">{title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
             </div>
         </div>
     );

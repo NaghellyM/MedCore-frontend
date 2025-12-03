@@ -1,12 +1,7 @@
-/**
- * ENTIDADES MÉDICAS UNIFICADAS
- * ============================
- * Este archivo contiene todas las entidades base del dominio médico
- * consolidando duplicaciones entre archivos
- */
+// Entidades y tipos relacionados con el dominio de historia médica
 
 // Enums y tipos base
-export type DiagnosticState = "ACTIVE" | "INACTIVE" | "DELETED";
+export type DiagnosticState = "ACTIVE" | "ARCHIVED" | "DELETED";
 export type DiagnosisType = "principal" | "secundario";
 export type OrderType = "lab" | "imagen" | "interconsulta" | "laboratory" | "imaging" | "procedure" | "consultation";
 export type OrderStatus = "pendiente" | "en_proceso" | "listo" | "routine" | "urgent" | "stat";

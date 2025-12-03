@@ -38,10 +38,10 @@ export function DiagnosticStatusIndicator({
                     borderColor: "border-green-200",
                     iconColor: "text-green-600"
                 };
-            case "INACTIVE":
+            case "ARCHIVED":
                 return {
                     icon: AlertCircle,
-                    label: "Inactivo",
+                    label: "Archivado",
                     bgColor: "bg-yellow-50",
                     textColor: "text-yellow-700",
                     borderColor: "border-yellow-200",

@@ -3,6 +3,7 @@ import { patientService } from '../../services/patientService';
 import { medicalHistoryService } from '../../services/medicalHistoryService';
 import { prescriptionService } from '../../services/prescriptionService';
 import { medicalOrdersService } from '../../services/medicalOrdersService';
+import { diagnosticService } from '../../services/diagnosticService';
 import type { QueuePatient } from '../../types/queue';
 import type { Diagnostic, MedicalHistory } from '../../types/medicalHistory';
 import type { Prescription } from '../../types/prescription';
@@ -170,23 +171,23 @@ export function useConsultation(options: UseConsultationOptions = {}): UseConsul
         }
     }, []);
 
-    // Cargar diagnósticos de la historia clínica
-    // Los diagnósticos vienen incluidos en la historia clínica, no en un endpoint separado
+    // Cargar diagnósticos del paciente
+    // Usamos el endpoint de diagnósticos por paciente para obtener datos actualizados
     const refreshDiagnostics = useCallback(async () => {
-        if (!medicalHistory?.id) return;
+        if (!patientInfo?.id) return;
         
         setLoadingDiagnostics(true);
         try {
-            // Obtener la historia clínica actualizada que incluye los diagnósticos
-            const response = await medicalHistoryService.getMedicalHistoryById(medicalHistory.id);
-            setDiagnostics(response.data?.diagnostics || []);
+            // Obtener diagnósticos directamente del servicio de diagnósticos
+            const response = await diagnosticService.getDiagnosticsByPatientId(patientInfo.id);
+            setDiagnostics(response.data || []);
         } catch (err: any) {
             console.error('Error al cargar diagnósticos:', err);
             setDiagnostics([]);
         } finally {
             setLoadingDiagnostics(false);
         }
-    }, [medicalHistory?.id]);
+    }, [patientInfo?.id]);
 
     // Cargar prescripciones del paciente
     const refreshPrescriptions = useCallback(async () => {

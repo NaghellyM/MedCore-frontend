@@ -10,17 +10,12 @@ import { queueService } from '../../../../core/services/queueService';
 import { useState } from 'react';
 import type { QueuePatient } from '../../../../core/types/queue';
 
-/**
- * Página de Consulta Médica
- * Maneja el flujo completo de atención al paciente
- */
 export default function ConsultationPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const { success, error: showError } = useToast();
     const [completing, setCompleting] = useState(false);
 
-    // Obtener el paciente del state de navegación
     const patient = location.state?.patient as QueuePatient | undefined;
 
     const handleCompleteConsultation = async (appointmentId: string) => {
