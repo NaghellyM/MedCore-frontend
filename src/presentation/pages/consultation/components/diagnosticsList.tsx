@@ -6,7 +6,6 @@ import { Badge } from '../../../components/ui/badge';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { 
     Stethoscope, 
-    Eye,
     Calendar,
     FileText,
     AlertCircle,
@@ -37,7 +36,6 @@ export const DiagnosticsList = memo(function DiagnosticsList({
     medicalHistoryId,
     patientId,
     loading = false,
-    onView,
     onRefresh,
     onAssign,
     className,
@@ -199,15 +197,7 @@ export const DiagnosticsList = memo(function DiagnosticsList({
                                     </div>
 
                                     <div className="flex items-center gap-1">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400"
-                                            onClick={() => onView(diagnostic.id)}
-                                            title="Ver detalles"
-                                        >
-                                            <Eye className="h-4 w-4" />
-                                        </Button>
+                                    
                                         {canDelete && diagnostic.state !== 'DELETED' && (
                                             <Button
                                                 variant="ghost"

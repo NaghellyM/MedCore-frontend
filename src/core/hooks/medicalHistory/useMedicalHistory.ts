@@ -66,15 +66,18 @@ export function usePatientMedicalHistory(
 
             let response: PatientMedicalHistoryResponse;
             
-            if (patientId) {
-                // Si se proporciona un patientId específico, usarlo
+            // Verificar si el usuario actual es un paciente
+            const currentUser = getCurrentUser();
+            const isPatient = currentUser && (currentUser.role === 'PACIENTE' || currentUser.role === 'patient');
+            
+            if (isPatient) {
+                response = await medicalHistoryService.getMyMedicalHistory();
+            } else if (patientId) {
                 response = await medicalHistoryService.getMedicalHistoryByPatientId(patientId);
             } else {
-                // Si no, usar el endpoint para obtener la historia del paciente logueado
-                response = await medicalHistoryService.getMyMedicalHistory();
+                throw new Error("Se requiere un ID de paciente para consultar la historia médica");
             }
 
-            // Validar que la respuesta tenga la estructura esperada
             if (!response) {
                 throw new Error("La respuesta del servidor está vacía");
             }

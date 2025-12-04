@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../core/utils/cn';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
-import { 
-    ChevronLeft, 
-    ChevronRight, 
-    CheckCircle, 
+import {
+    ChevronLeft,
+    ChevronRight,
+    CheckCircle,
     X,
     Loader2,
     Clock,
@@ -50,7 +50,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
     const navigate = useNavigate();
     const { success, error: showError } = useToast();
     const [showDiagnosticSelector, setShowDiagnosticSelector] = useState(false);
-    
+
     const {
         consultation,
         isActive,
@@ -86,7 +86,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
     });
 
     const {
-        isAssigning,
+
         assignDiagnostics,
         reset: resetAssignment
     } = useAssignDiagnostics();
@@ -127,17 +127,6 @@ export const ConsultationPanel = memo(function ConsultationPanel({
         navigate(`/prescriptions/${prescriptionId}`);
     };
 
-    const handleAddLaboratoryOrder = () => {
-        if (patientInfo) {
-            navigate(`/orders/laboratory/new?patientId=${patientInfo.id}`);
-        }
-    };
-
-    const handleAddRadiologyOrder = () => {
-        if (patientInfo) {
-            navigate(`/orders/radiology/new?patientId=${patientInfo.id}`);
-        }
-    };
 
     const handleViewOrder = (orderId: string) => {
         navigate(`/orders/${orderId}`);
@@ -176,7 +165,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
         }
 
         const assigned = await assignDiagnostics(patientInfo.id, selectedDiagnostics);
-        
+
         if (assigned) {
             success(
                 'Diagnósticos asignados',
@@ -319,7 +308,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
                                 <div className="flex items-center gap-2 text-sm text-slate-500">
                                     <Clock className="h-4 w-4" />
                                     <span>
-                                        Iniciada: {consultation?.startedAt 
+                                        Iniciada: {consultation?.startedAt
                                             ? new Date(consultation.startedAt).toLocaleTimeString('es-ES', {
                                                 hour: '2-digit',
                                                 minute: '2-digit'
