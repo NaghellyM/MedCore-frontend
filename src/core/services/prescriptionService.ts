@@ -63,14 +63,16 @@ export const prescriptionService = {
         return response.data;
     },
 
-    // Descarga la prescripción en formato PDF
+
     async downloadPrescriptionPdf(prescriptionId: string): Promise<Blob> {
-        const response = await httpPatient.get(
-            `${prescriptionsUrl}/${prescriptionId}/pdf`,
-            { responseType: 'blob' }
-        );
-        return response.data;
-    },
+    const response = await httpPatient.get(
+        `/prescriptions/${prescriptionId}/pdf`,
+        { responseType: "arraybuffer" }
+    );
+
+    return new Blob([response.data], { type: "application/pdf" });
+}
+,
 
     // Obtiene la URL para descargar el PDF
     getPrescriptionPdfUrl(prescriptionId: string): string {
@@ -103,4 +105,19 @@ export const prescriptionService = {
     async reactivatePrescription(prescriptionId: string): Promise<UpdatePrescriptionStatusResponse> {
         return this.updatePrescriptionStatus(prescriptionId, { status: 'ACTIVE' });
     },
+
+    // Descarga TODAS las prescripciones del paciente en un solo PDF
+async downloadAllPrescriptionsPdf(patientId: string): Promise<Blob> {
+    const response = await httpPatient.get(
+        `${prescriptionsUrl}/patient/${patientId}/pdf`,
+        { responseType: "blob" }
+    );
+    return response.data;
+},
+
+// Obtiene la URL pública del PDF de TODAS las prescripciones
+getAllPrescriptionsPdfUrl(patientId: string): string {
+    return `${prescriptionsUrl}/patient/${patientId}/pdf`;
+},
+
 };

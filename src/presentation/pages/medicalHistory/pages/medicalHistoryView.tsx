@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { documentsService } from "../../../../core/services/documentsService";
+import { prescriptionService } from "../../../../core/services/prescriptionService";
+import { FileText as FileTextIcon,FileIcon } from "lucide-react";
+import { Image, File, Download, FileArchive, FileVideo, FileAudio } from "lucide-react";
 import { 
     FileText, 
     Calendar, 
@@ -28,6 +32,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     showFilters = true
 }) => {
     const { user } = useAuth();
+    const patientId = history.patientId || history.patient?.id;
     
     // Determinar si el usuario actual es un paciente
     const isPatient = user?.role === 'PACIENTE' || user?.role === 'patient';
@@ -37,6 +42,49 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     const [showStatisticsDetails, setShowStatisticsDetails] = useState(false);
     const [localDiagnostics, setLocalDiagnostics] = useState(history.diagnostics);
     const [showDeleted, setShowDeleted] = useState(false);
+    const [documents, setDocuments] = useState<any[]>([]);
+    const [loadingDocuments, setLoadingDocuments] = useState(true);
+    const [prescriptions, setPrescriptions] = useState([]);
+const [loadingPrescriptions, setLoadingPrescriptions] = useState(true);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [previewType, setPreviewType] = useState<string | null>(null);
+
+
+
+    useEffect(() => {
+    loadDocuments();
+}, [patientId]);
+
+
+
+
+const handleDownload = async (documentId: string, filename: string) => {
+    try {
+        const response = await documentsService.downloadDocument(documentId);
+        const url = window.URL.createObjectURL(response.data);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error("Error descargando:", err);
+    }
+};
+
+
+    const loadDocuments = async () => {
+    if (!patientId) return;
+    try {
+        const res = await documentsService.getDocumentsByPatientId(patientId);
+        setDocuments(res.data);
+    } catch (error) {
+        console.error("Error cargando documentos:", error);
+    } finally {
+        setLoadingDocuments(false);
+    }
+};
+
 
     // Hook para filtrado por rol
     const { canViewDeleted } = useDiagnosticFilter({ showDeleted });
@@ -45,6 +93,64 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
     useEffect(() => {
         setLocalDiagnostics(history.diagnostics);
     }, [history.diagnostics]);
+
+    useEffect(() => {
+    loadPrescriptions();
+}, [patientId]);
+
+const loadPrescriptions = async () => {
+    if (!patientId) return;
+    try {
+        const res = await prescriptionService.getPrescriptionsByPatientId(patientId);
+        console.log("res:", res);
+        
+        setPrescriptions(res.data || []);
+    } catch (error) {
+        console.error("Error cargando prescripciones:", error);
+    } finally {
+        setLoadingPrescriptions(false);
+    }
+};
+
+
+const downloadPrescriptionPdf = async (id: string) => {
+    try {
+        const blob = await prescriptionService.downloadPrescriptionPdf(id);
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `prescription-${id}.pdf`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("Error descargando PDF:", error);
+    }
+};
+
+
+const downloadAllPrescriptionsPdf = async () => {
+    try {
+        const blob = await prescriptionService.downloadAllPrescriptionsPdf(patientId);
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `prescripciones-${patientId}.pdf`;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+        console.error("Error descargando PDF:", error);
+    }
+};
+
+
 
     const handleDiagnosticDeleted = useCallback((deletedId: string) => {
         if (canViewDeleted) {
@@ -81,15 +187,17 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
             });
     }, [localDiagnostics, canViewDeleted, showDeleted, selectedState, sortBy, sortOrder]);
 
+    
     // Estadísticas (memoizadas para evitar recálculos)
-    const stats = useMemo(() => ({
-        total: localDiagnostics.length,
-        active: localDiagnostics.filter((d: any) => d.state === "ACTIVE").length,
-        archived: localDiagnostics.filter((d: any) => d.state === "ARCHIVED").length,
-        deleted: localDiagnostics.filter((d: any) => d.state === "DELETED").length,
-        withDocuments: localDiagnostics.filter((d: any) => d.documents && d.documents.length > 0).length,
-        withNextAppointment: localDiagnostics.filter((d: any) => d.nextAppointment).length
-    }), [localDiagnostics]);
+const stats = useMemo(() => ({
+    total: localDiagnostics.length,
+    active: localDiagnostics.filter((d: any) => d.state === "ACTIVE").length,
+    archived: localDiagnostics.filter((d: any) => d.state === "ARCHIVED").length,
+    deleted: localDiagnostics.filter((d: any) => d.state === "DELETED").length,
+    totalDocuments: documents.length,
+    withNextAppointment: localDiagnostics.filter((d: any) => d.nextAppointment).length
+}), [localDiagnostics, documents]);
+
 
     const getStateColor = (state: DiagnosticState) => {
         switch (state) {
@@ -109,8 +217,88 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
         }
     };
 
+    const handlePreview = async (documentId: string, fileType: string) => {
+    try {
+        const response = await documentsService.downloadDocument(documentId);
+
+        const blobUrl = window.URL.createObjectURL(response.data);
+        setPreviewUrl(blobUrl);
+        setPreviewType(fileType.toLowerCase());
+    } catch (err) {
+        console.error("Error mostrando previsualización:", err);
+    }
+};
+
+
+// Función para mostrar un ícono según el tipo de archivo
+const getDocumentIcon = (type: string) => {
+    const fileType = type.toLowerCase();
+
+    if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(fileType)) {
+        return <Image className="w-6 h-6 text-blue-600" />;
+    }
+
+    if (["pdf"].includes(fileType)) {
+        return <FileText className="w-6 h-6 text-red-600" />;
+    }
+
+    if (["zip", "rar", "7z"].includes(fileType)) {
+        return <FileArchive className="w-6 h-6 text-amber-600" />;
+    }
+
+    if (["mp4", "mov", "avi", "mkv"].includes(fileType)) {
+        return <FileVideo className="w-6 h-6 text-purple-600" />;
+    }
+
+    if (["mp3", "wav", "aac"].includes(fileType)) {
+        return <FileAudio className="w-6 h-6 text-green-600" />;
+    }
+
+    return <File className="w-6 h-6 text-slate-600" />;
+};
+
+
     return (
+        
         <div className="flex flex-col gap-6">
+            {previewUrl && (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+        <div className="bg-white rounded-lg p-4 max-w-4xl w-full max-h-[90vh] overflow-auto relative">
+
+            {/* Botón cerrar */}
+            <button
+                onClick={() => setPreviewUrl(null)}
+                className="absolute top-3 right-3 text-xl"
+            >
+                ✕
+            </button>
+
+            {/* Vista segun tipo */}
+            {["jpg", "jpeg", "png", "gif", "webp"].includes(previewType!) ? (
+                <img src={previewUrl} className="w-full rounded-lg" />
+            ) : previewType === "pdf" ? (
+                <iframe
+                    src={previewUrl}
+                    className="w-full h-[80vh] rounded-lg"
+                ></iframe>
+            ) : (
+                <div className="text-center py-10">
+                    <p className="text-gray-600">
+                        No se puede previsualizar este tipo de archivo.
+                    </p>
+                    <a
+                        href={previewUrl}
+                        target="_blank"
+                        className="text-blue-600 underline"
+                    >
+                        Abrir directamente
+                    </a>
+                </div>
+            )}
+        </div>
+    </div>
+)}
+
             {/* Encabezado de la Historia Clínica */}
             <section className="rounded-2xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm transition-colors duration-300">
                 <div className="flex items-start justify-between mb-4">
@@ -185,7 +373,7 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                             <p className="text-sm text-blue-700 dark:text-blue-300">Total Diagnósticos</p>
                         </div>
                         <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/30 rounded-lg transition-colors duration-300">
-                            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.withDocuments}</p>
+                            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.totalDocuments}</p>
                             <p className="text-sm text-amber-700 dark:text-amber-300">Con Documentos</p>
                         </div>
                     </div>
@@ -351,6 +539,209 @@ export const MedicalHistoryView: React.FC<MedicalHistoryViewProps> = ({
                     </div>
                 )}
             </section>
+            {/* ====================================================
+   DOCUMENTOS DEL PACIENTE 📄
+==================================================== */}
+{/* ====================================================
+    DOCUMENTOS DEL PACIENTE 📄
+==================================================== */}
+<section className="flex flex-col gap-4 mt-4">
+    <h2 className="text-lg font-semibold flex items-center gap-2">
+        <FileTextIcon className="w-5 h-5 text-blue-600" />
+        Documentos del Paciente
+    </h2>
+
+    {loadingDocuments ? (
+        <p className="text-slate-500 italic">Cargando documentos...</p>
+    ) : documents.length === 0 ? (
+        <div className="p-6 text-center border bg-slate-50 rounded-xl">
+            <FileIcon className="w-10 h-10 text-slate-400 mx-auto" />
+            <p className="mt-2 text-slate-500">No hay documentos registrados.</p>
+        </div>
+    ) : (
+        <div className="grid md:grid-cols-2 gap-4">
+            {documents.map(doc => (
+                <div
+                    key={doc.id}
+                    className="p-4 border rounded-xl bg-white shadow-sm flex gap-4 items-center cursor-pointer hover:bg-slate-50"
+                    onClick={() => handlePreview(doc.id, doc.fileType)}
+                >
+
+                    
+                    {/* ICONO */}
+                    <div className="p-3 rounded-lg bg-slate-100">
+                        {getDocumentIcon(doc.fileType)}
+                    </div>
+
+                    {/* INFO */}
+                    <div className="flex-1">
+                        <p className="font-medium">{doc.filename}</p>
+                        <p className="text-xs text-slate-500">
+                            {doc.diagnostic?.title}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                            {new Date(doc.createdAt).toLocaleDateString()}
+                        </p>
+                    </div>
+
+                    {/* BOTÓN DESCARGAR */}
+                    <button
+    className="p-2 rounded-md bg-blue-100 hover:bg-blue-200"
+    onClick={(e) => {
+    e.stopPropagation();
+    handleDownload(doc.id, doc.filename);
+}}
+
+>
+    <FileTextIcon className="w-4 h-4 text-blue-600" />
+</button>
+
+                </div>
+            ))}
+        </div>
+    )}
+</section>
+{/* ====================================================
+    PRESCRIPCIONES DEL PACIENTE 💊
+==================================================== */}
+<section className="flex flex-col gap-4 mt-6">
+    <h2 className="text-lg font-semibold flex items-center gap-2">
+        <Stethoscope className="w-5 h-5 text-green-600" />
+        Prescripciones del Paciente
+    </h2>
+
+<button
+    onClick={downloadAllPrescriptionsPdf}
+    className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md flex justify-center items-center gap-2 transition"
+>
+    <FileText className="w-5 h-5" />
+    Descargar todas las prescripciones en PDF
+</button>
+
+
+    {loadingPrescriptions ? (
+        <p className="text-slate-500 italic">Cargando prescripciones...</p>
+    ) : prescriptions.length === 0 ? (
+        <div className="p-6 text-center border bg-slate-50 rounded-xl dark:bg-gray-800 dark:border-gray-700">
+            <FileText className="w-10 h-10 text-slate-400 mx-auto" />
+            <p className="mt-2 text-slate-500 dark:text-gray-400">No hay prescripciones registradas.</p>
+        </div>
+    ) : (
+        <div className="flex flex-col gap-4">
+            {prescriptions.map((pres) => (
+                <div
+    key={pres.id}
+    className="p-5 border rounded-xl bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700"
+>
+    {/* Encabezado */}
+    <div className="flex items-center justify-between mb-3">
+        <div>
+            <h3 className="text-md font-semibold text-slate-800 dark:text-gray-100">
+                Prescripción Médica
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-gray-400">
+                Emitida el: {new Date(pres.prescriptionDate).toLocaleDateString()}
+            </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+            <button
+                onClick={() => downloadPrescriptionPdf(pres.id)}
+                className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md flex items-center gap-1 text-sm"
+            >
+                <FileText className="w-4 h-4" />
+                PDF
+            </button>
+
+            <span
+                className={`text-xs px-3 py-1 rounded-full font-semibold ${
+                    pres.status === "ACTIVE"
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                        : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                }`}
+            >
+                {pres.status === "ACTIVE" ? "Activa" : "Inactiva"}
+            </span>
+        </div>
+    </div>
+
+    {/* Alergias */}
+    {pres.allergies?.length > 0 && (
+        <div className="mb-3">
+            <p className="text-sm font-medium text-slate-600 dark:text-gray-300">Alergias:</p>
+            <div className="flex gap-2 flex-wrap mt-1">
+                {pres.allergies.map((al) => (
+                    <span
+                        key={al}
+                        className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded dark:bg-red-900/30 dark:text-red-300"
+                    >
+                        {al}
+                    </span>
+                ))}
+            </div>
+        </div>
+    )}
+
+    {/* Notas */}
+    {pres.notes && (
+        <p className="text-sm italic text-slate-700 dark:text-gray-300 mb-3">
+            “{pres.notes}”
+        </p>
+    )}
+
+    {/* Medicamentos */}
+    <div className="mt-3 border-t pt-3 dark:border-gray-600">
+        <p className="font-medium text-sm text-slate-700 dark:text-gray-200 mb-2">
+            Medicamentos Recetados:
+        </p>
+
+        <div className="flex flex-col gap-3">
+            {pres.medications.map((med) => (
+                <div
+                    key={med.id}
+                    className="p-3 rounded-lg bg-slate-50 border dark:bg-gray-700 dark:border-gray-600"
+                >
+                    <p className="text-sm font-semibold text-slate-800 dark:text-gray-100">
+                        {med.medicationName}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-gray-300">
+                        {med.activeIngredient}
+                    </p>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 text-sm">
+                        <div>
+                            <span className="font-medium">Dosis:</span> {med.dosage}
+                        </div>
+                        <div>
+                            <span className="font-medium">Frecuencia:</span> {med.frequency}
+                        </div>
+                        <div>
+                            <span className="font-medium">Duración:</span>{" "}
+                            {med.duration} {med.durationType}
+                        </div>
+                        <div>
+                            <span className="font-medium">Advertencias:</span>{" "}
+                            {med.warnings || "Ninguna"}
+                        </div>
+                    </div>
+
+                    {med.instructions && (
+                        <p className="text-xs mt-2 italic text-slate-600 dark:text-gray-300">
+                            Instrucciones: {med.instructions}
+                        </p>
+                    )}
+                </div>
+            ))}
+        </div>
+    </div>
+</div>
+
+            ))}
+        </div>
+    )}
+</section>
+
+ 
         </div>
     );
 };
