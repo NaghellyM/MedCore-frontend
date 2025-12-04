@@ -26,57 +26,61 @@ const MySwal = withReactContent(Swal);
 const iconToSvg = (Icon: any, classes = "h-6 w-6") =>
     renderToStaticMarkup(<Icon className={classes} />);
 
+interface Diagnostic {
+    id: string;
+    title: string;
+    diagnosis?: string;
+    consultDate: string;
+    state: string;
+}
+
 interface Props {
     patientId?: string | null;
+    diagnostics?: Diagnostic[];
     className?: string;
 }
 
 export const PrescriptionsList = memo(function PrescriptionsList({
     patientId,
+    diagnostics = [],
     className,
 }: Props) {
 
     // ====================================================
-    // FORMULARIO — CREAR PRESCRIPCIÓN COMPLETA
+    // FORMULARIO — RECIBE OPCIONALMENTE diagnosticId
     // ====================================================
-    const openPrescriptionForm = async () => {
+    const openPrescriptionForm = async (diagnosticId?: string) => {
 
         const html = `
             <div class="text-left space-y-5">
 
-                <!-- Encabezado -->
                 <div class="p-3 bg-orange-50 border border-orange-200 rounded-lg">
                     <div class="font-semibold text-slate-700 flex items-center gap-2">
                         ${iconToSvg(Pill, "h-5 w-5 text-orange-600")}
                         Nueva Prescripción Médica
                     </div>
                     <p class="text-xs text-slate-500 mt-1">
-                        Agrega varios medicamentos, alergias y notas. Todo es validado automáticamente.
+                        Agrega varios medicamentos, alergias y notas.
                     </p>
                 </div>
 
-                <!-- Notas -->
                 <div>
-                    <label class="font-semibold text-sm text-slate-700">Notas (opcional)</label>
-                    <textarea id="notes" class="swal2-textarea" rows="3" placeholder="Observaciones, recomendaciones, etc."></textarea>
+                    <label class="font-semibold text-sm text-slate-700">Notas</label>
+                    <textarea id="notes" class="swal2-textarea" rows="3"></textarea>
                 </div>
 
-                <!-- Alergias -->
                 <div>
-                    <label class="font-semibold text-sm text-slate-700">Alergias del paciente (opcional)</label>
-                    <input id="allergies" class="swal2-input" placeholder="Ej: penicilina, sulfas..."/>
+                    <label class="font-semibold text-sm text-slate-700">Alergias</label>
+                    <input id="allergies" class="swal2-input" placeholder="Ej: penicilina"/>
                 </div>
 
-                <!-- Lista dinámica de medicamentos -->
                 <div id="medications-container" class="space-y-4"></div>
 
-                <!-- Botón agregar medicamento -->
                 <button id="add-med"
                     class="w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center justify-center gap-2">
                     ${iconToSvg(Plus, "h-5 w-5")}
                     Agregar medicamento
                 </button>
-
             </div>
         `;
 
@@ -108,7 +112,8 @@ export const PrescriptionsList = memo(function PrescriptionsList({
                 const addMedicationForm = () => {
                     const id = Date.now();
                     const div = document.createElement("div");
-                    div.className = "p-4 border border-slate-200 bg-white rounded-lg shadow-sm relative space-y-3";
+                    div.className =
+                        "p-4 border border-slate-200 bg-white rounded-lg shadow-sm relative space-y-3";
                     div.setAttribute("data-id", String(id));
 
                     div.innerHTML = `
@@ -118,8 +123,8 @@ export const PrescriptionsList = memo(function PrescriptionsList({
 
                         <input class="swal2-input" placeholder="Nombre del medicamento" data-field="name"/>
                         <input class="swal2-input" placeholder="Ingrediente activo" data-field="ingredient"/>
-                        <input class="swal2-input" placeholder="Dosis (ej: 500mg)" data-field="dosage"/>
-                        <input class="swal2-input" placeholder="Frecuencia (ej: Cada 8 horas)" data-field="frequency"/>
+                        <input class="swal2-input" placeholder="Dosis (Ej: 500mg)" data-field="dosage"/>
+                        <input class="swal2-input" placeholder="Frecuencia (Ej: Cada 8h)" data-field="frequency"/>
 
                         <div class="flex gap-2">
                             <input type="number" class="swal2-input" style="width:50%" placeholder="Duración" data-field="duration"/>
@@ -130,19 +135,8 @@ export const PrescriptionsList = memo(function PrescriptionsList({
                             </select>
                         </div>
 
-                        <select class="swal2-select" data-field="type">
-                            <option value="">Tipo (opcional)</option>
-                            <option value="antibiotico">Antibiótico</option>
-                            <option value="antiinflamatorio">Antiinflamatorio</option>
-                            <option value="analgesico">Analgésico</option>
-                            <option value="antihipertensivo">Antihipertensivo</option>
-                            <option value="anticoagulante">Anticoagulante</option>
-                            <option value="vitamina">Vitamina</option>
-                            <option value="antidiabetico">Antidiabético</option>
-                        </select>
-
-                        <input class="swal2-input" placeholder="Instrucciones (opcional)" data-field="instructions"/>
-                        <input class="swal2-input" placeholder="Advertencias (opcional)" data-field="warnings"/>
+                        <input class="swal2-input" placeholder="Instrucciones" data-field="instructions"/>
+                        <input class="swal2-input" placeholder="Advertencias" data-field="warnings"/>
                     `;
 
                     div.querySelector(".remove-med")!.addEventListener("click", () => div.remove());
@@ -150,7 +144,7 @@ export const PrescriptionsList = memo(function PrescriptionsList({
                     container.appendChild(div);
                 };
 
-                addMedicationForm(); // uno por defecto
+                addMedicationForm();
                 addBtn.addEventListener("click", () => addMedicationForm());
             },
 
@@ -160,25 +154,12 @@ export const PrescriptionsList = memo(function PrescriptionsList({
 
                 const blocks = Array.from(document.querySelectorAll("[data-id]"));
 
-                if (blocks.length === 0) {
+                if (blocks.length === 0)
                     return Swal.showValidationMessage("Debes agregar al menos un medicamento.");
-                }
 
                 const medications = blocks.map((block: any) => {
                     const f = (field: string) =>
                         (block.querySelector(`[data-field="${field}"]`) as HTMLInputElement)?.value;
-
-                    if (!f("name") || !f("ingredient") || !f("dosage")) {
-                        return Swal.showValidationMessage(
-                            "Cada medicamento debe tener nombre, ingrediente activo y dosis."
-                        );
-                    }
-
-                    if (Number(f("duration")) < 1) {
-                        return Swal.showValidationMessage(
-                            "La duración debe ser mayor o igual a 1."
-                        );
-                    }
 
                     return {
                         medicationName: f("name"),
@@ -189,7 +170,6 @@ export const PrescriptionsList = memo(function PrescriptionsList({
                         durationType: f("durationType"),
                         instructions: f("instructions") || "",
                         warnings: f("warnings") || "",
-                        medicationType: f("type") || "", // 🔥 NECESARIO PARA EL BACKEND
                     };
                 });
 
@@ -197,8 +177,8 @@ export const PrescriptionsList = memo(function PrescriptionsList({
                     notes: getValue("notes"),
                     allergies: getValue("allergies")
                         ?.split(",")
-                        ?.map((a) => a.trim())
-                        .filter((a) => a),
+                        ?.map((x) => x.trim())
+                        ?.filter((x) => x),
                     medications,
                 };
             },
@@ -208,16 +188,13 @@ export const PrescriptionsList = memo(function PrescriptionsList({
 
         const payload = {
             patientId: patientId!,
+            diagnosticId: diagnosticId || undefined,
+            notes: swal.value.notes,
+            allergies: swal.value.allergies,
             medications: swal.value.medications,
-            notes: swal.value.notes || undefined,
-            allergies: swal.value.allergies || undefined,
         };
 
-        Swal.fire({
-            title: "Enviando prescripción...",
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading(),
-        });
+        Swal.fire({ title: "Enviando...", didOpen: () => Swal.showLoading() });
 
         try {
             await prescriptionService.createPrescription(payload);
@@ -227,7 +204,6 @@ export const PrescriptionsList = memo(function PrescriptionsList({
                 title: "Prescripción enviada",
                 text: "La prescripción fue creada exitosamente.",
             });
-
         } catch (err: any) {
             Swal.fire({
                 iconHtml: iconToSvg(AlertTriangle, "h-10 w-10 text-red-600"),
@@ -248,27 +224,60 @@ export const PrescriptionsList = memo(function PrescriptionsList({
             )}
         >
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                        <Pill className="h-5 w-5 text-orange-600" />
-                        Prescripciones
-                    </CardTitle>
-
-                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300">
-                        Activo
-                    </Badge>
-                </div>
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <Pill className="h-5 w-5 text-orange-600" />
+                    Prescripciones
+                </CardTitle>
             </CardHeader>
 
-            <CardContent className="py-6 text-center">
-                <Button
-                    variant="secondary"
-                    className="px-6 py-3 text-md font-semibold"
-                    rightIcon={<ClipboardPlus size={18} />}
-                    onClick={openPrescriptionForm}
-                >
-                    Crear Prescripción
-                </Button>
+            <CardContent className="space-y-6">
+
+                {/* ======================= */}
+                {/*   LISTA DE DIAGNOSTICOS */}
+                {/* ======================= */}
+                {diagnostics.length > 0 && (
+                    <div className="space-y-3">
+                        <p className="text-sm font-semibold text-slate-700">
+                            Diagnósticos del paciente
+                        </p>
+
+                        {diagnostics.map((d) => (
+                            <div
+                                key={d.id}
+                                className="p-4 bg-white border border-slate-200 rounded-lg flex items-center justify-between"
+                            >
+                                <div>
+                                    <p className="font-medium">{d.title}</p>
+                                    <p className="text-sm text-slate-600">{d.diagnosis}</p>
+                                    <p className="text-xs text-slate-500 mt-1">
+                                        {new Date(d.consultDate).toLocaleDateString()}
+                                    </p>
+                                </div>
+
+                                <Button
+                                    className="bg-orange-600 hover:bg-orange-700 text-white"
+                                    onClick={() => openPrescriptionForm(d.id)}
+                                >
+                                    Prescribir
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* ======================= */}
+                {/*   BOTÓN NORMAL GENERAL  */}
+                {/* ======================= */}
+                <div className="text-center pt-4">
+                    <Button
+                        variant="secondary"
+                        className="px-6 py-3 text-md font-semibold"
+                        rightIcon={<ClipboardPlus size={18} />}
+                        onClick={() => openPrescriptionForm(undefined)}
+                    >
+                        Crear Prescripción
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );

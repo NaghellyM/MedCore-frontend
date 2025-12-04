@@ -25,6 +25,10 @@ export const useDiagnosticsByPatient = (config: UseDiagnosticsByPatientConfig) =
             setError(null);
             
             const response = await diagnosticService.getDiagnosticsByPatientId(patientId, state);
+
+            console.log("respuesta lista diagnonisto", response);
+            
+
             setDiagnostics(response.data || []);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Error al obtener diagnósticos del paciente';

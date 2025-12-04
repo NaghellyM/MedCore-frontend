@@ -57,7 +57,7 @@ export const DocumentDiagnosticList = memo(function DocumentDiagnosticList({
 
         const fetchDiagnostics = async () => {
             try {
-                const data = await diagnosticService.getDiagnosticsByPatientId(patientId);
+                const data = await diagnosticService.getDiagnosticsByPatientId(patientId,"ACTIVE");
                 setDiagnostics(data.data || []);
             } catch (err) {
                 console.error("Error cargando diagnósticos:", err);
