@@ -77,7 +77,6 @@ export const DiagnosticSelector = memo(function DiagnosticSelector({
         return selectedDiagnostics.some(d => d.predefinedId === diagnosticId);
     }, [selectedDiagnostics]);
 
-    // Agregar diagnóstico a la selección
     const handleAddDiagnostic = (diagnostic: PredefinedDiagnostic) => {
         if (!isSelected(diagnostic.id)) {
             const selected: SelectedDiagnostic = {

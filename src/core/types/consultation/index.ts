@@ -14,6 +14,7 @@ export type ConsultationStep =
     | 'patient-info'      // Información del paciente
     | 'medical-history'   // Historia clínica
     | 'diagnostics'       // Diagnósticos
+    | "documents"          // Documentos
     | 'prescriptions'     // Prescripciones
     | 'orders'            // Órdenes médicas (lab/radiología)
     | 'summary';          // Resumen y finalización

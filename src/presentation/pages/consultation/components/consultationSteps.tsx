@@ -1,3 +1,4 @@
+
 import { memo } from 'react';
 import { cn } from '../../../../core/utils/cn';
 import { 
@@ -26,6 +27,7 @@ const STEPS_CONFIG: Array<{
     { step: 'patient-info', label: 'Paciente', icon: User },
     { step: 'medical-history', label: 'Historia', icon: FileText },
     { step: 'diagnostics', label: 'Diagnósticos', icon: Stethoscope },
+    { step: 'documents', label: 'Documentos', icon: FileText },
     { step: 'prescriptions', label: 'Recetas', icon: Pill },
     { step: 'orders', label: 'Órdenes', icon: ClipboardList },
     { step: 'summary', label: 'Resumen', icon: CheckCircle },

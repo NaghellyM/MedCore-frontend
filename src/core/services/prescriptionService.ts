@@ -15,10 +15,21 @@ const prescriptionsUrl = `/prescriptions`;
 export const prescriptionService = {
     // Crea una nueva prescripción/receta médica
     async createPrescription(data: CreatePrescriptionDto): Promise<CreatePrescriptionResponse> {
+        
+        console.log("respuesta: ", data);
+
         const response = await httpPatient.post<CreatePrescriptionResponse>(
             prescriptionsUrl,
             data
         );
+
+        console.log("Data respuesta: ", response);
+
+
+        
+        
+        
+
         return response.data;
     },
 

@@ -45,8 +45,8 @@ export const documentsService = {
     formData.append("diagnosticId", diagnosticId);
 
     for (const file of files) {
-      formData.append("files", file);
-    }
+  formData.append("documents", file); // <- NOMBRE CORRECTO PARA MULTER
+ }
     
     const response = await httpPatient.post(`${documentsUrl}/upload`, formData, {
       headers: {

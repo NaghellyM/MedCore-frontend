@@ -1,12 +1,12 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../../../core/utils/cn';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
-import {
-    ChevronLeft,
-    ChevronRight,
-    CheckCircle,
+import { 
+    ChevronLeft, 
+    ChevronRight, 
+    CheckCircle, 
     X,
     Loader2,
     Clock,
@@ -15,18 +15,27 @@ import {
     Pill,
     ClipboardList
 } from 'lucide-react';
+
+// Hooks de negocio
 import { useConsultation } from '../../../../core/hooks/consultation';
-import { useAssignDiagnostics } from '../../../../core/hooks/diagnostic';
 import { useToast } from '../../../../core/hooks/notifications';
+
+// Componentes de navegación y pasos
 import { ConsultationSteps } from './consultationSteps';
+
+// Componentes de contenido de pasos
 import { PatientInfoCard } from './patientInfoCard';
 import { MedicalHistorySelector } from './medicalHistorySelector';
 import { DiagnosticsList } from './diagnosticsList';
-import { DiagnosticSelector } from './diagnosticSelector';
+// import { DocumentDiagnosticList } from './documentDiagnosticList'; // Componente importado pero no definido aquí, asumimos que existe
+import { DocumentDiagnosticList } from './documentDiagnosticList'; // Mantengo la importación que incluiste
 import { PrescriptionsList } from './prescriptionsList';
 import { MedicalOrdersList } from './medicalOrdersList';
+
+// Tipos
 import type { QueuePatient } from '../../../../core/types/queue';
-import type { SelectedDiagnostic } from '../../../../core/types/diagnostic';
+
+// El componente ConsultationSummary y SummaryCard están definidos al final de este archivo.
 
 interface ConsultationPanelProps {
     patient: QueuePatient;
@@ -49,8 +58,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
 }: ConsultationPanelProps) {
     const navigate = useNavigate();
     const { success, error: showError } = useToast();
-    const [showDiagnosticSelector, setShowDiagnosticSelector] = useState(false);
-
+    
     const {
         consultation,
         isActive,
@@ -84,12 +92,6 @@ export const ConsultationPanel = memo(function ConsultationPanel({
             showError('Error en la consulta', errorMsg);
         },
     });
-
-    const {
-
-        assignDiagnostics,
-        reset: resetAssignment
-    } = useAssignDiagnostics();
 
     // Iniciar consulta cuando se monta el componente
     useEffect(() => {
@@ -127,6 +129,17 @@ export const ConsultationPanel = memo(function ConsultationPanel({
         navigate(`/prescriptions/${prescriptionId}`);
     };
 
+    const handleAddLaboratoryOrder = () => {
+        if (patientInfo) {
+            navigate(`/orders/laboratory/new?patientId=${patientInfo.id}`);
+        }
+    };
+
+    const handleAddRadiologyOrder = () => {
+        if (patientInfo) {
+            navigate(`/orders/radiology/new?patientId=${patientInfo.id}`);
+        }
+    };
 
     const handleViewOrder = (orderId: string) => {
         navigate(`/orders/${orderId}`);
@@ -146,38 +159,6 @@ export const ConsultationPanel = memo(function ConsultationPanel({
     const handleCancelConsultation = () => {
         cancelConsultation();
         onCancel();
-    };
-
-    // Handlers para diagnósticos
-    const handleOpenDiagnosticSelector = () => {
-        setShowDiagnosticSelector(true);
-    };
-
-    const handleCloseDiagnosticSelector = () => {
-        setShowDiagnosticSelector(false);
-        resetAssignment();
-    };
-
-    const handleAssignDiagnostics = async (selectedDiagnostics: SelectedDiagnostic[]) => {
-        if (!patientInfo) {
-            showError('Error', 'No se ha cargado la información del paciente');
-            return;
-        }
-
-        const assigned = await assignDiagnostics(patientInfo.id, selectedDiagnostics);
-
-        if (assigned) {
-            success(
-                'Diagnósticos asignados',
-                `Se han asignado ${selectedDiagnostics.length} diagnóstico${selectedDiagnostics.length > 1 ? 's' : ''} correctamente`
-            );
-            setShowDiagnosticSelector(false);
-            resetAssignment();
-            // Recargar la lista de diagnósticos
-            refreshDiagnostics();
-        } else {
-            showError('Error', 'No se pudieron asignar los diagnósticos');
-        }
     };
 
     // Determinar qué pasos están completados
@@ -214,26 +195,27 @@ export const ConsultationPanel = memo(function ConsultationPanel({
 
             case 'diagnostics':
                 return (
-                    <>
-                        <DiagnosticsList
-                            diagnostics={diagnostics}
-                            medicalHistoryId={medicalHistory?.id || null}
-                            patientId={patientInfo?.id || null}
-                            loading={loadingDiagnostics}
-                            onView={handleViewDiagnostic}
-                            onRefresh={refreshDiagnostics}
-                            onAssign={handleOpenDiagnosticSelector}
-                        />
-                        {patientInfo && (
-                            <DiagnosticSelector
-                                open={showDiagnosticSelector}
-                                onClose={handleCloseDiagnosticSelector}
-                                onConfirm={handleAssignDiagnostics}
-                                patientId={patientInfo.id}
-                            />
-                        )}
-                    </>
+                    <DiagnosticsList
+                        diagnostics={diagnostics}
+                        medicalHistoryId={medicalHistory?.id || null}
+                        patientId={patientInfo?.id || null}
+                        loading={loadingDiagnostics}
+                        onView={handleViewDiagnostic}
+                        onRefresh={refreshDiagnostics}
+                    />
                 );
+            
+            // Nota: Este paso 'documents' está usando la lógica y props de 'prescriptions'
+            case 'documents':
+            return (
+                <DocumentDiagnosticList
+                        prescriptions={prescriptions}
+                        patientId={patientInfo?.id || null}
+                        loading={loadingPrescriptions}
+                        onAdd={handleAddPrescription}
+                        onView={handleViewPrescription}
+                />
+            );
 
             case 'prescriptions':
                 return (
@@ -308,7 +290,7 @@ export const ConsultationPanel = memo(function ConsultationPanel({
                                 <div className="flex items-center gap-2 text-sm text-slate-500">
                                     <Clock className="h-4 w-4" />
                                     <span>
-                                        Iniciada: {consultation?.startedAt
+                                        Iniciada: {consultation?.startedAt 
                                             ? new Date(consultation.startedAt).toLocaleTimeString('es-ES', {
                                                 hour: '2-digit',
                                                 minute: '2-digit'
@@ -388,6 +370,8 @@ export const ConsultationPanel = memo(function ConsultationPanel({
         </div>
     );
 });
+
+// --- Componentes Auxiliares ---
 
 // Componente de resumen de consulta
 interface ConsultationSummaryProps {
